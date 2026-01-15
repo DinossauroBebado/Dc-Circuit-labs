@@ -1,0 +1,594 @@
+/* ================= VARIÁVEIS E RESET GLOBAL ================= */
+:root {
+    /* Paleta de Cores da DC Circuit Labs */
+    --color-black-tech: #121212;
+    /* Preto técnico profundo */
+    --color-dark-grey: #1A1A1A;
+    /* Cinza escuro para fundos secundários */
+    --color-blue-electric: #007BFF;
+    /* Azul vibrante para acentos */
+    --color-blue-deep: #003366;
+    /* Azul profundo para elementos corporativos */
+    --color-white: #FFFFFF;
+    --color-light-grey: #F4F7F9;
+    /* Fundo claro */
+    --text-color: #333333;
+    --text-light: #888888;
+
+    /* Tipografia */
+    --font-primary: 'Montserrat', sans-serif;
+
+    /* Espaçamento */
+    --section-spacing: 80px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-primary);
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--color-white);
+    overflow-x: hidden;
+}
+
+/* Utilitários */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.text-blue {
+    color: var(--color-blue-electric);
+}
+
+.text-white {
+    color: var(--color-white);
+}
+
+.text-white-70 {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.highlight-blue {
+    color: var(--color-blue-electric);
+    font-weight: 800;
+}
+
+.bg-light {
+    background-color: var(--color-light-grey);
+}
+
+.center-text {
+    text-align: center;
+}
+
+.mb-4 {
+    margin-bottom: 2rem;
+}
+
+.section-padding {
+    padding: var(--section-spacing) 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 700;
+    color: var(--color-black-tech);
+}
+
+h1 {
+    font-size: 3.5rem;
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.section-subtitle {
+    color: var(--color-blue-electric);
+    font-weight: 600;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Botões */
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--color-blue-electric);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-blue-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-secondary {
+    border-color: var(--color-blue-electric);
+    color: var(--color-blue-electric);
+    background: transparent;
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-blue-electric);
+    color: var(--color-white);
+}
+
+.btn-small {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+}
+
+/* ================= HEADER ================= */
+#main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 20px 0;
+    transition: all 0.4s ease;
+    background: transparent;
+    /* Transparente no topo */
+}
+
+#main-header.scrolled {
+    background-color: var(--color-black-tech);
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo img {
+    height: 40px;
+    /* Ajuste conforme o tamanho do seu ícone */
+    margin-right: 10px;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-white);
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    align-items: center;
+}
+
+.nav-links li {
+    margin-left: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--color-white);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+    opacity: 0.9;
+}
+
+.nav-links a:hover {
+    color: var(--color-blue-electric);
+    opacity: 1;
+}
+
+/* ================= HERO SECTION ================= */
+#hero {
+    height: 100vh;
+    min-height: 600px;
+    background-color: var(--color-black-tech);
+    /* Substitua a URL abaixo se tiver uma imagem de fundo técnica */
+    background-image: url('assets/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* Camada escura sobre a imagem de fundo para o texto aparecer */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(0, 51, 102, 0.8) 100%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+}
+
+#hero h1 {
+    color: var(--color-white);
+    margin-bottom: 20px;
+}
+
+#hero p {
+    color: var(--color-white);
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 40px;
+    max-width: 600px;
+}
+
+.hero-btns {
+    display: flex;
+    gap: 20px;
+}
+
+/* ================= ABOUT SECTION ================= */
+.row {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.col-text {
+    flex: 1;
+}
+
+.col-image {
+    flex: 1;
+}
+
+.feature-list {
+    list-style: none;
+    margin-top: 30px;
+}
+
+.feature-list li {
+    margin-bottom: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.feature-list i,
+.feature-list svg {
+    color: var(--color-blue-electric);
+    margin-right: 10px;
+}
+
+/* Visual abstrato para a área Sobre */
+.about-tech-visual {
+    position: relative;
+    height: 400px;
+    background: var(--color-light-grey);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tech-circle {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 3px solid var(--color-blue-electric);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.2;
+}
+
+.tech-line {
+    position: absolute;
+    width: 150%;
+    height: 2px;
+    background: var(--color-blue-deep);
+    top: 30%;
+    left: -25%;
+    transform: rotate(15deg);
+    opacity: 0.1;
+}
+
+/* ================= SERVICES SECTION ================= */
+.section-header {
+    margin-bottom: 60px;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.service-card {
+    background: var(--color-white);
+    padding: 40px 30px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    border-bottom-color: var(--color-blue-electric);
+    box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15);
+}
+
+.icon-box {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.icon-box svg {
+    stroke: var(--color-blue-electric);
+}
+
+/* ================= CONTACT SECTION ================= */
+.dark-section {
+    background-color: var(--color-black-tech);
+    color: var(--color-white);
+}
+
+.contact-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+}
+
+.contact-info {
+    flex: 1;
+    min-width: 300px;
+    text-align: center;
+}
+
+.c-item {
+    margin-bottom: 30px;
+}
+
+.c-label {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-bottom: 5px;
+}
+
+.c-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.contact-form {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    color: var(--color-white);
+    font-family: var(--font-primary);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--color-blue-electric);
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* ================= FOOTER ================= */
+footer {
+    background-color: var(--color-dark-grey);
+    padding: 30px 0;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-text-small {
+    font-weight: 700;
+    color: var(--color-white);
+}
+
+/* ================= RESPONSIVO (MOBILE) ================= */
+.burger {
+    display: none;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .nav-links {
+        position: absolute;
+        right: 0px;
+        height: 92vh;
+        top: 8vh;
+        background-color: var(--color-black-tech);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 50%;
+        transform: translateX(100%);
+        transition: transform 0.5s ease-in;
+        padding-top: 60px;
+    }
+
+    .nav-links li {
+        margin: 20px 0;
+    }
+
+    .burger {
+        display: block;
+    }
+
+    .burger div {
+        width: 25px;
+        height: 3px;
+        background-color: var(--color-white);
+        margin: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .row {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .col-image {
+        width: 100%;
+    }
+
+    .about-tech-visual {
+        height: 250px;
+    }
+
+    .contact-wrapper {
+        flex-direction: column;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    /* Títulos menores no mobile */
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+}
+
+.nav-active {
+    transform: translateX(0%);
+}
+
+/* Animação do Burger */
+.toggle .line1 {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.toggle .line2 {
+    opacity: 0;
+}
+
+.toggle .line3 {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
+/* ================= ANIMAÇÕES DE SCROLL SIMPLES ================= */
+.reveal,
+.reveal-left,
+.reveal-right,
+.reveal-up {
+    opacity: 0;
+    transition: all 0.8s ease-out;
+}
+
+.reveal {
+    transform: translateY(30px);
+}
+
+.reveal-left {
+    transform: translateX(-50px);
+}
+
+.reveal-right {
+    transform: translateX(50px);
+}
+
+.reveal-up {
+    transform: translateY(50px);
+}
+
+.active.reveal,
+.active.reveal-left,
+.active.reveal-right,
+.active.reveal-up {
+    opacity: 1;
+    transform: none;
+}
+
+/* Ajuste para garantir alinhamento perfeito dos 6 itens */
+.services-grid {
+    display: grid;
+    /* Cria colunas de no mínimo 300px, preenchendo o espaço */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+/* Opcional: Para telas muito grandes, forçar 3 colunas para ficar 3x2 */
+@media screen and (min-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
