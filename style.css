@@ -592,3 +592,16 @@ footer {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+.contact-link {
+    text-decoration: none;
+    /* Remove o sublinhado */
+    color: inherit;
+    /* Faz o link herdar a cor azul que você já definiu no span */
+    transition: opacity 0.3s;
+}
+
+.contact-link:hover {
+    opacity: 0.7;
+    /* Dá um efeito visual suave ao passar o mouse */
+}
