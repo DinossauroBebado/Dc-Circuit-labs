@@ -605,3 +605,44 @@ footer {
     opacity: 0.7;
     /* Dá um efeito visual suave ao passar o mouse */
 }
+
+:root {
+    --color-black-tech: #121212;
+    --color-blue-electric: #007BFF;
+    --color-white: #FFFFFF;
+    --font-primary: 'Montserrat', sans-serif;
+}
+
+/* [Estilos base do seu site original...] */
+
+.lang-selector {
+    display: flex;
+    gap: 8px;
+    margin-left: 20px;
+    align-items: center;
+}
+
+.lang-btn {
+    background: transparent;
+    border: 1px solid var(--color-blue-electric);
+    color: var(--color-white);
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.lang-btn:hover {
+    background: var(--color-blue-electric);
+}
+
+@media screen and (max-width: 768px) {
+    .lang-selector {
+        margin-top: 25px;
+        justify-content: center;
+    }
+}
+
+/* [Restante do CSS original...] */

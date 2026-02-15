@@ -4,20 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="DC Circuit Labs - Engenharia de Prototipagem Rápida e Inovação. Transformamos ideias em realidade técnica com velocidade e precisão.">
+    <meta name="description" content="DC Circuit Labs - Engenharia de Prototipagem Rápida e Inovação.">
     <title>DC Circuit Labs | Engenharia & Prototipagem Rápida</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&display=swap"
         rel="stylesheet">
-
     <link rel="stylesheet" href="style.css">
-
     <link rel="icon" type="image/png" href="assets/logo-icon.png">
 </head>
 
 <body>
-
     <header id="main-header">
         <div class="container header-content">
             <a href="#hero" class="logo">
@@ -26,10 +21,14 @@
             </a>
             <nav>
                 <ul class="nav-links">
-                    <li><a href="#about">Sobre</a></li>
-                    <li><a href="#services">Serviços</a></li>
-                    <!-- <li><a href="#process">Processo</a></li> -->
-                    <li><a href="#contact" class="btn btn-small">Contato</a></li>
+                    <li><a href="#about" data-i18n="nav_about">Sobre</a></li>
+                    <li><a href="#services" data-i18n="nav_services">Serviços</a></li>
+                    <li><a href="#contact" class="btn btn-small" data-i18n="nav_contact">Contato</a></li>
+                    <li class="lang-selector">
+                        <button onclick="switchLanguage('pt')" class="lang-btn">PT</button>
+                        <button onclick="switchLanguage('en')" class="lang-btn">EN</button>
+                        <button onclick="switchLanguage('zh')" class="lang-btn">ZH</button>
+                    </li>
                 </ul>
                 <div class="burger">
                     <div class="line1"></div>
@@ -43,12 +42,12 @@
     <section id="hero">
         <div class="hero-overlay"></div>
         <div class="container hero-content reveal">
-            <h1>Acelerando a Inovação <br>através da <span class="text-blue">Prototipagem Rápida.</span></h1>
-            <p>Transformamos conceitos complexos de engenharia em realidades tangíveis. O parceiro ideal para levar sua
-                ideia do esboço à escala com velocidade e precisão eletrônica.</p>
+            <h1 data-i18n="hero_title">Acelerando a Inovação através da Prototipagem Rápida.</h1>
+            <p data-i18n="hero_subtitle">Transformamos conceitos complexos de engenharia em realidades tangíveis. O
+                parceiro ideal para levar sua ideia do esboço à escala.</p>
             <div class="hero-btns">
-                <a href="#contact" class="btn btn-primary">Iniciar Projeto</a>
-                <a href="#services" class="btn btn-secondary">Nossos Serviços</a>
+                <a href="#contact" class="btn btn-primary" data-i18n="btn_project">Iniciar Projeto</a>
+                <a href="#services" class="btn btn-secondary" data-i18n="btn_services">Nossos Serviços</a>
             </div>
         </div>
     </section>
@@ -57,17 +56,16 @@
         <div class="container">
             <div class="row">
                 <div class="col-text reveal-left">
-                    <h4 class="section-subtitle">QUEM SOMOS</h4>
-                    <h2 class="section-title">Experiência que impulsiona o futuro.</h2>
-                    <p>A DC Circuit Labs nasceu da necessidade de fechar a lacuna entre a teoria da engenharia e a
-                        fabricação funcional.</p>
-                    <p>Somos um laboratório focado na intersecção de design eletrônico robusto e metodologias ágeis de
-                        fabricação. Nossa equipe combina anos de experiência em desenvolvimento de hardware com as
-                        mais novas tecnologias de impressão 3D e montagem de PCB.</p>
+                    <h4 class="section-subtitle" data-i18n="about_subtitle">QUEM SOMOS</h4>
+                    <h2 class="section-title" data-i18n="about_title">Experiência que impulsiona o futuro.</h2>
+                    <p data-i18n="about_p1">A DC Circuit Labs nasceu da necessidade de fechar a lacuna entre a teoria da
+                        engenharia e a fabricação funcional.</p>
+                    <p data-i18n="about_p2">Somos um laboratório focado na intersecção de design eletrônico robusto e
+                        metodologias ágeis de fabricação.</p>
                     <ul class="feature-list">
-                        <li><i class="fas fa-check-circle"></i> Foco em MVPs funcionais.</li>
-                        <li><i class="fas fa-check-circle"></i> Engenharia de precisão.</li>
-                        <li><i class="fas fa-check-circle"></i> Redução do tempo de lançamento no mercado.</li>
+                        <li><span data-i18n="feat_1">Foco em MVPs funcionais.</span></li>
+                        <li><span data-i18n="feat_2">Engenharia de precisão.</span></li>
+                        <li><span data-i18n="feat_3">Redução do tempo de lançamento no mercado.</span></li>
                     </ul>
                 </div>
                 <div class="col-image reveal-right">
@@ -83,146 +81,67 @@
     <section id="services" class="section-padding bg-light">
         <div class="container">
             <div class="section-header center-text reveal">
-                <h4 class="section-subtitle">O QUE DOMINAMOS</h4>
-                <h2 class="section-title">Especialidades Técnicas</h2>
-                <p>Do bit ao átomo: uma stack completa de engenharia para materializar seu produto.</p>
+                <h4 class="section-subtitle" data-i18n="services_subtitle">O QUE DOMINAMOS</h4>
+                <h2 class="section-title" data-i18n="services_title">Especialidades Técnicas</h2>
+                <p data-i18n="services_desc">Do bit ao átomo: uma stack completa de engenharia para materializar seu
+                    produto.</p>
             </div>
-
             <div class="services-grid">
-
                 <div class="service-card reveal-up">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-box">
-                            <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                            </path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                    </div>
-                    <h3>Projetos Mecânicos CAD</h3>
-                    <p>Modelagem 3D paramétrica, simulação de encaixes e criação de arquivos técnicos prontos para
-                        manufatura.</p>
+                    <h3>CAD</h3>
+                    <p data-i18n="s1">Modelagem 3D paramétrica.</p>
                 </div>
-
-                <div class="service-card reveal-up" style="transition-delay: 0.1s;">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-cpu">
-                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
-                            <rect x="9" y="9" width="6" height="6"></rect>
-                            <line x1="9" y1="1" x2="9" y2="4"></line>
-                            <line x1="15" y1="1" x2="15" y2="4"></line>
-                            <line x1="9" y1="20" x2="9" y2="23"></line>
-                            <line x1="15" y1="20" x2="15" y2="23"></line>
-                            <line x1="20" y1="9" x2="23" y2="9"></line>
-                            <line x1="20" y1="14" x2="23" y2="14"></line>
-                            <line x1="1" y1="9" x2="4" y2="9"></line>
-                            <line x1="1" y1="14" x2="4" y2="14"></line>
-                        </svg>
-                    </div>
-                    <h3>Design de PCB</h3>
-                    <p>Layout de circuitos impressos multicamadas, otimização de BOM e preparação de arquivos Gerber
-                        para produção em massa.</p>
+                <div class="service-card reveal-up">
+                    <h3>PCB</h3>
+                    <p data-i18n="s2">Design de circuitos impressos.</p>
                 </div>
-
-                <div class="service-card reveal-up" style="transition-delay: 0.2s;">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-terminal">
-                            <polyline points="4 17 10 11 4 5"></polyline>
-                            <line x1="12" y1="19" x2="20" y2="19"></line>
-                        </svg>
-                    </div>
-                    <h3>Firmware & Embedded</h3>
-                    <p>Programação de baixo nível (C/C++) para microcontroladores (STM32, ESP32) garantindo
-                        eficiência e estabilidade.</p>
+                <div class="service-card reveal-up">
+                    <h3>Firmware</h3>
+                    <p data-i18n="s3">C/C++ para microcontroladores.</p>
                 </div>
-
-                <div class="service-card reveal-up" style="transition-delay: 0.3s;">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-smartphone">
-                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                            <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                        </svg>
-                    </div>
-                    <h3>Dev de Aplicativos</h3>
-                    <p>Criação de apps nativos ou multiplataforma para controle de hardware via Bluetooth (BLE) e Wi-Fi,
-                        com interfaces intuitivas.</p>
+                <div class="service-card reveal-up">
+                    <h3>Apps</h3>
+                    <p data-i18n="s4">Controle via BLE e Wi-Fi.</p>
                 </div>
-
-                <div class="service-card reveal-up" style="transition-delay: 0.4s;">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-share-2">
-                            <circle cx="18" cy="5" r="3"></circle>
-                            <circle cx="6" cy="12" r="3"></circle>
-                            <circle cx="18" cy="19" r="3"></circle>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                        </svg>
-                    </div>
-                    <h3>Inteligência Artificial</h3>
-                    <p>Implementação de Edge AI, visão computacional e algoritmos preditivos rodando diretamente no
-                        hardware do seu produto.</p>
+                <div class="service-card reveal-up">
+                    <h3>AI</h3>
+                    <p data-i18n="s5">Edge AI e Visão Computacional.</p>
                 </div>
-
-                <div class="service-card reveal-up" style="transition-delay: 0.5s;">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-settings">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path
-                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                            </path>
-                        </svg>
-                    </div>
-                    <h3>Robótica & Automação</h3>
-                    <p>Integração de sensores, atuadores, cinemática e sistemas de controle autônomo para robôs móveis.
-                    </p>
+                <div class="service-card reveal-up">
+                    <h3>Robotics</h3>
+                    <p data-i18n="s6">Sistemas de controle autônomo.</p>
                 </div>
-
             </div>
         </div>
     </section>
 
     <section id="contact" class="section-padding dark-section">
         <div class="container center-text reveal">
-            <h2 class="section-title text-white">Pronto para materializar sua ideia?</h2>
-            <p class="text-white-70 mb-4">Vamos conversar sobre como a DC Circuit Labs pode acelerar seu próximo projeto
-                de engenharia.</p>
+            <h2 class="section-title text-white" data-i18n="contact_title">Pronto para materializar sua ideia?</h2>
+            <p class="text-white-70 mb-4" data-i18n="contact_subtitle">Vamos conversar sobre como a DC Circuit Labs pode
+                acelerar seu próximo projeto de engenharia.</p>
 
             <div class="contact-wrapper">
                 <div class="contact-info">
                     <div class="c-item">
-                        <span class="c-label">Email:</span>
+                        <span class="c-label" data-i18n="label_email">Email:</span>
                         <span class="c-value text-blue">
                             <a href="mailto:contato@dccircuitlabs.com"
                                 class="contact-link">contato@dccircuitlabs.com</a>
                         </span>
                     </div>
                     <div class="c-item">
-                        <span class="c-label">WhatsApp:</span>
+                        <span class="c-label" data-i18n="label_whatsapp">WhatsApp:</span>
                         <span class="c-value text-blue">
                             <a href="https://wa.me/5511975731817" target="_blank" class="contact-link">+55 (11)
                                 975731817</a>
                         </span>
                     </div>
                     <div class="c-item">
-                        <span class="c-label">Localização:</span>
-                        <span class="c-value">Pólo Tecnológico de Inovação de Curitiba</span>
+                        <span class="c-label" data-i18n="label_location">Localização:</span>
+                        <span class="c-value" data-i18n="value_location">Pólo Tecnológico de Inovação de Curitiba</span>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </section>
@@ -233,7 +152,7 @@
                 <span class="logo-text-small">DC CIRCUIT LABS</span>
                 <p>CNPJ : 64.870.544/0001-97</p>
             </div>
-            <div class="footer-links">
+            <div class="footer-links" data-i18n="footer_copy">
                 © 2026 DC Circuit Labs. Todos os direitos reservados.
             </div>
         </div>
