@@ -80,7 +80,7 @@ function switchLanguage(lang) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    switchLanguage(localStorage.getItem('preferredLang') || 'pt');
+    switchLanguage(localStorage.getItem('preferredLang') || 'en');
 
     const header = document.getElementById('main-header');
     window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 50));
