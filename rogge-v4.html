@@ -305,6 +305,7 @@
         <a href="#visao-geral" class="nav-pill active">📋 Visão Geral</a>
         <a href="#ibom" class="nav-pill">🔍 iBOM 3D</a>
         <a href="#pinout" class="nav-pill">🔌 Pinout Completo</a>
+        <a href="#ligacoes" class="nav-pill">🔧 Guia de Ligações</a>
         <a href="#testes" class="nav-pill">🧪 Testes de Hardware</a>
     </nav>
 
@@ -1719,6 +1720,322 @@ void loop()
 
         </div><!-- /testes -->
 
+        <!-- ═══════════════════ GUIA DE LIGAÇÕES ═══════════════════ -->
+        <div id="ligacoes" class="section-block">
+            <h2 class="section-title">🔧 Guia de Ligações — Conectores da Placa</h2>
+            <p class="section-subtitle">Função e pinout de cada conector físico da PCB Rogue V4.1. Dados extraídos do iBOM, esquemáticos e firmware de validação.</p>
+
+            <!-- GROUP 1: ALIMENTAÇÃO -->
+            <div class="doc-card full-width" style="margin-bottom: 20px;">
+                <h3>⚡ Alimentação e Proteção</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>Componente</th>
+                                <th>Tipo</th>
+                                <th>Pinos</th>
+                                <th>Pinout / Função</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="gpio-badge">24V_IN</span></td>
+                                <td>DB2EVC-5.08-2P-GN</td>
+                                <td>Borne Parafuso 2P (5.08mm)</td>
+                                <td>2</td>
+                                <td>
+                                    <strong>Pino 1:</strong> V<sub>IN</sub> (+) — Entrada de alimentação principal (0 ~ 45V DC)<br>
+                                    <strong>Pino 2:</strong> PGND (−) — Terra de potência
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">F4_2A</span></td>
+                                <td>XF-508P-A-B</td>
+                                <td>Porta-fusível automotivo</td>
+                                <td>—</td>
+                                <td>
+                                    Fusível de proteção de entrada (<strong>2A</strong>). Protege todo o circuito contra sobrecorrente.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">BAT1</span></td>
+                                <td>XDCR-1220-006</td>
+                                <td>Suporte de Bateria CR1220 (SMD)</td>
+                                <td>2</td>
+                                <td>
+                                    <strong>Pino +:</strong> V<sub>BAT</sub> do RTC PCF8563<br>
+                                    <strong>Pino −:</strong> GND<br>
+                                    Mantém o relógio RTC ativo quando a placa está desenergizada.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GROUP 2: RELÉS -->
+            <div class="doc-card full-width" style="margin-bottom: 20px;">
+                <h3>🔌 Saídas de Relés (RL_CON1 ~ RL_CON7)</h3>
+                <p style="color: var(--color-text-muted); margin-bottom: 14px;">7 bornes parafuso de 3 pinos (WJ2EDGV 5.08mm) para conexão das cargas controladas pelos relés SRD-24VDC-SL-C (SPDT). Cada borne expõe os 3 terminais do relé correspondente.</p>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>Relé Associado</th>
+                                <th>Pino 1 (COM)</th>
+                                <th>Pino 2 (NA)</th>
+                                <th>Pino 3 (NF)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="gpio-badge">RL_CON1</span></td><td>RL1 (Bit 0 — <code>0x01</code>)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
+                            <tr><td><span class="gpio-badge">RL_CON2</span></td><td>RL2 (Bit 1 — <code>0x02</code>)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
+                            <tr><td><span class="gpio-badge">RL_CON3</span></td><td>RL3 (Bit 2 — <code>0x04</code>)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
+                            <tr><td><span class="gpio-badge">RL_CON4</span></td><td>RL4 (Bit 3 — <code>0x08</code>)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
+                            <tr><td><span class="gpio-badge">RL_CON5</span></td><td>RL5 (Bit 4 — <code>0x10</code>)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
+                            <tr><td><span class="gpio-badge">RL_CON6</span></td><td>RL6 (Bit 5 — <code>0x20</code>)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
+                            <tr><td><span class="gpio-badge">RL_CON7</span></td><td>RL7 (Bit 6 — <code>0x40</code>)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="color: var(--color-text-muted); margin-top: 10px; font-size: .85rem;">⚠️ <strong>Capacidade de comutação:</strong> Máx. 15A @ 250V AC ou 15A @ 30V DC por relé (SRD-24VDC-SL-C).</p>
+            </div>
+
+            <!-- GROUP 3: BUZZER -->
+            <div class="doc-card full-width" style="margin-bottom: 20px;">
+                <h3>🔊 Buzzer</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead><tr><th>Designador</th><th>Componente</th><th>Tipo</th><th>Pino 1</th><th>Pino 2</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="gpio-badge">BUZZER</span></td>
+                                <td>DB2EVC-5.08-2P-GN</td>
+                                <td>Borne Parafuso 2P (5.08mm)</td>
+                                <td><strong>Sinal (+):</strong> Saída do ULN2803 — Canal 7 (Bit 7 / <code>0x80</code> do 74HC595D)</td>
+                                <td><strong>GND (−):</strong> Terra de potência</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GROUP 4: SENSORES DE PRESSÃO -->
+            <div class="doc-card full-width" style="margin-bottom: 20px;">
+                <h3>🌡️ Transdutores de Pressão (DS_CON1 ~ DS_CON8 + TP_CON1 ~ TP_CON3)</h3>
+                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Conectores XH-3A (2.5mm, 3 pinos) para sensores analógicos de pressão (0 ~ 5V DC). O sinal é condicionado na PCB para 0 ~ 3.3V antes de entrar no ADC do ESP32-S3.</p>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>GPIO / Canal ADC</th>
+                                <th>Pino 1</th>
+                                <th>Pino 2</th>
+                                <th>Pino 3</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="gpio-badge">TP_CON_1</span></td><td>GPIO 5 (ADC1_CH4)</td><td>Sinal (0 ~ 5V)</td><td>VCC (+5V)</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">TP_CON_2</span></td><td>GPIO 6 (ADC1_CH5)</td><td>Sinal (0 ~ 5V)</td><td>VCC (+5V)</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">TP_CON_3</span></td><td>GPIO 7 (ADC1_CH6)</td><td>Sinal (0 ~ 5V)</td><td>VCC (+5V)</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">DS_CON_1</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                            <tr><td><span class="gpio-badge">DS_CON_2</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                            <tr><td><span class="gpio-badge">DS_CON_3</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                            <tr><td><span class="gpio-badge">DS_CON_4</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                            <tr><td><span class="gpio-badge">DS_CON_5</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                            <tr><td><span class="gpio-badge">DS_CON_6</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                            <tr><td><span class="gpio-badge">DS_CON_7</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                            <tr><td><span class="gpio-badge">DS_CON_8</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GROUP 5: ENTRADAS OPTOACOPLADAS -->
+            <div class="doc-card full-width" style="margin-bottom: 20px;">
+                <h3>💡 Entradas Optoacopladas (OPT_CON1 ~ OPT_CON5)</h3>
+                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Bornes parafuso de 2 pinos (DB2EVC 5.08mm) para entradas digitais isoladas opticamente. Compatíveis com sinalização de 24V DC industrial. Lidas pelo CI 74HC165D via SPI.</p>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>Canal do 74HC165D</th>
+                                <th>Pino 1</th>
+                                <th>Pino 2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="gpio-badge">OPT_CON1</span></td><td>Entrada Opto 1 (D0 / Bit 7)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
+                            <tr><td><span class="gpio-badge">OPT_CON2</span></td><td>Entrada Opto 2 (D1 / Bit 6)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
+                            <tr><td><span class="gpio-badge">OPT_CON3</span></td><td>Entrada Opto 3 (D2 / Bit 5)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
+                            <tr><td><span class="gpio-badge">OPT_CON4</span></td><td>Entrada Opto 4 (D3 / Bit 4)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
+                            <tr><td><span class="gpio-badge">OPT_CON5</span></td><td>Entrada Opto 5 (D4 / Bit 3)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="color: var(--color-text-muted); margin-top: 10px; font-size: .85rem;">⚠️ <strong>Tensão de entrada:</strong> Conectar sinal de 24V DC (ou outra tensão adequada ao optoacoplador) entre os pinos (+) e (−).</p>
+            </div>
+
+            <!-- GROUP 6: SAÍDAS DIGITAIS (GP) -->
+            <div class="doc-card full-width" style="margin-bottom: 20px;">
+                <h3>📤 Saídas / Portas GPIO de Expansão (GP1 ~ GP4 + DI1/DI2 + DO1/DO2)</h3>
+                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Conectores XH-4A (2.5mm, 4 pinos) para interfaces genéricas GPIO. Podem ser usados para sensores, LEDs, botões ou expansão do sistema.</p>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>Tipo</th>
+                                <th>Pino 1</th>
+                                <th>Pino 2</th>
+                                <th>Pino 3</th>
+                                <th>Pino 4</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="gpio-badge">GP1</span></td><td>GPIO de Expansão</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">GP2</span></td><td>GPIO de Expansão</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">GP3</span></td><td>GPIO de Expansão</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">GP4</span></td><td>GPIO de Expansão</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">DI1</span></td><td>Entrada Digital</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">DI2</span></td><td>Entrada Digital</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">DO1</span></td><td>Saída Digital</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                            <tr><td><span class="gpio-badge">DO2</span></td><td>Saída Digital</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GROUP 7: COMUNICAÇÃO -->
+            <div class="doc-card full-width" style="margin-bottom: 20px;">
+                <h3>📡 Comunicação (RS-485 / PZEM / RJ45)</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>Componente</th>
+                                <th>Tipo</th>
+                                <th>Pinout Detalhado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="gpio-badge">CN201</span></td>
+                                <td>DB2EVC-5.08-2P-GN</td>
+                                <td>Borne Parafuso 2P<br>(RS-485 Principal)</td>
+                                <td>
+                                    <strong>Pino 1:</strong> RS485_A (+) — Linha diferencial A do THVD1450DR<br>
+                                    <strong>Pino 2:</strong> RS485_B (−) — Linha diferencial B do THVD1450DR<br>
+                                    <span style="color: var(--color-text-muted); font-size: .82rem;">GPIOs: RX=41, TX=42, RE/DE=40 | 9600 bps | Half-Duplex</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">CN202</span></td>
+                                <td>DB2EVC-5.08-2P-GN</td>
+                                <td>Borne Parafuso 2P<br>(RS-485 Auxiliar / C6)</td>
+                                <td>
+                                    <strong>Pino 1:</strong> RS485_A (+) — Linha diferencial A do MAX485<br>
+                                    <strong>Pino 2:</strong> RS485_B (−) — Linha diferencial B do MAX485<br>
+                                    <span style="color: var(--color-text-muted); font-size: .82rem;">ESP32-C6 GPIOs: RO=11, DI=12, DE/RE=13 | 9600 bps</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">PZEM</span></td>
+                                <td>XH-4A</td>
+                                <td>Conector XH 4P (2.5mm)<br>(Módulo PZEM-004T)</td>
+                                <td>
+                                    <strong>Pino 1:</strong> 5V (Alimentação do módulo PZEM)<br>
+                                    <strong>Pino 2:</strong> RX → GPIO 15 (TX2 do ESP32-S3)<br>
+                                    <strong>Pino 3:</strong> TX → GPIO 16 (RX2 do ESP32-S3)<br>
+                                    <strong>Pino 4:</strong> GND<br>
+                                    <span style="color: var(--color-text-muted); font-size: .82rem;">Protocolo Modbus-RTU | Medição AC: V, A, W, kWh, Hz, PF</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">RJ45</span></td>
+                                <td>R-RJ45S08P-B000</td>
+                                <td>Jack RJ45 (THT, Blindado)</td>
+                                <td>
+                                    Conector Ethernet / RS-485 de padrão industrial (8P8C).<br>
+                                    Pinos 1-8 conforme padrão T568B / personalizado para RS-485 sobre cabo CAT5.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GROUP 8: USB -->
+            <div class="doc-card full-width" style="margin-bottom: 20px;">
+                <h3>🔗 Conectores USB</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>Componente</th>
+                                <th>Tipo</th>
+                                <th>Função</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="gpio-badge">USBC1</span></td>
+                                <td>918-418K2022Y40000</td>
+                                <td>USB Type-C (THT, 14P)</td>
+                                <td>
+                                    <strong>Programação e debug</strong> — Conectado ao chip conversor CH340C (USB-UART).<br>
+                                    Usado para gravação de firmware via PlatformIO e monitoramento serial (115200 baud).
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">USB2</span></td>
+                                <td>TYPE-C 16PIN 2MD(073)</td>
+                                <td>USB Type-C (SMD, 16P)</td>
+                                <td>
+                                    <strong>USB CDC nativo</strong> — Conectado diretamente aos pinos D+/D− (GPIO 19/20) do ESP32-S3.<br>
+                                    Comunicação direta CDC com <code>ARDUINO_USB_CDC_ON_BOOT=1</code>.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GROUP 9: JUMPERS & TEST POINTS -->
+            <div class="doc-card full-width">
+                <h3>🔬 Jumpers e Pontos de Teste</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>Tipo</th>
+                                <th>Função / Sinal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="gpio-badge">JMP</span></td><td>Header 2P (2.54mm)</td><td>Jumper de configuração (curto-circuitar para habilitar funcionalidade)</td></tr>
+                            <tr><td><span class="gpio-badge">TP_3V3</span></td><td>Test Point</td><td>Medição da trilha regulada de <strong>+3.3V</strong></td></tr>
+                            <tr><td><span class="gpio-badge">TP_5V</span></td><td>Test Point</td><td>Medição da trilha regulada de <strong>+5V</strong></td></tr>
+                            <tr><td><span class="gpio-badge">TP_24V</span></td><td>Test Point</td><td>Medição da trilha de <strong>+24V</strong> (alimentação dos relés)</td></tr>
+                            <tr><td><span class="gpio-badge">TP_5.4V(BUCK)</span></td><td>Test Point</td><td>Saída do conversor Buck DC-DC (<strong>~5.4V</strong>)</td></tr>
+                            <tr><td><span class="gpio-badge">TP_P24V1</span></td><td>Test Point</td><td>Medição de <strong>+24V</strong> pós-fusível (entrada de potência)</td></tr>
+                            <tr><td><span class="gpio-badge">TP_GND</span></td><td>Test Point</td><td>Referência de <strong>GND</strong> lógico</td></tr>
+                            <tr><td><span class="gpio-badge">TP_PGND</span></td><td>Test Point</td><td>Referência de <strong>PGND</strong> (terra de potência)</td></tr>
+                            <tr><td><span class="gpio-badge">TP_GND1 ~ TP_GND3</span></td><td>Test Points</td><td>Pontos de GND adicionais para sonda de osciloscópio</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!-- /ligacoes -->
+
     </main>
 
     <footer>
@@ -1758,7 +2075,7 @@ void loop()
 
         // Highlight active nav pill on scroll
         window.addEventListener('scroll', () => {
-            const sections = ['visao-geral', 'ibom', 'pinout', 'testes'];
+            const sections = ['visao-geral', 'ibom', 'pinout', 'ligacoes', 'testes'];
             let current = '';
             sections.forEach(id => {
                 const el = document.getElementById(id);
