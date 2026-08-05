@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurador Interativo - MVP Colheitadeira Avícola | DC Circuit Labs</title>
+    <meta name="description"
+        content="Configurador técnico e comercial interativo para o desenvolvimento do Controle Remoto HMI 7'', Tração 800kg e Acionamento de Molinetes 12V com Ponte H para Colheitadeira Avícola (Projeto DNK).">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="locked">
+    <!-- AUTHENTICATION OVERLAY (RESTRICTED CLIENT AREA) -->
+    <div class="auth-overlay" id="auth-overlay">
+        <div class="auth-card" id="auth-card">
+            <div class="auth-logo-container">
+                <img src="../assets/logo_full_transp.png" alt="DC Circuit Labs Logo" class="auth-logo-img">
+            </div>
+            <div class="auth-header">
+                <span class="auth-badge">🔒 ÁREA RESTRITA E CRIPTOGRAFADA</span>
+                <h2>PROJETO DNK - ACESSO EXCLUSIVO</h2>
+                <p>Insira a chave de autenticação de cliente para acessar a proposta técnica e comercial do Projeto
+                    Colheitadeira Avícola.</p>
+            </div>
+            <form id="auth-form" class="auth-form" onsubmit="return false;">
+                <div class="input-field-group">
+                    <label for="client-password">Senha de Segurança de Acesso</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔑</span>
+                        <input type="password" id="client-password" placeholder="Digite a senha fornecida..."
+                            autocomplete="current-password" required autofocus>
+                        <button type="button" class="toggle-pwd-btn" id="toggle-pwd-btn"
+                            title="Mostrar/Ocultar Senha">👁️</button>
+                    </div>
+                    <div class="auth-error-msg" id="auth-error-msg" style="display: none;">
+                        ⚠️ Senha incorreta! Verifique suas credenciais de cliente.
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary auth-submit-btn" id="auth-submit-btn">
+                    Desbloquear Acesso à Proposta &rarr;
+                </button>
+            </form>
+            <div class="auth-footer-text">
+                <small>🛡️ Protegido por criptografia DC Circuit Labs (Engenharia de Desenvolvimento)</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Header / Bar -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="../index.html" class="brand-link"
+                    style="display:flex; align-items:center; gap:14px; text-decoration:none;">
+                    <img src="../assets/logo_full_transp.png" alt="DC Circuit Labs Logo" class="brand-logo-img">
+                    <div class="brand-text">
+                        <span class="company">DC CIRCUIT LABS</span>
+                        <span class="sub">Engenharia de Desenvolvimento</span>
+                    </div>
+                </a>
+            </div>
+            <div class="project-badge">
+                <span class="badge-dot"></span>
+                <span class="badge-title">Fase 1: Levantamento & Requisitos (Anexo 1)</span>
+                <span class="badge-client">Cliente: DNK</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-wrapper">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 id="main-heading">Configurador Técnico & Comercial Interativo</h1>
+                <p class="hero-subtitle">
+                    Personalize as especificações do **Display HMI 7"**, **Controle Remoto**, **Tração Principal
+                    (800kg)**, **Molinetes (Motores 12V + Ponte H)** e **Automação Siemens S7-1200**.
+                </p>
+                <div class="key-metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">300 m</div>
+                        <div class="metric-label">Alcance Rádio (ESP-NOW)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">&lt; 250 ms</div>
+                        <div class="metric-label">Tempo de Resposta</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">4x 12V DC</div>
+                        <div class="metric-label">Molinetes com Ponte H</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">5 RPM</div>
+                        <div class="metric-label">Translação Ultralenta</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="config-nav" id="config-navigation">
+            <button class="nav-tab active" data-tab="tab-controle" id="tab-btn-controle">
+                <span class="tab-num">01</span>
+                <span class="tab-label">Controle Remoto & Display 7"</span>
+            </button>
+            <button class="nav-tab" data-tab="tab-tracao" id="tab-btn-tracao">
+                <span class="tab-num">02</span>
+                <span class="tab-label">Tração & Molinetes 12V</span>
+            </button>
+            <button class="nav-tab" data-tab="tab-automacao" id="tab-btn-automacao">
+                <span class="tab-num">03</span>
+                <span class="tab-label">Integração CLP & Sensores</span>
+            </button>
+            <button class="nav-tab" data-tab="tab-resumo" id="tab-btn-resumo">
+                <span class="tab-num">04</span>
+                <span class="tab-label">Resumo & Proposta Final</span>
+            </button>
+        </nav>
+
+        <!-- Content Grid (Interactive Form + Sticky Summary) -->
+        <div class="layout-grid">
+            <!-- Left Options Panel -->
+            <div class="options-container">
+
+                <!-- TAB 1: CONTROLE REMOTO & DISPLAY -->
+                <div class="tab-content active" id="tab-controle">
+                    <div class="section-header">
+                        <h2>1. Especificações do Controle Remoto & Display HMI 7"</h2>
+                        <p>Escolha a placa PCB master, sistema de bateria, carcaça e acabamento mecânico do controle
+                            remoto.</p>
+                    </div>
+
+                    <!-- 1.1 Display HMI 7" -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>1.1. Display Touch Screen HMI 7.0" (Interface de Toque)</h3>
+                            <span class="group-hint">Módulo de tela de 7 polegadas capacitiva isolado da placa principal
+                                de rádio.</span>
+                        </div>
+                        <div class="cards-grid vertical">
+                            <label class="config-card selected" data-group="display" data-val="display_s3_cap"
+                                data-price="450">
+                                <input type="radio" name="display" value="display_s3_cap" checked>
+                                <div class="card-badge recommended">⭐ Padrão de Projeto (Display ESP32-S3 HMI 7")</div>
+                                <div class="card-header">
+                                    <h4>Display Touch 7.0" ESP32-S3 Capacitivo / Smart HMI (Sunton)</h4>
+                                    <span class="price">+ R$ 230,00 a R$ 450,00</span>
+                                </div>
+                                <p class="card-desc">Tela capacitiva de alta sensibilidade (toque suave tipo
+                                    smartphone). Vidro frontal protetor, resolução 800x480 e processador ESP32-S3
+                                    dedicado.</p>
+
+                                <a href="https://pt.aliexpress.com/item/1005005854755717.html" target="_blank"
+                                    class="buy-link-btn" onclick="event.stopPropagation();">
+                                    🛒 Link de Compra Display 7" ESP32-S3 (AliExpress) &rarr;
+                                </a>
+
+                                <div class="card-specs">
+                                    <span>🖐️ Touch: <strong>Capacitivo (Multi-Touch Suave)</strong></span>
+                                    <span>⚙️ Framework: <strong>LVGL Open Source (Sem licença paga)</strong></span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 1.2 Sistema de Alimentação -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>1.2. Sistema de Alimentação do Controle Remoto</h3>
+                            <span class="group-hint">Todas as opções incluem contingência USB-C Power Path (Load
+                                Sharing) nativa.</span>
+                        </div>
+                        <div class="cards-grid">
+                            <label class="config-card selected" data-group="bateria" data-val="makita5ah"
+                                data-price="890">
+                                <input type="radio" name="bateria" value="makita5ah" checked>
+                                <div class="card-badge recommended">Recomendado Campo</div>
+                                <div class="card-img-container">
+                                    <img src="images/image3.png" alt="Opção A - Bateria Removível Ferramenta"
+                                        class="card-img">
+                                </div>
+                                <div class="card-header">
+                                    <h4>Dock Bateria de Ferramenta 18V/20V (5.0Ah)</h4>
+                                    <span class="price">+ R$ 890,00</span>
+                                </div>
+                                <p class="card-desc">Bateria comercial removível tipo Makita/DeWalt acoplada em dock
+                                    mecânico. Troca instantânea em 5s.</p>
+                                <div class="card-specs">
+                                    <span>⚡ Autonomia: <strong>17h a 25h+</strong></span>
+                                    <span>⚖️ Peso: <strong>+650g (Contrapeso ergonômico)</strong></span>
+                                </div>
+                            </label>
+
+                            <label class="config-card" data-group="bateria" data-val="pack18650_12" data-price="400">
+                                <input type="radio" name="bateria" value="pack18650_12">
+                                <div class="card-img-container">
+                                    <img src="images/image4.png" alt="Opção B - Pack Interno 18650 12.5Ah"
+                                        class="card-img">
+                                </div>
+                                <div class="card-header">
+                                    <h4>Pack Interno Selado 18650 (12.5Ah)</h4>
+                                    <span class="price">+ R$ 400,00</span>
+                                </div>
+                                <p class="card-desc">Pack interno recarregável via porta USB-C Power Delivery integrada
+                                    no gabinete.</p>
+                                <div class="card-specs">
+                                    <span>⚡ Autonomia: <strong>17h a 25h+</strong></span>
+                                    <span>🔌 Recarga: <strong>3h a 5h na tomada USB-C</strong></span>
+                                </div>
+                            </label>
+
+                            <label class="config-card" data-group="bateria" data-val="pack18650_7" data-price="280">
+                                <input type="radio" name="bateria" value="pack18650_7">
+                                <div class="card-badge economic">Mais Econômico</div>
+                                <div class="card-header">
+                                    <h4>Pack Interno Selado 18650 (7.5Ah)</h4>
+                                    <span class="price">+ R$ 280,00</span>
+                                </div>
+                                <p class="card-desc">Pack compacto para operações curtas. Recarga exclusivamente via
+                                    entrada USB-C.</p>
+                                <div class="card-specs">
+                                    <span>⚡ Autonomia: <strong>9h a 12h</strong></span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 1.3 Placa PCB Master -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>1.3. Arquitetura Eletrônica & Placa PCB Master (SEPARADA DA TELA)</h3>
+                            <span class="group-hint">Processamento de comandos de rádio e joysticks (ESP32-WROOM-32U
+                                Master).</span>
+                        </div>
+                        <div class="cards-grid">
+                            <label class="config-card selected" data-group="pcb" data-val="pcb_top" data-price="680">
+                                <input type="radio" name="pcb" value="pcb_top" checked>
+                                <div class="card-badge recommended">Grau Industrial</div>
+                                <div class="card-img-container">
+                                    <img src="images/image8.png" alt="Placa PCB e Joysticks" class="card-img">
+                                </div>
+                                <div class="card-header">
+                                    <h4>PCB Dupla Reforçada + Joysticks Hall Effect + Antena 5dBi</h4>
+                                    <span class="price">+ R$ 680,00 (Sem a Tela)</span>
+                                </div>
+                                <p class="card-desc">Topologia de duas placas separadas (mão esquerda/direita),
+                                    Joysticks magnéticos de Efeito Hall (Zero Stick Drift), ESP32-WROOM-32U principal e
+                                    Antena 5dBi de 300m.</p>
+                                <div class="card-specs">
+                                    <span>🎯 Precisão: <strong>Hall Effect Magnético</strong></span>
+                                    <span>📶 Rádio: <strong>ESP-NOW 2.4GHz + Antena 5dBi</strong></span>
+                                </div>
+                            </label>
+
+                            <label class="config-card" data-group="pcb" data-val="pcb_std" data-price="395">
+                                <input type="radio" name="pcb" value="pcb_std">
+                                <div class="card-img-container">
+                                    <img src="images/image7.png" alt="PCB Padrão HMI" class="card-img">
+                                </div>
+                                <div class="card-header">
+                                    <h4>PCB Dupla Padrão MVP</h4>
+                                    <span class="price">+ R$ 395,00 (Sem a Tela)</span>
+                                </div>
+                                <p class="card-desc">Configuração essencial do hardware com ESP32-WROOM-32U principal,
+                                    joysticks padrão e 5 potenciômetros.</p>
+                                <div class="card-specs">
+                                    <span>🎯 Componentes: <strong>Linha Padrão</strong></span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 1.4 Mecânica e Carcaça -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>1.4. Estrutura Mecânica & Gabinete</h3>
+                        </div>
+                        <div class="cards-grid">
+                            <label class="config-card selected" data-group="carcaca" data-val="hibrida"
+                                data-price="290">
+                                <input type="radio" name="carcaca" value="hibrida" checked>
+                                <div class="card-badge recommended">Máxima Rigidez</div>
+                                <div class="card-img-container">
+                                    <img src="images/image2.png" alt="Design Híbrido Metal e 3D" class="card-img">
+                                </div>
+                                <div class="card-header">
+                                    <h4>Design Híbrido (Backplate Aço/Alumínio 1mm + Grip 3D)</h4>
+                                    <span class="price">+ R$ 290,00</span>
+                                </div>
+                                <p class="card-desc">Chassi traseiro cortado a laser CNC em chapa metálica de 1mm
+                                    atuando como espinha dorsal. Carenagem frontal ergonômica impressa em 3D. Altíssima
+                                    resistência a torção e quedas.</p>
+                            </label>
+
+                            <label class="config-card" data-group="carcaca" data-val="impressa3d" data-price="230">
+                                <input type="radio" name="carcaca" value="impressa3d">
+                                <div class="card-header">
+                                    <h4>Carenagem 100% Impressa em 3D (Polímero Modular)</h4>
+                                    <span class="price">+ R$ 230,00</span>
+                                </div>
+                                <p class="card-desc">Chassi fabricado integralmente em polímero com insertos roscados a
+                                    quente.</p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 1.5 Acabamento Frontal -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>1.5. Acabamento Frontal & Proteção</h3>
+                        </div>
+                        <div class="cards-grid">
+                            <label class="config-card selected" data-group="acabamento" data-val="filme_policarbonato"
+                                data-price="150">
+                                <input type="radio" name="acabamento" value="filme_policarbonato" checked>
+                                <div class="card-badge recommended">Estética Industrial</div>
+                                <div class="card-header">
+                                    <h4>Filme de Máquina (Painel Adesivado em Policarbonato)</h4>
+                                    <span class="price">+ R$ 150,00</span>
+                                </div>
+                                <p class="card-desc">Película plástica texturizada de alta resistência impressa com
+                                    layout completo e vedação frontal.</p>
+                            </label>
+
+                            <label class="config-card" data-group="acabamento" data-val="sem_filme" data-price="0">
+                                <input type="radio" name="acabamento" value="sem_filme">
+                                <div class="card-header">
+                                    <h4>Carenagem Plástica Exposta (Padrão Protótipo)</h4>
+                                    <span class="price">+ R$ 0,00</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="actions-footer">
+                        <button class="btn btn-primary next-tab-btn" data-target="tab-tracao">Avançar para Tração &
+                            Molinetes &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- TAB 2: TRAÇÃO E MOLINETES 12V -->
+                <div class="tab-content" id="tab-tracao">
+                    <div class="section-header">
+                        <h2>2. Tração Principal & Acionamento dos Molinetes 12V</h2>
+                        <p>Escolha o sistema de tração das rodas (800kg) e o circuito de acionamento eletrônico dos 4
+                            molinetes recolhedores frontais.</p>
+                    </div>
+
+                    <!-- 2.1 Tração Principal das Rodas -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>2.1. Tração Principal das Rodas (Maquinário 800 kg)</h3>
+                        </div>
+                        <div class="cards-grid vertical">
+
+                            <!-- Opção 3: AC Trifásico -->
+                            <label class="config-card selected" data-group="tracao" data-val="ac_trifasico"
+                                data-price="6400">
+                                <input type="radio" name="tracao" value="ac_trifasico" checked>
+                                <div class="card-badge recommended">⭐ Escolha de Engenharia (Recomendada)</div>
+                                <div class="card-img-container hero-img-container">
+                                    <img src="images/image6.png"
+                                        alt="Opção 3 - Motor AC Trifásico WEG + Redutor + Inversor CFW300"
+                                        class="card-img motor-img">
+                                </div>
+                                <div class="card-header">
+                                    <h4>Opção 3: 2x Motores AC Trifásicos WEG + Redutores + 2x Inversores CFW300</h4>
+                                    <span class="price">R$ 5.400,00 a R$ 7.400,00 (Média: R$ 6.400,00 - Conjunto
+                                        Completo)</span>
+                                </div>
+                                <p class="card-desc">Motores industriais WEG operando frios a 1750 RPM acoplados a
+                                    caixas redutoras (5 a 15 RPM exatos no eixo). <strong>Exigem obrigatoriamente 2x
+                                        Inversores de Frequência WEG CFW300</strong> para variação de frequência, rampas
+                                    de aceleração suave (para não assustar as aves) e inversão de direção diferencial.
+                                </p>
+
+                                <div class="links-row">
+                                    <a href="https://www.phelpsmaquinas.com.br/motoredutor-motor-2cv-com-redutor-1100-trifasico-220380v-18rpm?parceiro=9295"
+                                        target="_blank" class="buy-link-btn" onclick="event.stopPropagation();">
+                                        🛒 Link Motoredutor Trifásico 2CV (Phelps) &rarr;
+                                    </a>
+                                    <a href="https://www.mercadolivre.com.br/inversor-de-frequencia-cfw300a03p5t4nb20-2cv-trifasico-weg/p/MLB36120519?pdp_filters=item_id:MLB4552533877#is_advertising=true&searchVariation=MLB36120519&backend_model=search-backend&be_origin=backend&position=1&search_layout=grid&type=pad&tracking_id=d4c756b8-e03e-44a8-8252-291157254d68&ad_domain=VQCATCORE_LST&ad_position=1&ad_click_id=MjhjODc5YWQtZGNiOC00OWU4LWI4NjAtMmY3MjYxMjRiYTIz"
+                                        target="_blank" class="buy-link-btn" onclick="event.stopPropagation();">
+                                        🛒 Link Inversor WEG CFW300 (Mercado Livre) &rarr;
+                                    </a>
+                                </div>
+
+                                <div class="tech-comparison-grid">
+                                    <div class="tech-item green">
+                                        <span>💪 Torque Efetivo:</span>
+                                        <strong>Massivo (&gt; 300 N.m via redução)</strong>
+                                    </div>
+                                    <div class="tech-item green">
+                                        <span>⚡ Inversores WEG CFW300:</span>
+                                        <strong>Obrigatórios (Controle de Frequência & Rampas)</strong>
+                                    </div>
+                                    <div class="tech-item green">
+                                        <span>🔌 Alimentação:</span>
+                                        <strong>Direto na rede 220V trifásica do aviário</strong>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- Opção 2: Motoredutor DC TEK8 -->
+                            <label class="config-card risk-card" data-group="tracao" data-val="tek8_dc"
+                                data-price="5372">
+                                <input type="radio" name="tracao" value="tek8_dc">
+                                <div class="card-badge danger">⚠️ Alerta: Inviável Técnico</div>
+                                <div class="card-img-container hero-img-container">
+                                    <img src="images/image1.png" alt="Opção 2 - Motoredutores DC TEK8 24V em Dupla"
+                                        class="card-img motor-img">
+                                </div>
+                                <div class="card-header">
+                                    <h4>Opção 2: Motoredutores DC TEK8 24V (2 Motores por Roda)</h4>
+                                    <span class="price">~ R$ 5.372,00</span>
+                                </div>
+                                <p class="card-desc">Motores de cadeira de rodas acoplados em dupla no mesmo eixo. Não
+                                    entregam o torque necessário para girar 800 kg e geram desgaste destrutivo nas
+                                    engrenagens internas de bronze.</p>
+
+                                <a href="https://www.tek8.com.br/motoredutor-220w-24v-55-rpm-fonte-e-pwm-r-mk05524"
+                                    target="_blank" class="buy-link-btn" onclick="event.stopPropagation();">
+                                    🛒 Link Motoredutor TEK8 220W 24V &rarr;
+                                </a>
+                            </label>
+
+                            <!-- Opção 1: Hub Motor BLDC -->
+                            <label class="config-card risk-card" data-group="tracao" data-val="hub_bldc"
+                                data-price="4100">
+                                <input type="radio" name="tracao" value="hub_bldc">
+                                <div class="card-badge danger">⚠️ Alerta: Risco de Queima</div>
+                                <div class="card-img-container hero-img-container">
+                                    <img src="images/image5.png" alt="Opção 1 - Hub Motor BLDC 48V Direto"
+                                        class="card-img motor-img">
+                                </div>
+                                <div class="card-header">
+                                    <h4>Opção 1: Hub Motor BLDC Direto de Roda (48V)</h4>
+                                    <span class="price">~ R$ 4.100,00</span>
+                                </div>
+                                <p class="card-desc">Motores de roda sem redução. A 5 RPM a máquina opera em estado de
+                                    <i>stall</i> (travamento), convertendo 100% da energia em calor e derretendo os
+                                    enrolamentos do motor.</p>
+
+                                <a href="https://pt.aliexpress.com/item/1005004245638545.html" target="_blank"
+                                    class="buy-link-btn" onclick="event.stopPropagation();">
+                                    🛒 Link Controladora Flipsky 75100 (AliExpress) &rarr;
+                                </a>
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <!-- 2.2 Molinetes -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>2.2. Acionamento dos 4x Molinetes Frontais (Motores 12V DC + Driver Ponte H)</h3>
+                        </div>
+                        <div class="cards-grid">
+
+                            <label class="config-card selected" data-group="ponteh" data-val="ponteh_bts"
+                                data-price="930">
+                                <input type="radio" name="ponteh" value="ponteh_bts" checked>
+                                <div class="card-badge recommended">Padrão Módulos 43A</div>
+                                <div class="card-header">
+                                    <h4>4x Motores 12V DC (45 RPM) + Módulos Drivers Ponte H BTS7960 (43A)</h4>
+                                    <span class="price">+ R$ 930,00 (Kits Motores + Drivers)</span>
+                                </div>
+                                <p class="card-desc">4 Motoredutores compactos de 12V DC acionados por módulos Ponte H
+                                    de alta potência optoisolados. Permite ajuste fino de rotação e inversão imediata de
+                                    sentido comandados pelo rádio ESP-NOW.</p>
+
+                                <div class="links-row">
+                                    <a href="https://www.tek8.com.br/motoredutor-12v-dc-45-rpm-mm04512" target="_blank"
+                                        class="buy-link-btn" onclick="event.stopPropagation();">
+                                        🛒 Link Motoredutor Tek8 12V DC 45 RPM &rarr;
+                                    </a>
+                                    <a href="https://www.mercadolivre.com.br/modulo-driver-ponte-h-bts7960-43a/s/MLB26857410"
+                                        target="_blank" class="buy-link-btn" onclick="event.stopPropagation();">
+                                        🛒 Link Driver Ponte H BTS7960 43A &rarr;
+                                    </a>
+                                </div>
+                            </label>
+
+                            <label class="config-card" data-group="ponteh" data-val="ponteh_dedicada" data-price="1330">
+                                <input type="radio" name="ponteh" value="ponteh_dedicada">
+                                <div class="card-badge recommended">Grau Industrial PCB</div>
+                                <div class="card-header">
+                                    <h4>4x Motores 12V DC + Placa Driver MOSFET Quadrupla Dedicada (DC Circuit Labs)
+                                    </h4>
+                                    <span class="price">+ R$ 1.330,00</span>
+                                </div>
+                                <p class="card-desc">Projeto de uma PCB industrial dedicada no painel abrigando 4 pontes
+                                    H de estado sólido com MOSFETs de ultra-baixa resistência.</p>
+                            </label>
+
+                            <label class="config-card" data-group="ponteh" data-val="sem_molinetes" data-price="0">
+                                <input type="radio" name="ponteh" value="sem_molinetes">
+                                <div class="card-header">
+                                    <h4>Sem Acionamento de Molinetes 12V</h4>
+                                    <span class="price">R$ 0,00</span>
+                                </div>
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <div class="actions-footer">
+                        <button class="btn btn-secondary prev-tab-btn" data-target="tab-controle">&larr; Voltar</button>
+                        <button class="btn btn-primary next-tab-btn" data-target="tab-automacao">Avançar para Integração
+                            CLP &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- TAB 3: AUTOMAÇÃO E CLP -->
+                <div class="tab-content" id="tab-automacao">
+                    <div class="section-header">
+                        <h2>3. Automação do Painel & Comunicação com CLP</h2>
+                        <p>Integração entre o ESP32 Gateway e o Controlador Lógico Programável Siemens S7-1200 da
+                            máquina.</p>
+                    </div>
+
+                    <!-- Protocolo de Comunicação -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>3.1. Protocolo de Comunicação Físico com CLP Siemens S7-1200</h3>
+                        </div>
+                        <div class="cards-grid">
+                            <label class="config-card selected" data-group="protocolo" data-val="modbus_tcp"
+                                data-price="0">
+                                <input type="radio" name="protocolo" value="modbus_tcp" checked>
+                                <div class="card-badge recommended">Economia & Desempenho</div>
+                                <div class="card-header">
+                                    <h4>Modbus TCP/IP via Ethernet (Cabo RJ45)</h4>
+                                    <span class="price">R$ 0,00 (Nativo no CLP)</span>
+                                </div>
+                                <p class="card-desc">Conecta direto na porta PROFINET RJ45 da CPU Siemens. Dispensa a
+                                    compra de módulos de comunicação serial extras (Economia de ~US$ 150 no CLP).</p>
+                            </label>
+
+                            <label class="config-card" data-group="protocolo" data-val="modbus_rtu" data-price="850">
+                                <input type="radio" name="protocolo" value="modbus_rtu">
+                                <div class="card-header">
+                                    <h4>Modbus RTU via RS-485 Serial</h4>
+                                    <span class="price">+ R$ 850,00 (Custo Módulo Siemens)</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sensores Ambientais -->
+                    <div class="option-group">
+                        <div class="group-title">
+                            <h3>3.2. Sensores Ambientais de Granja (Expansão na PCB)</h3>
+                        </div>
+                        <div class="cards-grid">
+                            <label class="config-card selected" data-group="sensores" data-val="sensor_completo"
+                                data-price="250">
+                                <input type="radio" name="sensores" value="sensor_completo" checked>
+                                <div class="card-badge recommended">Recomendado Aviário</div>
+                                <div class="card-header">
+                                    <h4>Kit Completo: Temp/Umidade SHT30 + Sensor Eletroquímico de Amônia (NH3)</h4>
+                                    <span class="price">+ R$ 250,00</span>
+                                </div>
+                                <p class="card-desc">Sensor industrial Sensirion SHT30 (I2C) + Sensor eletroquímico
+                                    Winsen ME3-NH3 para medição contínua de amônia corrosiva.</p>
+                            </label>
+
+                            <label class="config-card" data-group="sensores" data-val="sensor_basico" data-price="60">
+                                <input type="radio" name="sensores" value="sensor_basico">
+                                <div class="card-header">
+                                    <h4>Apenas Temperatura e Umidade (Sensirion SHT30)</h4>
+                                    <span class="price">+ R$ 60,00</span>
+                                </div>
+                            </label>
+
+                            <label class="config-card" data-group="sensores" data-val="sem_sensores" data-price="0">
+                                <input type="radio" name="sensores" value="sem_sensores">
+                                <div class="card-header">
+                                    <h4>Sem Sensores Ambientais</h4>
+                                    <span class="price">R$ 0,00</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="actions-footer">
+                        <button class="btn btn-secondary prev-tab-btn" data-target="tab-tracao">&larr; Voltar</button>
+                        <button class="btn btn-primary next-tab-btn" data-target="tab-resumo">Ver Resumo & Proposta
+                            Final &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- TAB 4: RESUMO E PROPOSTA FINAL (INCLUI ESQUEMÁTICO DE LIGAÇÕES) -->
+                <div class="tab-content" id="tab-resumo">
+                    <div class="section-header">
+                        <h2>4. Resumo Executivo, Esquemático & Proposta Final</h2>
+                        <p>Revise a Bill of Materials (BOM), as funcionalidades escolhidas, o esquemático de ligações e
+                            a análise de viabilidade.</p>
+                    </div>
+
+                    <div class="proposal-card-display">
+                        <div class="proposal-header">
+                            <div class="prop-title">
+                                <h3>PROPOSTA TÉCNICA E COMERCIAL - FASE 1</h3>
+                                <span>Projeto: Controle Remoto HMI 7" (MVP Aviário) | Cliente: DNK</span>
+                            </div>
+                            <div class="prop-price-tag">
+                                <span class="tag-label">Custo Estimado de Hardware:</span>
+                                <span class="tag-amount" id="final-total-price">R$ 0,00</span>
+                            </div>
+                        </div>
+
+                        <!-- Selected Features List -->
+                        <div class="summary-blocks-grid">
+                            <div class="summary-block">
+                                <h4>🕹️ Hardware do Controle Remoto</h4>
+                                <ul class="feature-list" id="summary-list-controle">
+                                    <!-- Populated via JS -->
+                                </ul>
+                            </div>
+
+                            <div class="summary-block">
+                                <h4>🚜 Tração & Molinetes 12V</h4>
+                                <ul class="feature-list" id="summary-list-tracao">
+                                    <!-- Populated via JS -->
+                                </ul>
+                            </div>
+
+                            <div class="summary-block">
+                                <h4>⚡ Automação & Sensores</h4>
+                                <ul class="feature-list" id="summary-list-automacao">
+                                    <!-- Populated via JS -->
+                                </ul>
+                            </div>
+
+                            <div class="summary-block">
+                                <h4>📋 Metricas de Aceite (Anexo 1)</h4>
+                                <ul class="feature-list">
+                                    <li>✅ Alcance RF Rádio: <strong>300 metros (ESP-NOW 5dBi)</strong></li>
+                                    <li>✅ Latência de Comando: <strong>&lt; 250 milissegundos</strong></li>
+                                    <li>✅ Autonomia Estimada: <strong id="summary-autonomia">20h+</strong></li>
+                                    <li>✅ Alimentação Segura: <strong>Entrada USB-C Load Sharing Native</strong></li>
+                                    <li>✅ Prazo Fase 1: <strong>14 dias úteis</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- EMBEDDED FOCUSED SCHEMATIC DIAGRAM -->
+                        <div class="embedded-schematic-section"
+                            style="margin-top: 2rem; margin-bottom: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                            <h3
+                                style="font-family: var(--font-heading); color: #fff; font-size: 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                                🔌 Esquemático de Ligações Focadas do Sistema (Sinais & Potência)
+                            </h3>
+
+                            <div class="schematic-container">
+                                <!-- Step 1: ESP32 Controle -->
+                                <div class="schematic-card remote-card">
+                                    <div class="schematic-header">
+                                        <span class="badge-icon">🕹️</span>
+                                        <h3>1. ESP32 CONTROLE (Controle Remoto HMI 7")</h3>
+                                    </div>
+                                    <div class="schematic-body">
+                                        <div class="schematic-node highlight-node">
+                                            <strong>ESP32-WROOM-32U (Master):</strong> Lê Joysticks e 5 Potenciômetros
+                                            &rarr; Transmite pacotes via Antena 5dBi
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Interconnect 1 -->
+                                <div class="schematic-arrow-banner">
+                                    &darr; 📡 LINK RÁDIO FREQUÊNCIA ESP-NOW 2.4GHz (Sem Fio até 300m / Latência
+                                    &lt;250ms) &darr;
+                                </div>
+
+                                <!-- Step 2: ESP Receptor -->
+                                <div class="schematic-card panel-card">
+                                    <div class="schematic-header">
+                                        <span class="badge-icon">📡</span>
+                                        <h3>2. ESP RECEPTOR (Central Gateway no Painel da Máquina)</h3>
+                                    </div>
+                                    <div class="schematic-body">
+                                        <div class="schematic-node highlight-node">
+                                            <strong>ESP32 Central Gateway:</strong> Recebe Rádio &rarr; Roteia Modbus
+                                            TCP/IP e Sinais PWM/DIR dos Molinetes
+                                        </div>
+                                        <div class="schematic-grid-2col" style="margin-top: 10px;">
+                                            <div class="schematic-arrow" style="text-align: left;">
+                                                &swarr; Cabo Ethernet RJ45 (Modbus TCP/IP)
+                                            </div>
+                                            <div class="schematic-arrow" style="text-align: right;">
+                                                Sinais PWM + DIR (12V DC) &searr;
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 & Step 6 Parallel Grid -->
+                                <div class="schematic-grid-2col">
+                                    <!-- Left Branch: CLP Siemens -->
+                                    <div class="schematic-card panel-card" style="margin-bottom:0;">
+                                        <div class="schematic-header">
+                                            <span class="badge-icon">🖥️</span>
+                                            <h3>3. CLP SIEMENS S7-1200</h3>
+                                        </div>
+                                        <div class="schematic-body">
+                                            <div class="schematic-node">
+                                                Processa interlocks de segurança &rarr; Saídas de Sinal 0-10V / Modbus
+                                                para os Inversores
+                                            </div>
+                                            <div class="schematic-arrow" style="margin-top:8px;">
+                                                &darr; Sinal Analógico 0-10V / Modbus
+                                            </div>
+                                            <!-- Step 4: Inversores -->
+                                            <div class="schematic-node highlight-node" style="margin-top:8px;">
+                                                <strong>4. INVERSORES DE FREQUÊNCIA (2x WEG CFW300)</strong><br>
+                                                Ajustam Frequência (5 RPM) & Rampas de Aceleração Suave
+                                            </div>
+                                            <div class="schematic-arrow" style="margin-top:8px;">
+                                                &darr; Potência Trifásica (Saídas U, V, W)
+                                            </div>
+                                            <!-- Step 5: Motores Trifásicos -->
+                                            <div class="schematic-node green-node" style="margin-top:8px;">
+                                                <strong>5. MOTORES TRIFÁSICOS AC</strong><br>
+                                                2x Motores WEG 2CV + Redutores (Tração Rodas 800kg)
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Branch: Motores 12V -->
+                                    <div class="schematic-card power-card" style="margin-bottom:0;">
+                                        <div class="schematic-header">
+                                            <span class="badge-icon">🔄</span>
+                                            <h3>6. MOTORES 12V DC (Molinetes)</h3>
+                                        </div>
+                                        <div class="schematic-body">
+                                            <div class="schematic-node">
+                                                <strong>Drivers Ponte H (BTS7960 43A):</strong> Módulos optoisolados de
+                                                alta potência
+                                            </div>
+                                            <div class="schematic-arrow" style="margin-top:8px;">
+                                                &darr; Saída 12V DC (PWM + Reversão Rápida)
+                                            </div>
+                                            <div class="schematic-node blue-node" style="margin-top:8px;">
+                                                <strong>4x Motoredutores 12V DC (Tek8 MM04512)</strong><br>
+                                                Recolhimento de frangos & Reversão para desobstrução
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="proposal-actions">
+                            <button class="btn btn-outline" id="print-proposal-btn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                    <path
+                                        d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                    </path>
+                                    <rect x="6" y="14" width="12" height="8"></rect>
+                                </svg>
+                                Imprimir / Salvar PDF
+                            </button>
+                            <button class="btn btn-success" id="copy-summary-btn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                Copiar Resumo para Área de Transferência
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Sticky Sidebar Summary -->
+            <aside class="sidebar-summary">
+                <div class="summary-card">
+                    <div class="summary-card-header">
+                        <h3>Resumo em Tempo Real</h3>
+                        <span class="live-dot"></span>
+                    </div>
+
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span>Controle & Display 7":</span>
+                            <strong id="price-controle">R$ 0,00</strong>
+                        </div>
+                        <div class="price-row">
+                            <span>Tração & Molinetes 12V:</span>
+                            <strong id="price-tracao">R$ 0,00</strong>
+                        </div>
+                        <div class="price-row">
+                            <span>Automação & Sensores:</span>
+                            <strong id="price-automacao">R$ 0,00</strong>
+                        </div>
+                        <div class="price-row total-row">
+                            <span>TOTAL ESTIMADO (Hardware):</span>
+                            <strong id="price-total">R$ 0,00</strong>
+                        </div>
+                    </div>
+
+                    <div class="quick-highlights">
+                        <div class="highlight-item">
+                            <span class="hl-icon">⚡</span>
+                            <div class="hl-text">
+                                <span class="hl-title">Autonomia do Controle</span>
+                                <span class="hl-value" id="sidebar-autonomia">17h a 25h+</span>
+                            </div>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="hl-icon">📺</span>
+                            <div class="hl-text">
+                                <span class="hl-title">Display HMI</span>
+                                <span class="hl-value" id="sidebar-display">Display 7" ESP32-S3</span>
+                            </div>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="hl-icon">⚡</span>
+                            <div class="hl-text">
+                                <span class="hl-title">Inversores Tração</span>
+                                <span class="hl-value">2x WEG CFW300 (Inclusos)</span>
+                            </div>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="hl-icon">🔄</span>
+                            <div class="hl-text">
+                                <span class="hl-title">Molinetes 12V</span>
+                                <span class="hl-value" id="sidebar-molinetes">Tek8 MM04512</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-footer">
+                        <button class="btn btn-primary btn-full" id="goto-summary-btn">Ver Proposta Completa
+                            &rarr;</button>
+                        <small class="note-text">*Valores estimados sujeitos à cotação final de componentes.</small>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 DC Circuit Labs - Engenharia de Desenvolvimento. Projeto MVP Colheitadeira Avícola (DNK).</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>
