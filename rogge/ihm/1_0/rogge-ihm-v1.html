@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rogge Industries | Documentação Rogge IHM V1.0 - DC Circuit Labs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../../main/4_1/assets/logo-icon.png">
+
+    <style>
+        :root {
+            --color-black-tech: #0d1117;
+            --color-dark-grey: #161b22;
+            --color-card-bg: #21262d;
+            --color-blue-electric: #007BFF;
+            --color-blue-deep: #003366;
+            --color-white: #FFFFFF;
+            --color-text-muted: #8b949e;
+            --color-danger: #f85149;
+            --color-success: #3fb950;
+            --color-warning: #d29922;
+            --color-border: #30363d;
+            --font-primary: 'Montserrat', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--color-black-tech);
+            color: var(--color-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ───────── HEADER ───────── */
+        header {
+            background-color: var(--color-dark-grey);
+            border-bottom: 1px solid var(--color-border);
+            padding: 18px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-container {
+            width: 90%; max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-left {
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+        }
+        .logo {
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: var(--color-white);
+            font-weight: 800; font-size: 1.1rem; letter-spacing: .5px;
+        }
+        .logo img { height: 32px; }
+        .highlight { color: var(--color-blue-electric); }
+
+        .selector-group {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255, 255, 255, 0.05); padding: 4px 10px;
+            border-radius: 8px; border: 1px solid var(--color-border);
+        }
+        .selector-item {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.78rem; color: var(--color-text-muted); font-weight: 600;
+        }
+        .header-select {
+            background: var(--color-black-tech); color: var(--color-blue-electric);
+            border: 1px solid rgba(0, 123, 255, 0.3); padding: 4px 8px;
+            border-radius: 6px; font-family: var(--font-primary);
+            font-size: 0.8rem; font-weight: 700; cursor: pointer; outline: none;
+            transition: all 0.2s;
+        }
+        .header-select:hover, .header-select:focus {
+            border-color: var(--color-blue-electric);
+        }
+
+        .client-tag {
+            font-size: .85rem; background: rgba(0,123,255,.15);
+            color: var(--color-blue-electric); border: 1px solid rgba(0,123,255,.3);
+            padding: 4px 12px; border-radius: 20px; font-weight: 600;
+        }
+
+        /* ───────── MAIN ───────── */
+        main {
+            flex: 1; display: block; width: 100%; max-width: 1200px;
+            margin: 0 auto; padding: 40px 20px;
+        }
+
+        .doc-header { margin-bottom: 30px; border-bottom: 1px solid var(--color-border); padding-bottom: 20px; }
+        .badge {
+            display: inline-block; background: rgba(210,153,34,.18); color: var(--color-warning);
+            font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; margin-bottom: 10px;
+        }
+        .doc-header h1 { font-size: 2rem; margin-bottom: 6px; }
+        .doc-header .subtitle { color: var(--color-text-muted); font-size: 1rem; }
+
+        .doc-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;
+        }
+        .doc-card {
+            background-color: var(--color-dark-grey); border: 1px solid var(--color-border);
+            border-radius: 10px; padding: 24px;
+        }
+        .doc-card h3 {
+            font-size: 1.1rem; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .doc-card p, .doc-card li { color: var(--color-text-muted); font-size: .95rem; line-height: 1.6; }
+        .doc-card ul { list-style: none; }
+        .doc-card li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+        .doc-card li strong { color: var(--color-white); }
+
+        footer {
+            border-top: 1px solid var(--color-border); padding: 20px 0;
+            text-align: center; font-size: .85rem; color: var(--color-text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <a href="../../index.html" class="logo">
+                    <img src="../../main/4_1/assets/logo-icon.png" alt="DC Circuit Labs">
+                    <span>DC CIRCUIT <span class="highlight">LABS</span></span>
+                </a>
+                <div class="selector-group">
+                    <div class="selector-item">
+                        <label for="hdr-project-select">Projeto:</label>
+                        <select id="hdr-project-select" class="header-select" onchange="onHeaderProjectChange(this.value)">
+                            <option value="main">Main (Placa Principal)</option>
+                            <option value="ihm" selected>IHM (Interface)</option>
+                        </select>
+                    </div>
+                    <div class="selector-item">
+                        <label for="hdr-version-select">Versão:</label>
+                        <select id="hdr-version-select" class="header-select" onchange="onHeaderVersionChange(this.value)">
+                            <option value="1_0" selected>v1.0</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <span class="client-tag">Área do Cliente</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="doc-header">
+            <span class="badge">EM DESENVOLVIMENTO / ESPECIFICAÇÃO DE HARDWARE</span>
+            <h1>Rogge Industries — IHM V1.0</h1>
+            <p class="subtitle">Interface Homem-Máquina para Painel de Controle, Telas de Operação e Comunicação Serial com a Placa Rogge Main.</p>
+        </div>
+
+        <div class="doc-grid">
+            <div class="doc-card">
+                <h3>🖥️ Visão Geral do Sistema IHM</h3>
+                <p>O módulo <strong>Rogge IHM V1.0</strong> gerencia a interface com o operador de campo, contendo telas de diagnóstico, botões seletores e sinalizadores luminosos.</p>
+                <ul>
+                    <li><strong>Display Operacional:</strong> Display Gráfico OLED/TFT Industrial</li>
+                    <li><strong>Comunicação com Main:</strong> Barramento Serial / UART Isolado</li>
+                    <li><strong>Alimentação:</strong> 24V DC (Linha Rogge Industries)</li>
+                    <li><strong>Versão de Hardware:</strong> V1.0</li>
+                </ul>
+            </div>
+
+            <div class="doc-card">
+                <h3>🔌 Conectividade e Interface</h3>
+                <p>Especificações preliminares dos conectores de sinal da placa IHM V1.0:</p>
+                <ul>
+                    <li><strong>Pino RX/TX:</strong> Comunicação rápida de telemetria com ESP32-S3 (Main).</li>
+                    <li><strong>Interface de Entrada:</strong> Teclado industrial de membrana / Botões de emergência.</li>
+                    <li><strong>Sinalização LED:</strong> Indicadores de Status, Falha e Alimentação.</li>
+                    <li><strong>Montagem:</strong> Painel Frontal IP65.</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        © 2026 DC Circuit Labs — Rogge Industries. Todos os direitos reservados.
+    </footer>
+
+    <script>
+        function onHeaderProjectChange(proj) {
+            if (proj === 'main') {
+                window.location.href = '../../main/4_1/rogge-v4.html';
+            } else if (proj === 'ihm') {
+                window.location.href = 'rogge-ihm-v1.html';
+            }
+        }
+        function onHeaderVersionChange(ver) {
+            if (ver === '1_0') {
+                window.location.href = 'rogge-ihm-v1.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

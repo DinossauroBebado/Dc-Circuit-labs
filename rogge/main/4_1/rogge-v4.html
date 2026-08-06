@@ -287,16 +287,55 @@
             .section-title { font-size: 1.25rem; }
             .doc-header h1 { font-size: 1.5rem; }
         }
+        .header-left {
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+        }
+        .selector-group {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255, 255, 255, 0.05); padding: 4px 10px;
+            border-radius: 8px; border: 1px solid var(--color-border);
+        }
+        .selector-item {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.78rem; color: var(--color-text-muted); font-weight: 600;
+        }
+        .header-select {
+            background: var(--color-black-tech); color: var(--color-blue-electric);
+            border: 1px solid rgba(0, 123, 255, 0.3); padding: 4px 8px;
+            border-radius: 6px; font-family: var(--font-primary);
+            font-size: 0.8rem; font-weight: 700; cursor: pointer; outline: none;
+            transition: all 0.2s;
+        }
+        .header-select:hover, .header-select:focus {
+            border-color: var(--color-blue-electric);
+        }
     </style>
 </head>
 
 <body>
     <header>
         <div class="header-container">
-            <a href="index.html" class="logo">
-                <img src="assets/logo-icon.png" alt="DC Circuit Labs">
-                <span>DC CIRCUIT <span class="highlight">LABS</span></span>
-            </a>
+            <div class="header-left">
+                <a href="../../index.html" class="logo">
+                    <img src="assets/logo-icon.png" alt="DC Circuit Labs">
+                    <span>DC CIRCUIT <span class="highlight">LABS</span></span>
+                </a>
+                <div class="selector-group">
+                    <div class="selector-item">
+                        <label for="hdr-project-select">Projeto:</label>
+                        <select id="hdr-project-select" class="header-select" onchange="onHeaderProjectChange(this.value)">
+                            <option value="main" selected>Main (Placa Principal)</option>
+                            <option value="ihm">IHM (Interface)</option>
+                        </select>
+                    </div>
+                    <div class="selector-item">
+                        <label for="hdr-version-select">Versão:</label>
+                        <select id="hdr-version-select" class="header-select" onchange="onHeaderVersionChange(this.value)">
+                            <option value="4_1" selected>v4.1</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <span class="client-tag">Área do Cliente</span>
         </div>
     </header>
@@ -2444,6 +2483,18 @@ void loop()
                 pill.classList.toggle('active', pill.getAttribute('href') === '#' + current);
             });
         });
+        function onHeaderProjectChange(proj) {
+            if (proj === 'ihm') {
+                window.location.href = '../../ihm/1_0/rogge-ihm-v1.html';
+            } else if (proj === 'main') {
+                window.location.href = 'rogge-v4.html';
+            }
+        }
+        function onHeaderVersionChange(ver) {
+            if (ver === '4_1') {
+                window.location.href = 'rogge-v4.html';
+            }
+        }
     </script>
 </body>
 
