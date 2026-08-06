@@ -27,7 +27,11 @@
             --font-code: 'Fira Code', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: var(--font-primary);
@@ -47,266 +51,594 @@
             top: 0;
             z-index: 100;
         }
+
         .header-container {
-            width: 90%; max-width: 1200px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: space-between;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+
         .logo {
-            display: flex; align-items: center; gap: 12px;
-            text-decoration: none; color: var(--color-white);
-            font-weight: 800; font-size: 1.1rem; letter-spacing: .5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--color-white);
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: .5px;
         }
-        .logo img { height: 32px; }
-        .highlight { color: var(--color-blue-electric); }
+
+        .logo img {
+            height: 32px;
+        }
+
+        .highlight {
+            color: var(--color-blue-electric);
+        }
+
         .client-tag {
-            font-size: .85rem; background: rgba(0,123,255,.15);
-            color: var(--color-blue-electric); border: 1px solid rgba(0,123,255,.3);
-            padding: 4px 12px; border-radius: 20px; font-weight: 600;
+            font-size: .85rem;
+            background: rgba(0, 123, 255, .15);
+            color: var(--color-blue-electric);
+            border: 1px solid rgba(0, 123, 255, .3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
         }
 
         /* ───────── NAV PILLS ───────── */
         .nav-pills {
-            display: flex; gap: 6px; flex-wrap: wrap;
-            justify-content: center; padding: 14px 20px;
-            background: var(--color-dark-grey); border-bottom: 1px solid var(--color-border);
-            position: sticky; top: 69px; z-index: 99;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 14px 20px;
+            background: var(--color-dark-grey);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 69px;
+            z-index: 99;
         }
+
         .nav-pill {
-            padding: 8px 18px; border-radius: 20px; border: 1px solid var(--color-border);
-            background: transparent; color: var(--color-text-muted); font-family: var(--font-primary);
-            font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .25s;
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1px solid var(--color-border);
+            background: transparent;
+            color: var(--color-text-muted);
+            font-family: var(--font-primary);
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .25s;
             text-decoration: none;
         }
-        .nav-pill:hover, .nav-pill.active {
-            background: rgba(0,123,255,.15); color: var(--color-blue-electric);
-            border-color: rgba(0,123,255,.4);
+
+        .nav-pill:hover,
+        .nav-pill.active {
+            background: rgba(0, 123, 255, .15);
+            color: var(--color-blue-electric);
+            border-color: rgba(0, 123, 255, .4);
         }
 
         /* ───────── MAIN CONTENT ───────── */
         main {
-            flex: 1; display: block; width: 100%; max-width: 1200px;
-            margin: 0 auto; padding: 40px 20px;
-        }
-        .section-block { margin-bottom: 50px; animation: fadeIn .4s ease-in-out; }
-        .section-title {
-            font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .section-subtitle {
-            color: var(--color-text-muted); font-size: .92rem; margin-bottom: 22px;
+            flex: 1;
+            display: block;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        .doc-header { margin-bottom: 30px; border-bottom: 1px solid var(--color-border); padding-bottom: 20px; }
-        .badge {
-            display: inline-block; background: rgba(0,123,255,.2); color: var(--color-blue-electric);
-            font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; margin-bottom: 10px;
+        .section-block {
+            margin-bottom: 50px;
+            animation: fadeIn .4s ease-in-out;
         }
-        .doc-header h1 { font-size: 2rem; margin-bottom: 6px; }
-        .doc-header .subtitle { color: var(--color-text-muted); font-size: 1rem; }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-subtitle {
+            color: var(--color-text-muted);
+            font-size: .92rem;
+            margin-bottom: 22px;
+        }
+
+        .doc-header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(0, 123, 255, .2);
+            color: var(--color-blue-electric);
+            font-size: .8rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .doc-header h1 {
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        .doc-header .subtitle {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+        }
 
         .doc-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
         }
+
         .doc-card {
-            background-color: var(--color-dark-grey); border: 1px solid var(--color-border);
-            border-radius: 10px; padding: 24px;
+            background-color: var(--color-dark-grey);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            padding: 24px;
         }
-        .full-width { grid-column: 1 / -1; }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
         .doc-card h3 {
-            font-size: 1.1rem; margin-bottom: 14px;
-            display: flex; align-items: center; gap: 8px;
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .doc-card p, .doc-card li { color: var(--color-text-muted); font-size: .95rem; line-height: 1.6; }
-        .doc-card ul { list-style: none; }
-        .doc-card li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
-        .doc-card li strong { color: var(--color-white); }
+
+        .doc-card p,
+        .doc-card li {
+            color: var(--color-text-muted);
+            font-size: .95rem;
+            line-height: 1.6;
+        }
+
+        .doc-card ul {
+            list-style: none;
+        }
+
+        .doc-card li {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+
+        .doc-card li strong {
+            color: var(--color-white);
+        }
 
         .btn-action {
-            display: inline-block; padding: 10px 18px;
-            background-color: var(--color-blue-electric); color: var(--color-white);
-            text-decoration: none; font-weight: 600; font-size: .9rem;
-            border-radius: 6px; transition: opacity .2s;
+            display: inline-block;
+            padding: 10px 18px;
+            background-color: var(--color-blue-electric);
+            color: var(--color-white);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: .9rem;
+            border-radius: 6px;
+            transition: opacity .2s;
         }
-        .btn-action:hover { opacity: .9; }
+
+        .btn-action:hover {
+            opacity: .9;
+        }
 
         /* ───────── TABLES ───────── */
-        .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid var(--color-border); }
-        table.pinout-table, table.test-table {
-            width: 100%; border-collapse: collapse; font-size: .85rem;
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
         }
-        table.pinout-table th, table.test-table th {
-            background: var(--color-dark-grey); color: var(--color-blue-electric);
-            font-weight: 700; text-transform: uppercase; font-size: .75rem;
-            letter-spacing: .5px; padding: 12px 14px; text-align: left;
-            border-bottom: 2px solid var(--color-border); white-space: nowrap;
+
+        table.pinout-table,
+        table.test-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .85rem;
         }
-        table.pinout-table td, table.test-table td {
-            padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
-            color: var(--color-text-muted); vertical-align: top;
+
+        table.pinout-table th,
+        table.test-table th {
+            background: var(--color-dark-grey);
+            color: var(--color-blue-electric);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: .75rem;
+            letter-spacing: .5px;
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 2px solid var(--color-border);
+            white-space: nowrap;
         }
-        table.pinout-table tbody tr:hover, table.test-table tbody tr:hover {
-            background: rgba(0,123,255,.04);
+
+        table.pinout-table td,
+        table.test-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+            color: var(--color-text-muted);
+            vertical-align: top;
         }
+
+        table.pinout-table tbody tr:hover,
+        table.test-table tbody tr:hover {
+            background: rgba(0, 123, 255, .04);
+        }
+
         .gpio-badge {
-            display: inline-block; background: rgba(0,123,255,.15); color: var(--color-blue-electric);
-            font-family: var(--font-code); font-size: .8rem; font-weight: 600;
-            padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+            display: inline-block;
+            background: rgba(0, 123, 255, .15);
+            color: var(--color-blue-electric);
+            font-family: var(--font-code);
+            font-size: .8rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
         }
+
         .chip-badge {
-            display: inline-block; font-family: var(--font-code); font-size: .75rem;
-            font-weight: 600; padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+            display: inline-block;
+            font-family: var(--font-code);
+            font-size: .75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
         }
-        .chip-s3 { background: rgba(63,185,80,.15); color: var(--color-success); }
-        .chip-c6 { background: rgba(210,153,34,.15); color: var(--color-warning); }
+
+        .chip-s3 {
+            background: rgba(63, 185, 80, .15);
+            color: var(--color-success);
+        }
+
+        .chip-c6 {
+            background: rgba(210, 153, 34, .15);
+            color: var(--color-warning);
+        }
+
         .status-approved {
-            display: inline-flex; align-items: center; gap: 4px;
-            background: rgba(63,185,80,.12); color: var(--color-success);
-            font-weight: 700; font-size: .78rem; padding: 3px 10px;
-            border-radius: 12px; white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(63, 185, 80, .12);
+            color: var(--color-success);
+            font-weight: 700;
+            font-size: .78rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
         }
-        .status-approved::before { content: '✓'; font-weight: 900; }
+
+        .status-approved::before {
+            content: '✓';
+            font-weight: 900;
+        }
 
         /* ───────── DASHBOARD COUNTERS ───────── */
         .dashboard-row {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 14px; margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
         }
+
         .dash-card {
-            background: var(--color-dark-grey); border: 1px solid var(--color-border);
-            border-radius: 10px; padding: 18px 16px; text-align: center;
+            background: var(--color-dark-grey);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            padding: 18px 16px;
+            text-align: center;
         }
+
         .dash-card .dash-number {
-            font-size: 2rem; font-weight: 800; color: var(--color-blue-electric);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--color-blue-electric);
             line-height: 1;
         }
+
         .dash-card .dash-label {
-            font-size: .78rem; color: var(--color-text-muted); margin-top: 6px;
-            font-weight: 600; text-transform: uppercase; letter-spacing: .3px;
+            font-size: .78rem;
+            color: var(--color-text-muted);
+            margin-top: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
         }
-        .dash-card.dash-success .dash-number { color: var(--color-success); }
+
+        .dash-card.dash-success .dash-number {
+            color: var(--color-success);
+        }
 
         /* ───────── ACCORDION ───────── */
         .accordion-item {
-            background: var(--color-dark-grey); border: 1px solid var(--color-border);
-            border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+            background: var(--color-dark-grey);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
             transition: border-color .3s;
         }
-        .accordion-item:hover { border-color: rgba(0,123,255,.3); }
+
+        .accordion-item:hover {
+            border-color: rgba(0, 123, 255, .3);
+        }
+
         .accordion-header {
-            display: flex; align-items: center; gap: 12px; padding: 16px 20px;
-            cursor: pointer; user-select: none; transition: background .2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: background .2s;
         }
-        .accordion-header:hover { background: rgba(0,123,255,.04); }
+
+        .accordion-header:hover {
+            background: rgba(0, 123, 255, .04);
+        }
+
         .accordion-icon {
-            width: 40px; height: 40px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; flex-shrink: 0;
-            background: rgba(0,123,255,.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            background: rgba(0, 123, 255, .1);
         }
-        .accordion-info { flex: 1; min-width: 0; }
-        .accordion-title { font-weight: 700; font-size: .95rem; }
-        .accordion-desc { color: var(--color-text-muted); font-size: .8rem; margin-top: 2px; }
+
+        .accordion-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .accordion-title {
+            font-weight: 700;
+            font-size: .95rem;
+        }
+
+        .accordion-desc {
+            color: var(--color-text-muted);
+            font-size: .8rem;
+            margin-top: 2px;
+        }
+
         .accordion-chevron {
-            font-size: .85rem; color: var(--color-text-muted); transition: transform .3s;
+            font-size: .85rem;
+            color: var(--color-text-muted);
+            transition: transform .3s;
             flex-shrink: 0;
         }
-        .accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+
+        .accordion-item.open .accordion-chevron {
+            transform: rotate(180deg);
+        }
+
         .accordion-body {
-            max-height: 0; overflow: hidden; transition: max-height .4s ease;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .4s ease;
         }
-        .accordion-item.open .accordion-body { max-height: 6000px; }
+
+        .accordion-item.open .accordion-body {
+            max-height: 6000px;
+        }
+
         .accordion-content {
-            padding: 0 20px 20px; border-top: 1px solid var(--color-border);
+            padding: 0 20px 20px;
+            border-top: 1px solid var(--color-border);
         }
+
         .accordion-content h4 {
-            font-size: .9rem; font-weight: 700; margin: 18px 0 8px;
+            font-size: .9rem;
+            font-weight: 700;
+            margin: 18px 0 8px;
             color: var(--color-blue-electric);
         }
-        .accordion-content p, .accordion-content li {
-            color: var(--color-text-muted); font-size: .88rem; line-height: 1.7;
+
+        .accordion-content p,
+        .accordion-content li {
+            color: var(--color-text-muted);
+            font-size: .88rem;
+            line-height: 1.7;
         }
-        .accordion-content ul { list-style: disc; padding-left: 22px; }
-        .accordion-content ul li { padding: 3px 0; border: none; }
+
+        .accordion-content ul {
+            list-style: disc;
+            padding-left: 22px;
+        }
+
+        .accordion-content ul li {
+            padding: 3px 0;
+            border: none;
+        }
+
         .accordion-content table {
-            width: 100%; border-collapse: collapse; font-size: .82rem; margin: 10px 0;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .82rem;
+            margin: 10px 0;
         }
+
         .accordion-content table th {
-            background: var(--color-black-tech); color: var(--color-blue-electric);
-            font-weight: 700; font-size: .72rem; text-transform: uppercase;
-            padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--color-border);
+            background: var(--color-black-tech);
+            color: var(--color-blue-electric);
+            font-weight: 700;
+            font-size: .72rem;
+            text-transform: uppercase;
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--color-border);
         }
+
         .accordion-content table td {
-            padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,.04);
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
             color: var(--color-text-muted);
         }
 
         /* ───────── CODE BLOCKS ───────── */
         .code-block {
-            background: var(--color-black-tech); border: 1px solid var(--color-border);
-            border-radius: 8px; overflow: hidden; margin: 12px 0;
+            background: var(--color-black-tech);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 12px 0;
         }
+
         .code-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 14px; background: rgba(255,255,255,.03);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, .03);
             border-bottom: 1px solid var(--color-border);
         }
+
         .code-lang {
-            font-family: var(--font-code); font-size: .72rem; font-weight: 600;
-            color: var(--color-text-muted); text-transform: uppercase;
+            font-family: var(--font-code);
+            font-size: .72rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
         }
+
         .code-copy {
-            background: transparent; border: 1px solid var(--color-border);
-            color: var(--color-text-muted); padding: 3px 10px; border-radius: 4px;
-            font-size: .72rem; cursor: pointer; font-family: var(--font-primary);
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: .72rem;
+            cursor: pointer;
+            font-family: var(--font-primary);
             transition: all .2s;
         }
-        .code-copy:hover { color: var(--color-white); border-color: var(--color-blue-electric); }
-        .code-block pre {
-            padding: 14px; overflow-x: auto; max-height: 450px;
+
+        .code-copy:hover {
+            color: var(--color-white);
+            border-color: var(--color-blue-electric);
         }
+
+        .code-block pre {
+            padding: 14px;
+            overflow-x: auto;
+            max-height: 450px;
+        }
+
         .code-block code {
-            font-family: var(--font-code); font-size: .78rem;
-            color: #c9d1d9; line-height: 1.6; white-space: pre;
+            font-family: var(--font-code);
+            font-size: .78rem;
+            color: #c9d1d9;
+            line-height: 1.6;
+            white-space: pre;
         }
 
         /* ───────── FOOTER ───────── */
         footer {
-            border-top: 1px solid var(--color-border); padding: 20px 0;
-            text-align: center; font-size: .85rem; color: var(--color-text-muted);
+            border-top: 1px solid var(--color-border);
+            padding: 20px 0;
+            text-align: center;
+            font-size: .85rem;
+            color: var(--color-text-muted);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ───────── RESPONSIVE ───────── */
         @media (max-width: 768px) {
-            .doc-grid { grid-template-columns: 1fr; }
-            .dashboard-row { grid-template-columns: repeat(2, 1fr); }
-            .section-title { font-size: 1.25rem; }
-            .doc-header h1 { font-size: 1.5rem; }
+            .doc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section-title {
+                font-size: 1.25rem;
+            }
+
+            .doc-header h1 {
+                font-size: 1.5rem;
+            }
         }
+
         .header-left {
-            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
+
         .selector-group {
-            display: flex; align-items: center; gap: 10px;
-            background: rgba(255, 255, 255, 0.05); padding: 4px 10px;
-            border-radius: 8px; border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
         }
+
         .selector-item {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.78rem; color: var(--color-text-muted); font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: var(--color-text-muted);
+            font-weight: 600;
         }
+
         .header-select {
-            background: var(--color-black-tech); color: var(--color-blue-electric);
-            border: 1px solid rgba(0, 123, 255, 0.3); padding: 4px 8px;
-            border-radius: 6px; font-family: var(--font-primary);
-            font-size: 0.8rem; font-weight: 700; cursor: pointer; outline: none;
+            background: var(--color-black-tech);
+            color: var(--color-blue-electric);
+            border: 1px solid rgba(0, 123, 255, 0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: var(--font-primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
             transition: all 0.2s;
         }
-        .header-select:hover, .header-select:focus {
+
+        .header-select:hover,
+        .header-select:focus {
             border-color: var(--color-blue-electric);
         }
     </style>
@@ -317,20 +649,23 @@
         <div class="header-container">
             <div class="header-left">
                 <a href="../../index.html" class="logo">
-                    <img src="assets/logo-icon.png" onerror="this.onerror=null; this.src='../../../assets/logo-icon.png';" alt="DC Circuit Labs">
+                    <img src="assets/logo-icon.png"
+                        onerror="this.onerror=null; this.src='../../../assets/logo-icon.png';" alt="DC Circuit Labs">
                     <span>DC CIRCUIT <span class="highlight">LABS</span></span>
                 </a>
                 <div class="selector-group">
                     <div class="selector-item">
                         <label for="hdr-project-select">Projeto:</label>
-                        <select id="hdr-project-select" class="header-select" onchange="onHeaderProjectChange(this.value)">
+                        <select id="hdr-project-select" class="header-select"
+                            onchange="onHeaderProjectChange(this.value)">
                             <option value="main" selected>Main (Placa Principal)</option>
                             <option value="ihm">IHM (Interface)</option>
                         </select>
                     </div>
                     <div class="selector-item">
                         <label for="hdr-version-select">Versão:</label>
-                        <select id="hdr-version-select" class="header-select" onchange="onHeaderVersionChange(this.value)">
+                        <select id="hdr-version-select" class="header-select"
+                            onchange="onHeaderVersionChange(this.value)">
                             <option value="4_1" selected>v4.1</option>
                         </select>
                     </div>
@@ -359,18 +694,20 @@
             <div class="doc-header">
                 <span class="badge">PROJETO CONFIDENCIAL</span>
                 <h1>Rogge Industries — V4.1</h1>
-                <p class="subtitle">Documentação Técnica, Especificações Eletrônicas, Pinout, Mapa SPI, Observações de Campo e Guia de Ligações</p>
+                <p class="subtitle">Documentação Técnica, Especificações Eletrônicas, Pinout, Mapa SPI, Observações de
+                    Campo e Guia de Ligações</p>
             </div>
 
             <div class="doc-grid">
                 <div class="doc-card">
                     <h3>📋 Visão Geral do Sistema</h3>
-                    <p>O sistema <strong>Rogge V4.1</strong> foi projetado para controle de precisão e prototipagem ágil com integração IoT e suporte a iBOM 3D interativo.</p>
+                    <p>O sistema <strong>Rogge V4.1</strong> foi projetado para controle de precisão e prototipagem ágil
+                        com integração IoT e suporte a iBOM 3D interativo.</p>
                     <ul>
                         <li><strong>MCU Principal:</strong> ESP32-S3 (Dual-Core Xtensa LX7)</li>
-                        <li><strong>Co-processador:</strong> <em>Sem C6 Auxiliar</em> (Removido nesta revisão de hardware)</li>
                         <li><strong>Comunicação:</strong> RS-485 Industrial, SPI, I2C, UART</li>
-                        <li><strong>Alimentação:</strong> 24V DC Nominal (máx. 36V DC Pico) com proteção contra inversão</li>
+                        <li><strong>Alimentação:</strong> 24V DC Nominal (máx. 36V DC Pico) com proteção contra inversão
+                        </li>
                         <li><strong>Revisão de Hardware:</strong> V4.1 (DC Circuit Labs)</li>
                     </ul>
                 </div>
@@ -379,10 +716,14 @@
                     <h3>⚙️ Especificações de Montagem</h3>
                     <p>Instruções para teste, montagem SMT/THT e inspeção visual da placa Rogge V4.1:</p>
                     <ul>
-                        <li><strong>Processo SMT:</strong> Montagem de precisão com pastas de solda SAC305 e inspeção AOI.</li>
-                        <li><strong>Modificação USB:</strong> Capacitores de 470µF substituídos por 47µF para baixar a capacitância nas trilhas USB.</li>
-                        <li><strong>Inspeção THT:</strong> Verificação dos conectores e componentes no painel iBOM abaixo.</li>
-                        <li><strong>Testes Funcionais:</strong> Validação de hardware realizada (sem testes de Wi-Fi e 1-Wire por ausência de antena/sensor).</li>
+                        <li><strong>Processo SMT:</strong> Montagem de precisão com pastas de solda SAC305 e inspeção
+                            AOI.</li>
+                        <li><strong>Modificação USB:</strong> Capacitores de 470µF substituídos por 47µF para baixar a
+                            capacitância nas trilhas USB.</li>
+                        <li><strong>Inspeção THT:</strong> Verificação dos conectores e componentes no painel iBOM
+                            abaixo.</li>
+                        <li><strong>Testes Funcionais:</strong> Validação de hardware realizada (sem testes de Wi-Fi e
+                            1-Wire por ausência de antena/sensor).</li>
                     </ul>
                 </div>
             </div>
@@ -391,42 +732,85 @@
         <!-- ═══════════════════ GUIA DE LIGAÇÕES ═══════════════════ -->
         <div id="ligacoes" class="section-block">
             <h2 class="section-title">🔧 Guia de Ligações — Conectores e Diagramas</h2>
-            <p class="section-subtitle">Esquemas visuais de ligação, pinout de bornes e especificação dos conectores da placa Rogue V4.1. Dados extraídos dos esquemáticos, fotos de bancada e firmware de validação.</p>
+            <p class="section-subtitle">Esquemas visuais de ligação, pinout de bornes e especificação dos conectores da
+                placa Rogue V4.1. Dados extraídos dos esquemáticos, fotos de bancada e firmware de validação.</p>
 
             <!-- DIAGRAMAS DE LIGAÇÕES (FOTOS DE ASSETS) -->
             <div class="doc-card full-width" style="margin-bottom: 24px;">
                 <h3>📷 Diagramas de Ligações e Conectores Físicos</h3>
                 <p style="color: var(--color-text-muted); margin-bottom: 16px;">
-                    Esquemas de ligação de bancada para conexões de alimentação, comunicação, relés e optoacopladores. Clique em qualquer imagem para abrir a visualização em alta resolução.
+                    Esquemas de ligação de bancada para conexões de alimentação, comunicação, relés e optoacopladores.
+                    Clique em qualquer imagem para abrir a visualização em alta resolução.
                 </p>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px;">
                     <!-- Card Main.png -->
-                    <div style="background: var(--color-black-tech); border: 1px solid var(--color-border); border-radius: 10px; padding: 18px; display: flex; flex-direction: column;">
-                        <h4 style="color: var(--color-blue-electric); margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <div
+                        style="background: var(--color-black-tech); border: 1px solid var(--color-border); border-radius: 10px; padding: 18px; display: flex; flex-direction: column;">
+                        <h4
+                            style="color: var(--color-blue-electric); margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
                             🔌 Guia Geral de Ligações da Placa (Main.png)
                         </h4>
-                        <div style="overflow: hidden; border-radius: 8px; border: 1px solid var(--color-border); margin-bottom: 14px; cursor: pointer; text-align: center; background: #000; position: relative;" onclick="openImageModal('assets/Main.png', 'Guia Geral de Ligações — Main.png')">
-                            <img src="assets/Main.png" alt="Guia Geral de Ligações - Main" style="width: 100%; height: auto; max-height: 420px; object-fit: contain; display: block; transition: transform .3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                        <div style="overflow: hidden; border-radius: 8px; border: 1px solid var(--color-border); margin-bottom: 14px; cursor: pointer; text-align: center; background: #000; position: relative;"
+                            onclick="openImageModal('assets/Main.png', 'Guia Geral de Ligações — Main.png')">
+                            <img src="assets/Main.png" alt="Guia Geral de Ligações - Main"
+                                style="width: 100%; height: auto; max-height: 420px; object-fit: contain; display: block; transition: transform .3s;"
+                                onmouseover="this.style.transform='scale(1.03)'"
+                                onmouseout="this.style.transform='scale(1)'">
+                            <div class="img-zoom-hint"
+                                style="position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.85); color: #fff; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(0,123,255,0.4); pointer-events: none; display: flex; align-items: center; gap: 6px;">
+                                🔍 Clique para Zoom e Panorâmica</div>
                         </div>
-                        <p style="color: var(--color-text-muted); font-size: 0.86rem; margin-bottom: 14px; flex: 1; line-height: 1.5;">
-                            Visão panorâmica dos conectores da placa, com indicação dos bornes de alimentação <strong>(24V DC Nominal / máx. 36V DC Pico)</strong>, saídas de relés, RS-485 industrial e portas de expansão.
+                        <p
+                            style="color: var(--color-text-muted); font-size: 0.86rem; margin-bottom: 14px; flex: 1; line-height: 1.5;">
+                            Visão panorâmica dos conectores da placa, com indicação dos bornes de alimentação
+                            <strong>(24V DC Nominal / máx. 36V DC Pico)</strong>, saídas de relés, RS-485 industrial e
+                            portas de expansão.
                         </p>
-                        <a href="assets/Main.png" target="_blank" class="btn-action" style="font-size: 0.82rem; padding: 8px 14px; text-align: center; display: inline-block;">🔍 Abrir Imagem em Alta Resolução</a>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button onclick="openImageModal('assets/Main.png', 'Guia Geral de Ligações — Main.png')"
+                                class="btn-action"
+                                style="font-size: 0.82rem; padding: 8px 14px; flex: 1; text-align: center; border: none; cursor: pointer;">🔍
+                                Abrir com Zoom Interativo</button>
+                            <a href="assets/Main.png" target="_blank" class="btn-action"
+                                style="font-size: 0.82rem; padding: 8px 14px; background: rgba(255,255,255,0.08); border: 1px solid var(--color-border); color: var(--color-white); text-decoration: none; border-radius: 6px; font-weight: 600;">↗️
+                                Nova Aba</a>
+                        </div>
                     </div>
 
                     <!-- Card OPTO+.png -->
-                    <div style="background: var(--color-black-tech); border: 1px solid var(--color-border); border-radius: 10px; padding: 18px; display: flex; flex-direction: column;">
-                        <h4 style="color: var(--color-blue-electric); margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <div
+                        style="background: var(--color-black-tech); border: 1px solid var(--color-border); border-radius: 10px; padding: 18px; display: flex; flex-direction: column;">
+                        <h4
+                            style="color: var(--color-blue-electric); margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
                             💡 Esquema de Conexão das Entradas Optoacopladas (OPTO+.png)
                         </h4>
-                        <div style="overflow: hidden; border-radius: 8px; border: 1px solid var(--color-border); margin-bottom: 14px; cursor: pointer; text-align: center; background: #000; position: relative;" onclick="openImageModal('assets/OPTO+.png', 'Esquema de Conexão das Entradas Optoacopladas — OPTO+.png')">
-                            <img src="assets/OPTO+.png" alt="Esquema de Conexão das Entradas Optoacopladas - OPTO+" style="width: 100%; height: auto; max-height: 420px; object-fit: contain; display: block; transition: transform .3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                        <div style="overflow: hidden; border-radius: 8px; border: 1px solid var(--color-border); margin-bottom: 14px; cursor: pointer; text-align: center; background: #000; position: relative;"
+                            onclick="openImageModal('assets/OPTO+.png', 'Esquema de Conexão das Entradas Optoacopladas — OPTO+.png')">
+                            <img src="assets/OPTO+.png" alt="Esquema de Conexão das Entradas Optoacopladas - OPTO+"
+                                style="width: 100%; height: auto; max-height: 420px; object-fit: contain; display: block; transition: transform .3s;"
+                                onmouseover="this.style.transform='scale(1.03)'"
+                                onmouseout="this.style.transform='scale(1)'">
+                            <div class="img-zoom-hint"
+                                style="position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.85); color: #fff; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(0,123,255,0.4); pointer-events: none; display: flex; align-items: center; gap: 6px;">
+                                🔍 Clique para Zoom e Panorâmica</div>
                         </div>
-                        <p style="color: var(--color-text-muted); font-size: 0.86rem; margin-bottom: 14px; flex: 1; line-height: 1.5;">
-                            Diagrama de fiação para as 8 entradas optoacopladas (OPT_CON1 a OPT_CON5). Apresenta a polarização dos bornes, ligação do polo positivo (+), polo negativo (−/GND) e sinais de 24V DC.
+                        <p
+                            style="color: var(--color-text-muted); font-size: 0.86rem; margin-bottom: 14px; flex: 1; line-height: 1.5;">
+                            Diagrama de fiação para as 8 entradas optoacopladas (OPT_CON1 a OPT_CON5). Apresenta a
+                            polarização dos bornes, ligação do polo positivo (+), polo negativo (−/GND) e sinais de 24V
+                            DC.
                         </p>
-                        <a href="assets/OPTO+.png" target="_blank" class="btn-action" style="font-size: 0.82rem; padding: 8px 14px; text-align: center; display: inline-block;">🔍 Abrir Imagem em Alta Resolução</a>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button
+                                onclick="openImageModal('assets/OPTO+.png', 'Esquema de Conexão das Entradas Optoacopladas — OPTO+.png')"
+                                class="btn-action"
+                                style="font-size: 0.82rem; padding: 8px 14px; flex: 1; text-align: center; border: none; cursor: pointer;">🔍
+                                Abrir com Zoom Interativo</button>
+                            <a href="assets/OPTO+.png" target="_blank" class="btn-action"
+                                style="font-size: 0.82rem; padding: 8px 14px; background: rgba(255,255,255,0.08); border: 1px solid var(--color-border); color: var(--color-white); text-decoration: none; border-radius: 6px; font-weight: 600;">↗️
+                                Nova Aba</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -452,7 +836,8 @@
                                 <td>Borne Parafuso 2P (5.08mm)</td>
                                 <td>2</td>
                                 <td>
-                                    <strong>Pino 1:</strong> V<sub>IN</sub> (+) — Entrada de alimentação principal (<strong>24V DC Nominal</strong>, 0 ~ 36V DC máx. pico)<br>
+                                    <strong>Pino 1:</strong> V<sub>IN</sub> (+) — Entrada de alimentação principal
+                                    (<strong>24V DC Nominal</strong>, 0 ~ 36V DC máx. pico)<br>
                                     <strong>Pino 2:</strong> PGND (−) — Terra de potência
                                 </td>
                             </tr>
@@ -462,7 +847,8 @@
                                 <td>Porta-fusível automotivo</td>
                                 <td>—</td>
                                 <td>
-                                    Fusível de proteção de entrada (<strong>2A</strong>). Protege todo o circuito contra sobrecorrente.
+                                    Fusível de proteção de entrada (<strong>2A</strong>). Protege todo o circuito contra
+                                    sobrecorrente.
                                 </td>
                             </tr>
                             <tr>
@@ -484,7 +870,9 @@
             <!-- GROUP 2: RELÉS -->
             <div class="doc-card full-width" style="margin-bottom: 20px;">
                 <h3>🔌 Saídas de Relés (RL_CON1 ~ RL_CON7)</h3>
-                <p style="color: var(--color-text-muted); margin-bottom: 14px;">7 bornes parafuso de 3 pinos (WJ2EDGV 5.08mm) para conexão das cargas controladas pelos relés SRD-24VDC-SL-C (SPDT). Cada borne expõe os 3 terminais do relé correspondente.</p>
+                <p style="color: var(--color-text-muted); margin-bottom: 14px;">7 bornes parafuso de 3 pinos (WJ2EDGV
+                    5.08mm) para conexão das cargas controladas pelos relés SRD-24VDC-SL-C (SPDT). Cada borne expõe os 3
+                    terminais do relé correspondente.</p>
                 <div class="table-wrapper">
                     <table class="pinout-table">
                         <thead>
@@ -497,17 +885,60 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="gpio-badge">RL_CON1</span></td><td>RL1 (Bit 0 — <code>0x01</code> / CS2)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
-                            <tr><td><span class="gpio-badge">RL_CON2</span></td><td>RL2 (Bit 1 — <code>0x02</code> / CS2)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
-                            <tr><td><span class="gpio-badge">RL_CON3</span></td><td>RL3 (Bit 2 — <code>0x04</code> / CS2)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
-                            <tr><td><span class="gpio-badge">RL_CON4</span></td><td>RL4 (Bit 3 — <code>0x08</code> / CS2)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
-                            <tr><td><span class="gpio-badge">RL_CON5</span></td><td>RL5 (Bit 4 — <code>0x10</code> / CS2)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
-                            <tr><td><span class="gpio-badge">RL_CON6</span></td><td>RL6 (Bit 5 — <code>0x20</code> / CS2)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
-                            <tr><td><span class="gpio-badge">RL_CON7</span></td><td>RL7 (Bit 6 — <code>0x40</code> / CS2)</td><td>Comum</td><td>Normalmente Aberto</td><td>Normalmente Fechado</td></tr>
+                            <tr>
+                                <td><span class="gpio-badge">RL_CON1</span></td>
+                                <td>RL1 (Bit 0 — <code>0x01</code> / CS2)</td>
+                                <td>Comum</td>
+                                <td>Normalmente Aberto</td>
+                                <td>Normalmente Fechado</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">RL_CON2</span></td>
+                                <td>RL2 (Bit 1 — <code>0x02</code> / CS2)</td>
+                                <td>Comum</td>
+                                <td>Normalmente Aberto</td>
+                                <td>Normalmente Fechado</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">RL_CON3</span></td>
+                                <td>RL3 (Bit 2 — <code>0x04</code> / CS2)</td>
+                                <td>Comum</td>
+                                <td>Normalmente Aberto</td>
+                                <td>Normalmente Fechado</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">RL_CON4</span></td>
+                                <td>RL4 (Bit 3 — <code>0x08</code> / CS2)</td>
+                                <td>Comum</td>
+                                <td>Normalmente Aberto</td>
+                                <td>Normalmente Fechado</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">RL_CON5</span></td>
+                                <td>RL5 (Bit 4 — <code>0x10</code> / CS2)</td>
+                                <td>Comum</td>
+                                <td>Normalmente Aberto</td>
+                                <td>Normalmente Fechado</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">RL_CON6</span></td>
+                                <td>RL6 (Bit 5 — <code>0x20</code> / CS2)</td>
+                                <td>Comum</td>
+                                <td>Normalmente Aberto</td>
+                                <td>Normalmente Fechado</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">RL_CON7</span></td>
+                                <td>RL7 (Bit 6 — <code>0x40</code> / CS2)</td>
+                                <td>Comum</td>
+                                <td>Normalmente Aberto</td>
+                                <td>Normalmente Fechado</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-                <p style="color: var(--color-text-muted); margin-top: 10px; font-size: .85rem;">⚠️ <strong>Capacidade de comutação:</strong> Máx. 15A @ 250V AC ou 15A @ 30V DC por relé (SRD-24VDC-SL-C).</p>
+                <p style="color: var(--color-text-muted); margin-top: 10px; font-size: .85rem;">⚠️ <strong>Capacidade de
+                        comutação:</strong> Máx. 15A @ 250V AC ou 15A @ 30V DC por relé (SRD-24VDC-SL-C).</p>
             </div>
 
             <!-- GROUP 3: BUZZER -->
@@ -515,13 +946,22 @@
                 <h3>🔊 Buzzer</h3>
                 <div class="table-wrapper">
                     <table class="pinout-table">
-                        <thead><tr><th>Designador</th><th>Componente</th><th>Tipo</th><th>Pino 1</th><th>Pino 2</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Designador</th>
+                                <th>Componente</th>
+                                <th>Tipo</th>
+                                <th>Pino 1</th>
+                                <th>Pino 2</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr>
                                 <td><span class="gpio-badge">BUZZER</span></td>
                                 <td>DB2EVC-5.08-2P-GN</td>
                                 <td>Borne Parafuso 2P (5.08mm)</td>
-                                <td><strong>Sinal (+):</strong> Saída do ULN2803 — Canal 7 (Bit 7 / <code>0x80</code> do 74HC595D)</td>
+                                <td><strong>Sinal (+):</strong> Saída do ULN2803 — Canal 7 (Bit 7 / <code>0x80</code> do
+                                    74HC595D)</td>
                                 <td><strong>GND (−):</strong> Terra de potência</td>
                             </tr>
                         </tbody>
@@ -532,7 +972,9 @@
             <!-- GROUP 4: SENSORES DE PRESSÃO -->
             <div class="doc-card full-width" style="margin-bottom: 20px;">
                 <h3>🌡️ Transdutores de Pressão (DS_CON1 ~ DS_CON8 + TP_CON1 ~ TP_CON3)</h3>
-                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Conectores XH-3A (2.5mm, 3 pinos) para sensores analógicos de pressão (0 ~ 5V DC). O sinal é condicionado na PCB para 0 ~ 3.3V antes de entrar no ADC do ESP32-S3.</p>
+                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Conectores XH-3A (2.5mm, 3 pinos) para
+                    sensores analógicos de pressão (0 ~ 5V DC). O sinal é condicionado na PCB para 0 ~ 3.3V antes de
+                    entrar no ADC do ESP32-S3.</p>
                 <div class="table-wrapper">
                     <table class="pinout-table">
                         <thead>
@@ -545,17 +987,68 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="gpio-badge">TP_CON_1</span></td><td>GPIO 5 (ADC1_CH4)</td><td>Sinal (0 ~ 5V)</td><td>VCC (+5V)</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">TP_CON_2</span></td><td>GPIO 6 (ADC1_CH5)</td><td>Sinal (0 ~ 5V)</td><td>VCC (+5V)</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">TP_CON_3</span></td><td>GPIO 7 (ADC1_CH6)</td><td>Sinal (0 ~ 5V)</td><td>VCC (+5V)</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">DS_CON_1</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND) — <em>Sem testes 1-Wire por falta do sensor</em></td></tr>
-                            <tr><td><span class="gpio-badge">DS_CON_2</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
-                            <tr><td><span class="gpio-badge">DS_CON_3</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
-                            <tr><td><span class="gpio-badge">DS_CON_4</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
-                            <tr><td><span class="gpio-badge">DS_CON_5</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
-                            <tr><td><span class="gpio-badge">DS_CON_6</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
-                            <tr><td><span class="gpio-badge">DS_CON_7</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
-                            <tr><td><span class="gpio-badge">DS_CON_8</span></td><td>—</td><td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td></tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_CON_1</span></td>
+                                <td>GPIO 5 (ADC1_CH4)</td>
+                                <td>Sinal (0 ~ 5V)</td>
+                                <td>VCC (+5V)</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_CON_2</span></td>
+                                <td>GPIO 6 (ADC1_CH5)</td>
+                                <td>Sinal (0 ~ 5V)</td>
+                                <td>VCC (+5V)</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_CON_3</span></td>
+                                <td>GPIO 7 (ADC1_CH6)</td>
+                                <td>Sinal (0 ~ 5V)</td>
+                                <td>VCC (+5V)</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DS_CON_1</span></td>
+                                <td>—</td>
+                                <td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND) — <em>Sem
+                                        testes 1-Wire por falta do sensor</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DS_CON_2</span></td>
+                                <td>—</td>
+                                <td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DS_CON_3</span></td>
+                                <td>—</td>
+                                <td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DS_CON_4</span></td>
+                                <td>—</td>
+                                <td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DS_CON_5</span></td>
+                                <td>—</td>
+                                <td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DS_CON_6</span></td>
+                                <td>—</td>
+                                <td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DS_CON_7</span></td>
+                                <td>—</td>
+                                <td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DS_CON_8</span></td>
+                                <td>—</td>
+                                <td colspan="3">Conector de expansão para sensor digital (VCC / DATA / GND)</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -564,7 +1057,9 @@
             <!-- GROUP 5: ENTRADAS OPTOACOPLADAS -->
             <div class="doc-card full-width" style="margin-bottom: 20px;">
                 <h3>💡 Entradas Optoacopladas (OPT_CON1 ~ OPT_CON5)</h3>
-                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Bornes parafuso de 2 pinos (DB2EVC 5.08mm) para entradas digitais isoladas opticamente. Compatíveis com sinalização de 24V DC industrial. Lidas pelo CI 74HC165D via SPI (CS1 — GPIO 14).</p>
+                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Bornes parafuso de 2 pinos (DB2EVC
+                    5.08mm) para entradas digitais isoladas opticamente. Compatíveis com sinalização de 24V DC
+                    industrial. Lidas pelo CI 74HC165D via SPI (CS1 — GPIO 14).</p>
                 <div class="table-wrapper">
                     <table class="pinout-table">
                         <thead>
@@ -576,21 +1071,50 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="gpio-badge">OPT_CON1</span></td><td>Entrada Opto 1 (D0 / Bit 7 / CS1)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
-                            <tr><td><span class="gpio-badge">OPT_CON2</span></td><td>Entrada Opto 2 (D1 / Bit 6 / CS1)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
-                            <tr><td><span class="gpio-badge">OPT_CON3</span></td><td>Entrada Opto 3 (D2 / Bit 5 / CS1)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
-                            <tr><td><span class="gpio-badge">OPT_CON4</span></td><td>Entrada Opto 4 (D3 / Bit 4 / CS1)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
-                            <tr><td><span class="gpio-badge">OPT_CON5</span></td><td>Entrada Opto 5 (D4 / Bit 3 / CS1)</td><td>Sinal (+)</td><td>GND (−)</td></tr>
+                            <tr>
+                                <td><span class="gpio-badge">OPT_CON1</span></td>
+                                <td>Entrada Opto 1 (D0 / Bit 7 / CS1)</td>
+                                <td>Sinal (+)</td>
+                                <td>GND (−)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">OPT_CON2</span></td>
+                                <td>Entrada Opto 2 (D1 / Bit 6 / CS1)</td>
+                                <td>Sinal (+)</td>
+                                <td>GND (−)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">OPT_CON3</span></td>
+                                <td>Entrada Opto 3 (D2 / Bit 5 / CS1)</td>
+                                <td>Sinal (+)</td>
+                                <td>GND (−)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">OPT_CON4</span></td>
+                                <td>Entrada Opto 4 (D3 / Bit 4 / CS1)</td>
+                                <td>Sinal (+)</td>
+                                <td>GND (−)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">OPT_CON5</span></td>
+                                <td>Entrada Opto 5 (D4 / Bit 3 / CS1)</td>
+                                <td>Sinal (+)</td>
+                                <td>GND (−)</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-                <p style="color: var(--color-text-muted); margin-top: 10px; font-size: .85rem;">⚠️ <strong>Tensão de entrada:</strong> Conectar sinal de 24V DC entre os pinos (+) e (−) conforme foto de referência OPTO+.png.</p>
+                <p style="color: var(--color-text-muted); margin-top: 10px; font-size: .85rem;">⚠️ <strong>Tensão de
+                        entrada:</strong> Conectar sinal de 24V DC entre os pinos (+) e (−) conforme foto de referência
+                    OPTO+.png.</p>
             </div>
 
             <!-- GROUP 6: SAÍDAS DIGITAIS (GP) -->
             <div class="doc-card full-width" style="margin-bottom: 20px;">
                 <h3>📤 Saídas / Portas GPIO de Expansão (GP1 ~ GP4 + DI1/DI2 + DO1/DO2)</h3>
-                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Conectores XH-4A (2.5mm, 4 pinos) para interfaces genéricas GPIO. Mapeados com as linhas CS3 (Digital Output - GPIO10) e CS4 (Digital Input - GPIO2).</p>
+                <p style="color: var(--color-text-muted); margin-bottom: 14px;">Conectores XH-4A (2.5mm, 4 pinos) para
+                    interfaces genéricas GPIO. Mapeados com as linhas CS3 (Digital Output - GPIO10) e CS4 (Digital Input
+                    - GPIO2).</p>
                 <div class="table-wrapper">
                     <table class="pinout-table">
                         <thead>
@@ -604,14 +1128,70 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="gpio-badge">GP1</span></td><td>GPIO de Expansão</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">GP2</span></td><td>GPIO de Expansão</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">GP3</span></td><td>GPIO de Expansão</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">GP4</span></td><td>GPIO de Expansão</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">DI1</span></td><td>Entrada Digital (CS4 / GPIO 2)</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">DI2</span></td><td>Entrada Digital (CS4 / GPIO 2)</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">DO1</span></td><td>Saída Digital (CS3 / GPIO 10)</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
-                            <tr><td><span class="gpio-badge">DO2</span></td><td>Saída Digital (CS3 / GPIO 10)</td><td>VCC</td><td>Sinal 1</td><td>Sinal 2</td><td>GND</td></tr>
+                            <tr>
+                                <td><span class="gpio-badge">GP1</span></td>
+                                <td>GPIO de Expansão</td>
+                                <td>VCC</td>
+                                <td>Sinal 1</td>
+                                <td>Sinal 2</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">GP2</span></td>
+                                <td>GPIO de Expansão</td>
+                                <td>VCC</td>
+                                <td>Sinal 1</td>
+                                <td>Sinal 2</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">GP3</span></td>
+                                <td>GPIO de Expansão</td>
+                                <td>VCC</td>
+                                <td>Sinal 1</td>
+                                <td>Sinal 2</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">GP4</span></td>
+                                <td>GPIO de Expansão</td>
+                                <td>VCC</td>
+                                <td>Sinal 1</td>
+                                <td>Sinal 2</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DI1</span></td>
+                                <td>Entrada Digital (CS4 / GPIO 2)</td>
+                                <td>VCC</td>
+                                <td>Sinal 1</td>
+                                <td>Sinal 2</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DI2</span></td>
+                                <td>Entrada Digital (CS4 / GPIO 2)</td>
+                                <td>VCC</td>
+                                <td>Sinal 1</td>
+                                <td>Sinal 2</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DO1</span></td>
+                                <td>Saída Digital (CS3 / GPIO 10)</td>
+                                <td>VCC</td>
+                                <td>Sinal 1</td>
+                                <td>Sinal 2</td>
+                                <td>GND</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">DO2</span></td>
+                                <td>Saída Digital (CS3 / GPIO 10)</td>
+                                <td>VCC</td>
+                                <td>Sinal 1</td>
+                                <td>Sinal 2</td>
+                                <td>GND</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -638,7 +1218,8 @@
                                 <td>
                                     <strong>Pino 1:</strong> RS485_A (+) — Linha diferencial A do THVD1450DR<br>
                                     <strong>Pino 2:</strong> RS485_B (−) — Linha diferencial B do THVD1450DR<br>
-                                    <span style="color: var(--color-text-muted); font-size: .82rem;">GPIOs: RX=41, TX=42, RE/DE=40 | 9600 bps | Half-Duplex</span>
+                                    <span style="color: var(--color-text-muted); font-size: .82rem;">GPIOs: RX=41,
+                                        TX=42, RE/DE=40 | 9600 bps | Half-Duplex</span>
                                 </td>
                             </tr>
                             <tr>
@@ -647,7 +1228,8 @@
                                 <td>Borne Parafuso 2P<br>(RS-485 Auxiliar)</td>
                                 <td>
                                     <strong>Reservado / Não populado</strong><br>
-                                    <span style="color: var(--color-warning); font-size: .82rem;">Nesta revisão a placa é produzida sem o C6 auxiliar.</span>
+                                    <span style="color: var(--color-warning); font-size: .82rem;">Nesta revisão a placa
+                                        é produzida sem o C6 auxiliar.</span>
                                 </td>
                             </tr>
                             <tr>
@@ -659,7 +1241,8 @@
                                     <strong>Pino 2:</strong> RX → GPIO 15 (TX2 do ESP32-S3)<br>
                                     <strong>Pino 3:</strong> TX → GPIO 16 (RX2 do ESP32-S3)<br>
                                     <strong>Pino 4:</strong> GND<br>
-                                    <span style="color: var(--color-text-muted); font-size: .82rem;">Protocolo Modbus-RTU | Medição AC: V, A, W, kWh, Hz, PF</span>
+                                    <span style="color: var(--color-text-muted); font-size: .82rem;">Protocolo
+                                        Modbus-RTU | Medição AC: V, A, W, kWh, Hz, PF</span>
                                 </td>
                             </tr>
                             <tr>
@@ -695,9 +1278,12 @@
                                 <td>918-418K2022Y40000</td>
                                 <td>USB Type-C (THT, 14P)</td>
                                 <td>
-                                    <strong>Programação e debug</strong> — Conectado ao chip conversor CH340C (USB-UART).<br>
-                                    Usado para gravação de firmware via PlatformIO e monitoramento serial (115200 baud).<br>
-                                    <span style="color: var(--color-warning);">⚠️ Modificação: Capacitores de 470µF substituídos por 47µF para baixar capacitância das trilhas USB.</span>
+                                    <strong>Programação e debug</strong> — Conectado ao chip conversor CH340C
+                                    (USB-UART).<br>
+                                    Usado para gravação de firmware via PlatformIO e monitoramento serial (115200
+                                    baud).<br>
+                                    <span style="color: var(--color-warning);">⚠️ Modificação: Capacitores de 470µF
+                                        substituídos por 47µF para baixar capacitância das trilhas USB.</span>
                                 </td>
                             </tr>
                             <tr>
@@ -705,7 +1291,8 @@
                                 <td>TYPE-C 16PIN 2MD(073)</td>
                                 <td>USB Type-C (SMD, 16P)</td>
                                 <td>
-                                    <strong>USB CDC nativo</strong> — Conectado diretamente aos pinos D+/D− (GPIO 19/20) do ESP32-S3.<br>
+                                    <strong>USB CDC nativo</strong> — Conectado diretamente aos pinos D+/D− (GPIO 19/20)
+                                    do ESP32-S3.<br>
                                     Comunicação direta CDC com <code>ARDUINO_USB_CDC_ON_BOOT=1</code>.
                                 </td>
                             </tr>
@@ -727,15 +1314,51 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="gpio-badge">JMP</span></td><td>Header 2P (2.54mm)</td><td>Jumper de configuração (curto-circuitar para habilitar funcionalidade)</td></tr>
-                            <tr><td><span class="gpio-badge">TP_3V3</span></td><td>Test Point</td><td>Medição da trilha regulada de <strong>+3.3V</strong></td></tr>
-                            <tr><td><span class="gpio-badge">TP_5V</span></td><td>Test Point</td><td>Medição da trilha regulada de <strong>+5V</strong></td></tr>
-                            <tr><td><span class="gpio-badge">TP_24V</span></td><td>Test Point</td><td>Medição da trilha de <strong>+24V</strong> (alimentação dos relés)</td></tr>
-                            <tr><td><span class="gpio-badge">TP_5.4V(BUCK)</span></td><td>Test Point</td><td>Saída do conversor Buck DC-DC (<strong>~5.4V</strong>)</td></tr>
-                            <tr><td><span class="gpio-badge">TP_P24V1</span></td><td>Test Point</td><td>Medição de <strong>+24V</strong> pós-fusível (entrada de potência)</td></tr>
-                            <tr><td><span class="gpio-badge">TP_GND</span></td><td>Test Point</td><td>Referência de <strong>GND</strong> lógico</td></tr>
-                            <tr><td><span class="gpio-badge">TP_PGND</span></td><td>Test Point</td><td>Referência de <strong>PGND</strong> (terra de potência)</td></tr>
-                            <tr><td><span class="gpio-badge">TP_GND1 ~ TP_GND3</span></td><td>Test Points</td><td>Pontos de GND adicionais para sonda de osciloscópio</td></tr>
+                            <tr>
+                                <td><span class="gpio-badge">JMP</span></td>
+                                <td>Header 2P (2.54mm)</td>
+                                <td>Jumper de configuração (curto-circuitar para habilitar funcionalidade)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_3V3</span></td>
+                                <td>Test Point</td>
+                                <td>Medição da trilha regulada de <strong>+3.3V</strong></td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_5V</span></td>
+                                <td>Test Point</td>
+                                <td>Medição da trilha regulada de <strong>+5V</strong></td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_24V</span></td>
+                                <td>Test Point</td>
+                                <td>Medição da trilha de <strong>+24V</strong> (alimentação dos relés)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_5.4V(BUCK)</span></td>
+                                <td>Test Point</td>
+                                <td>Saída do conversor Buck DC-DC (<strong>~5.4V</strong>)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_P24V1</span></td>
+                                <td>Test Point</td>
+                                <td>Medição de <strong>+24V</strong> pós-fusível (entrada de potência)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_GND</span></td>
+                                <td>Test Point</td>
+                                <td>Referência de <strong>GND</strong> lógico</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_PGND</span></td>
+                                <td>Test Point</td>
+                                <td>Referência de <strong>PGND</strong> (terra de potência)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="gpio-badge">TP_GND1 ~ TP_GND3</span></td>
+                                <td>Test Points</td>
+                                <td>Pontos de GND adicionais para sonda de osciloscópio</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -747,10 +1370,13 @@
             <div class="doc-card full-width" style="padding: 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 style="margin: 0;">🔍 Visualizador iBOM 3D Interativo (Rogge V4.1)</h3>
-                    <a href="ibom-rogge-v4.html" target="_blank" class="btn-action" style="font-size: 0.8rem; padding: 6px 12px;">↗️ Abrir em Tela Cheia</a>
+                    <a href="ibom-rogge-v4.html" target="_blank" class="btn-action"
+                        style="font-size: 0.8rem; padding: 6px 12px;">↗️ Abrir em Tela Cheia</a>
                 </div>
-                <div style="width: 100%; height: 720px; border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); background: var(--color-black-tech); position: relative;">
-                    <iframe src="ibom-rogge-v4.html" style="width: 100%; height: 100%; border: none; display: block;" title="iBOM Rogge V4.1" loading="eager" allowfullscreen="true"></iframe>
+                <div
+                    style="width: 100%; height: 720px; border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); background: var(--color-black-tech); position: relative;">
+                    <iframe src="ibom-rogge-v4.html" style="width: 100%; height: 100%; border: none; display: block;"
+                        title="iBOM Rogge V4.1" loading="eager" allowfullscreen="true"></iframe>
                 </div>
             </div>
         </div>
@@ -758,11 +1384,13 @@
         <!-- ═══════════════════ PINOUT COMPLETO ═══════════════════ -->
         <div id="pinout" class="section-block">
             <h2 class="section-title">🔌 Pinout Completo da Placa</h2>
-            <p class="section-subtitle">Mapeamento de todos os GPIOs utilizados no ESP32-S3 (MCU principal) e CIs de expansão.</p>
+            <p class="section-subtitle">Mapeamento de todos os GPIOs utilizados no ESP32-S3 (MCU principal) e CIs de
+                expansão.</p>
 
             <!-- ESP32-S3 -->
             <div class="doc-card full-width" style="margin-bottom: 20px;">
-                <h3><span class="chip-badge chip-s3">ESP32-S3</span> Microcontrolador Principal — Mapeamento de GPIOs</h3>
+                <h3><span class="chip-badge chip-s3">ESP32-S3</span> Microcontrolador Principal — Mapeamento de GPIOs
+                </h3>
                 <div class="table-wrapper">
                     <table class="pinout-table">
                         <thead>
@@ -906,47 +1534,7 @@
                 </div>
             </div>
 
-            <!-- ESP32-C6 (REVISÃO SEM C6) -->
-            <div class="doc-card full-width" style="margin-bottom: 20px; opacity: 0.7;">
-                <h3><span class="chip-badge chip-c6">ESP32-C6</span> Co-processador Auxiliar — [REVISÃO SEM C6 AUXILIAR]</h3>
-                <p style="color: var(--color-warning); font-size: 0.9rem; margin-bottom: 10px;">⚠️ Nesta revisão de hardware V4.1, a placa opera sem o co-processador C6 auxiliar ("sem C6 auxiliar"). O mapeamento abaixo é mantido para fins de histórico de layout.</p>
-                <div class="table-wrapper">
-                    <table class="pinout-table">
-                        <thead>
-                            <tr>
-                                <th>Bloco / Periférico</th>
-                                <th>Função do Sinal</th>
-                                <th>GPIO</th>
-                                <th>Interface</th>
-                                <th>Status da Revisão</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>RS-485 Auxiliar (MAX485)</td>
-                                <td>Serial RX (RO)</td>
-                                <td><span class="gpio-badge">GPIO 11</span></td>
-                                <td>UART1 RX</td>
-                                <td>Não populado / Sem C6 auxiliar</td>
-                            </tr>
-                            <tr>
-                                <td>RS-485 Auxiliar (MAX485)</td>
-                                <td>Serial TX (DI)</td>
-                                <td><span class="gpio-badge">GPIO 12</span></td>
-                                <td>UART1 TX</td>
-                                <td>Não populado / Sem C6 auxiliar</td>
-                            </tr>
-                            <tr>
-                                <td>RS-485 Auxiliar (MAX485)</td>
-                                <td>Direção DE / RE</td>
-                                <td><span class="gpio-badge">GPIO 13</span></td>
-                                <td>Digital Output</td>
-                                <td>Não populado / Sem C6 auxiliar</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
 
             <!-- 74HC595D Outputs -->
             <div class="doc-card full-width">
@@ -962,14 +1550,54 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>Bit 0</td><td><code>0x01</code></td><td>Q0</td><td>Relé de Potência 1</td></tr>
-                            <tr><td>Bit 1</td><td><code>0x02</code></td><td>Q1</td><td>Relé de Potência 2</td></tr>
-                            <tr><td>Bit 2</td><td><code>0x04</code></td><td>Q2</td><td>Relé de Potência 3</td></tr>
-                            <tr><td>Bit 3</td><td><code>0x08</code></td><td>Q3</td><td>Relé de Potência 4</td></tr>
-                            <tr><td>Bit 4</td><td><code>0x10</code></td><td>Q4</td><td>Relé de Potência 5</td></tr>
-                            <tr><td>Bit 5</td><td><code>0x20</code></td><td>Q5</td><td>Relé de Potência 6</td></tr>
-                            <tr><td>Bit 6</td><td><code>0x40</code></td><td>Q6</td><td>Relé de Potência 7</td></tr>
-                            <tr><td>Bit 7</td><td><code>0x80</code></td><td>Q7</td><td>Buzzer de Sinalização Sonora</td></tr>
+                            <tr>
+                                <td>Bit 0</td>
+                                <td><code>0x01</code></td>
+                                <td>Q0</td>
+                                <td>Relé de Potência 1</td>
+                            </tr>
+                            <tr>
+                                <td>Bit 1</td>
+                                <td><code>0x02</code></td>
+                                <td>Q1</td>
+                                <td>Relé de Potência 2</td>
+                            </tr>
+                            <tr>
+                                <td>Bit 2</td>
+                                <td><code>0x04</code></td>
+                                <td>Q2</td>
+                                <td>Relé de Potência 3</td>
+                            </tr>
+                            <tr>
+                                <td>Bit 3</td>
+                                <td><code>0x08</code></td>
+                                <td>Q3</td>
+                                <td>Relé de Potência 4</td>
+                            </tr>
+                            <tr>
+                                <td>Bit 4</td>
+                                <td><code>0x10</code></td>
+                                <td>Q4</td>
+                                <td>Relé de Potência 5</td>
+                            </tr>
+                            <tr>
+                                <td>Bit 5</td>
+                                <td><code>0x20</code></td>
+                                <td>Q5</td>
+                                <td>Relé de Potência 6</td>
+                            </tr>
+                            <tr>
+                                <td>Bit 6</td>
+                                <td><code>0x40</code></td>
+                                <td>Q6</td>
+                                <td>Relé de Potência 7</td>
+                            </tr>
+                            <tr>
+                                <td>Bit 7</td>
+                                <td><code>0x80</code></td>
+                                <td>Q7</td>
+                                <td>Buzzer de Sinalização Sonora</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -979,23 +1607,30 @@
         <!-- ═══════════════════ MAPA SPI ═══════════════════ -->
         <div id="spi-map" class="section-block">
             <h2 class="section-title">🗺️ Mapa das Conexões SPI</h2>
-            <p class="section-subtitle">Mapeamento detalhado dos sinais do barramento SPI e dos Chip Selects (CS1 a CS4) da placa Rogge V4.1.</p>
+            <p class="section-subtitle">Mapeamento detalhado dos sinais do barramento SPI e dos Chip Selects (CS1 a CS4)
+                da placa Rogge V4.1.</p>
 
             <div class="doc-card full-width">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 24px;">
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 24px;">
                     <!-- Bus Card -->
-                    <div style="background: var(--color-black-tech); border: 1px solid var(--color-border); padding: 20px; border-radius: 8px;">
-                        <h4 style="color: var(--color-blue-electric); margin-bottom: 14px; font-size: 1.05rem;">⚡ Sinais Principais do Barramento SPI</h4>
+                    <div
+                        style="background: var(--color-black-tech); border: 1px solid var(--color-border); padding: 20px; border-radius: 8px;">
+                        <h4 style="color: var(--color-blue-electric); margin-bottom: 14px; font-size: 1.05rem;">⚡ Sinais
+                            Principais do Barramento SPI</h4>
                         <ul style="list-style: none; padding: 0;">
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <li
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
                                 <span><strong>MISO</strong> (Master In Slave Out):</span>
                                 <span class="gpio-badge">GPIO 13</span>
                             </li>
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <li
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
                                 <span><strong>MOSI</strong> (Master Out Slave In):</span>
                                 <span class="gpio-badge">GPIO 11</span>
                             </li>
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                            <li
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
                                 <span><strong>CLOCK</strong> (Serial Clock):</span>
                                 <span class="gpio-badge">GPIO 12</span>
                             </li>
@@ -1003,22 +1638,28 @@
                     </div>
 
                     <!-- Chip Selects Card -->
-                    <div style="background: var(--color-black-tech); border: 1px solid var(--color-border); padding: 20px; border-radius: 8px;">
-                        <h4 style="color: var(--color-blue-electric); margin-bottom: 14px; font-size: 1.05rem;">🎯 Mapeamento dos Chip Selects (CS)</h4>
+                    <div
+                        style="background: var(--color-black-tech); border: 1px solid var(--color-border); padding: 20px; border-radius: 8px;">
+                        <h4 style="color: var(--color-blue-electric); margin-bottom: 14px; font-size: 1.05rem;">🎯
+                            Mapeamento dos Chip Selects (CS)</h4>
                         <ul style="list-style: none; padding: 0;">
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <li
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
                                 <span><strong>CS1</strong> — Opto (Entradas Optoacopladas):</span>
                                 <span class="gpio-badge">GPIO 14</span>
                             </li>
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <li
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
                                 <span><strong>CS2</strong> — Relés (Latch 74HC595D):</span>
                                 <span class="gpio-badge">GPIO 21</span>
                             </li>
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <li
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
                                 <span><strong>CS3</strong> — Digital Output:</span>
                                 <span class="gpio-badge">GPIO 10</span>
                             </li>
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                            <li
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
                                 <span><strong>CS4</strong> — Digital Input:</span>
                                 <span class="gpio-badge">GPIO 2</span>
                             </li>
@@ -1059,13 +1700,15 @@
                                 <td><strong>CS1</strong></td>
                                 <td><span class="gpio-badge">GPIO 14</span></td>
                                 <td>Optoacopladores (74HC165D)</td>
-                                <td>Seleção de Chip (CS1) — Latch/Load paralelo para amostragem das entradas optoacopladas</td>
+                                <td>Seleção de Chip (CS1) — Latch/Load paralelo para amostragem das entradas
+                                    optoacopladas</td>
                             </tr>
                             <tr>
                                 <td><strong>CS2</strong></td>
                                 <td><span class="gpio-badge">GPIO 21</span></td>
                                 <td>Relés / Buzzer (74HC595D)</td>
-                                <td>Seleção de Chip (CS2) — Latch de saída (ST_CP) para atualizar o estado físico dos relés</td>
+                                <td>Seleção de Chip (CS2) — Latch de saída (ST_CP) para atualizar o estado físico dos
+                                    relés</td>
                             </tr>
                             <tr>
                                 <td><strong>CS3</strong></td>
@@ -1088,27 +1731,37 @@
         <!-- ═══════════════════ OBSERVAÇÕES TÉCNICAS ═══════════════════ -->
         <div id="observacoes" class="section-block">
             <h2 class="section-title">⚠️ Sessão de Observações e Modificações de Campo</h2>
-            <p class="section-subtitle">Relatório técnico detalhando modificações de hardware, comportamentos de inicialização e ensaios pendentes na placa Rogge V4.1.</p>
+            <p class="section-subtitle">Relatório técnico detalhando modificações de hardware, comportamentos de
+                inicialização e ensaios pendentes na placa Rogge V4.1.</p>
 
             <div class="doc-grid">
                 <!-- Observação 1: Capacitores USB -->
                 <div class="doc-card" style="border-left: 4px solid var(--color-warning);">
                     <h3 style="color: var(--color-warning);">🔌 Instabilidade no USB para Programação</h3>
-                    <p><strong>Comportamento Observado:</strong> Foram identificadas instabilidades e interrupções na comunicação USB durante o processo de gravação do microcontrolador via CH340C.</p>
-                    <div style="background: rgba(210,153,34,0.1); border: 1px solid rgba(210,153,34,0.3); padding: 14px; border-radius: 8px; margin-top: 12px;">
+                    <p><strong>Comportamento Observado:</strong> Foram identificadas instabilidades e interrupções na
+                        comunicação USB durante o processo de gravação do microcontrolador via CH340C.</p>
+                    <div
+                        style="background: rgba(210,153,34,0.1); border: 1px solid rgba(210,153,34,0.3); padding: 14px; border-radius: 8px; margin-top: 12px;">
                         <strong style="color: var(--color-warning);">Modificação de Hardware Efetuada:</strong><br>
-                        <strong>SUBSTITUÍDOS CAPACITORES DE 470µF POR 47µF</strong> — Redução da capacitância total nas trilhas da interface USB para evitar acoplamento excessivo e manter a integridade do sinal serial durante o upload.
+                        <strong>SUBSTITUÍDOS CAPACITORES DE 470µF POR 47µF</strong> — Redução da capacitância total nas
+                        trilhas da interface USB para evitar acoplamento excessivo e manter a integridade do sinal
+                        serial durante o upload.
                     </div>
                 </div>
 
                 <!-- Observação 2: Relés Startup -->
                 <div class="doc-card" style="border-left: 4px solid var(--color-danger);">
                     <h3 style="color: var(--color-danger);">⚡ Comportamento dos Relés no Start-up</h3>
-                    <p><strong>Comportamento Observado:</strong> Às vezes os relés são acionados momentaneamente no exato instante em que a placa é ligada (energização inicial).</p>
-                    <div style="background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); padding: 14px; border-radius: 8px; margin-top: 12px;">
+                    <p><strong>Comportamento Observado:</strong> Às vezes os relés são acionados momentaneamente no
+                        exato instante em que a placa é ligada (energização inicial).</p>
+                    <div
+                        style="background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); padding: 14px; border-radius: 8px; margin-top: 12px;">
                         <strong style="color: var(--color-danger);">Ação Tomada & Ponto de Atenção:</strong><br>
-                        Reduzimos ao máximo a duração desse pulso residual através de otimizações na inicialização dos GPIOs no firmware e circuito de latch. No entanto, o tempo <strong>não foi totalmente zerado</strong>.<br><br>
-                        🔍 <em>Recomendação: Verificar se este tempo residual de comutação dos relés durante o boot pode ser um problema para as cargas e equipamentos conectados na aplicação final.</em>
+                        Reduzimos ao máximo a duração desse pulso residual através de otimizações na inicialização dos
+                        GPIOs no firmware e circuito de latch. No entanto, o tempo <strong>não foi totalmente
+                            zerado</strong>.<br><br>
+                        🔍 <em>Recomendação: Verificar se este tempo residual de comutação dos relés durante o boot pode
+                            ser um problema para as cargas e equipamentos conectados na aplicação final.</em>
                     </div>
                 </div>
 
@@ -1116,14 +1769,18 @@
                 <div class="doc-card" style="border-left: 4px solid var(--color-text-muted);">
                     <h3 style="color: var(--color-text-muted);">🌡️ Testes no Barramento 1-Wire</h3>
                     <p><strong>Status de Validação:</strong> Não realizados.</p>
-                    <p style="margin-top: 10px;">Não foram realizados testes funcionais com o protocolo 1-Wire nesta bancada devido à <strong>falta do sensor de temperatura/pressão físico</strong> (ex: DS18B20) para conexão e amostragem.</p>
+                    <p style="margin-top: 10px;">Não foram realizados testes funcionais com o protocolo 1-Wire nesta
+                        bancada devido à <strong>falta do sensor de temperatura/pressão físico</strong> (ex: DS18B20)
+                        para conexão e amostragem.</p>
                 </div>
 
                 <!-- Observação 4: Wi-Fi -->
                 <div class="doc-card" style="border-left: 4px solid var(--color-text-muted);">
                     <h3 style="color: var(--color-text-muted);">📶 Testes de Comunicação Wi-Fi</h3>
                     <p><strong>Status de Validação:</strong> Não realizados.</p>
-                    <p style="margin-top: 10px;">Não foram executados testes de transmissão e recepção de dados via Wi-Fi devido à <strong>ausência da antena de RF física</strong> conectada ao pino U.FL da placa durante os procedimentos de ensaio.</p>
+                    <p style="margin-top: 10px;">Não foram executados testes de transmissão e recepção de dados via
+                        Wi-Fi devido à <strong>ausência da antena de RF física</strong> conectada ao pino U.FL da placa
+                        durante os procedimentos de ensaio.</p>
                 </div>
             </div>
         </div>
@@ -1131,7 +1788,8 @@
         <!-- ═══════════════════ COMPONENTES SUBSTITUÍDOS ═══════════════════ -->
         <div id="substituicoes" class="section-block">
             <h2 class="section-title">🔄 Componentes Substituídos & Decisões Técnicas</h2>
-            <p class="section-subtitle">Tabela de equivalências de componentes alterados em relação ao projeto original por indisponibilidade de estoque e suas respectivas justificativas de engenharia.</p>
+            <p class="section-subtitle">Tabela de equivalências de componentes alterados em relação ao projeto original
+                por indisponibilidade de estoque e suas respectivas justificativas de engenharia.</p>
 
             <div class="doc-card full-width">
                 <div class="table-wrapper">
@@ -1147,76 +1805,114 @@
                             <tr>
                                 <td>
                                     <strong>Buck LMR33630ADDAR</strong><br>
-                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Regulador DC-DC Buck (3A / 400kHz)</span>
+                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Regulador DC-DC Buck
+                                        (3A / 400kHz)</span>
                                 </td>
                                 <td>
-                                    <span class="gpio-badge" style="background: rgba(63,185,80,0.15); color: var(--color-success);">TI LMR33620ADDAR</span><br>
-                                    <span style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Código LCSC: C2163277</span>
+                                    <span class="gpio-badge"
+                                        style="background: rgba(63,185,80,0.15); color: var(--color-success);">TI
+                                        LMR33620ADDAR</span><br>
+                                    <span
+                                        style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Código
+                                        LCSC: C2163277</span>
                                 </td>
                                 <td>
-                                    Mantivemos a frequência de chaveamento em <strong>400kHz</strong> para aproveitar os indutores de 10µH previamente adquiridos, operando a <strong>2A</strong> (o que atende com folga o consumo total da placa e IHM).
+                                    Mantivemos a frequência de chaveamento em <strong>400kHz</strong> para aproveitar os
+                                    indutores de 10µH previamente adquiridos, operando a <strong>2A</strong> (o que
+                                    atende com folga o consumo total da placa e IHM).
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>LDO LDL1117S33R</strong><br>
-                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Regulador Linear LDO (1.2A)</span>
+                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Regulador Linear LDO
+                                        (1.2A)</span>
                                 </td>
                                 <td>
-                                    <span class="gpio-badge" style="background: rgba(63,185,80,0.15); color: var(--color-success);">DIODES AZ1117CH</span><br>
-                                    <span style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Código LCSC: C92102</span>
+                                    <span class="gpio-badge"
+                                        style="background: rgba(63,185,80,0.15); color: var(--color-success);">DIODES
+                                        AZ1117CH</span><br>
+                                    <span
+                                        style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Código
+                                        LCSC: C92102</span>
                                 </td>
                                 <td>
-                                    Mantida a robustez de <strong>1.2A</strong> para suportar com estabilidade os picos de consumo do ESP32-S3 e LEDs RGB, preservando o exato encaixe físico <strong>SOT-223</strong>.
+                                    Mantida a robustez de <strong>1.2A</strong> para suportar com estabilidade os picos
+                                    de consumo do ESP32-S3 e LEDs RGB, preservando o exato encaixe físico
+                                    <strong>SOT-223</strong>.
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Transceptor THVD1450DR</strong><br>
-                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Transceptor RS-485 Principal</span>
+                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Transceptor RS-485
+                                        Principal</span>
                                 </td>
                                 <td>
-                                    <span class="gpio-badge" style="background: rgba(63,185,80,0.15); color: var(--color-success);">MaxLinear SP3485EN</span><br>
-                                    <span style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Código LCSC: C8963</span>
+                                    <span class="gpio-badge"
+                                        style="background: rgba(63,185,80,0.15); color: var(--color-success);">MaxLinear
+                                        SP3485EN</span><br>
+                                    <span
+                                        style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Código
+                                        LCSC: C8963</span>
                                 </td>
                                 <td>
-                                    Substituição direta pino a pino (<strong>drop-in replacement</strong>). A proteção contra surtos permaneceu garantida pelo diodo TVS externo SM712 na placa.
+                                    Substituição direta pino a pino (<strong>drop-in replacement</strong>). A proteção
+                                    contra surtos permaneceu garantida pelo diodo TVS externo SM712 na placa.
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Diodo SM712-02HTG</strong><br>
-                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Diodo TVS D3 (Littelfuse)</span>
+                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Diodo TVS D3
+                                        (Littelfuse)</span>
                                 </td>
                                 <td>
-                                    <span class="gpio-badge" style="background: rgba(63,185,80,0.15); color: var(--color-success);">Semtech SM712-02HTG</span><br>
-                                    <span style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Código LCSC: C12067</span>
+                                    <span class="gpio-badge"
+                                        style="background: rgba(63,185,80,0.15); color: var(--color-success);">Semtech
+                                        SM712-02HTG</span><br>
+                                    <span
+                                        style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Código
+                                        LCSC: C12067</span>
                                 </td>
                                 <td>
-                                    Apenas troca de fabricante (Littelfuse → Semtech) para exatamente o <strong>mesmo componente e encapsulamento SOT-23</strong>.
+                                    Apenas troca de fabricante (Littelfuse → Semtech) para exatamente o <strong>mesmo
+                                        componente e encapsulamento SOT-23</strong>.
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Capacitor 47µF 16V X7R</strong><br>
-                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Encapsulamento 1210 (C5440143)</span>
+                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Encapsulamento 1210
+                                        (C5440143)</span>
                                 </td>
                                 <td>
-                                    <span class="gpio-badge" style="background: rgba(63,185,80,0.15); color: var(--color-success);">Capacitores X5R (16V/25V) + 10µF 50V</span><br>
-                                    <span style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Réplica C2918502 (10µF 50V)</span>
+                                    <span class="gpio-badge"
+                                        style="background: rgba(63,185,80,0.15); color: var(--color-success);">Capacitores
+                                        X5R (16V/25V) + 10µF 50V</span><br>
+                                    <span
+                                        style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">Réplica
+                                        C2918502 (10µF 50V)</span>
                                 </td>
                                 <td>
-                                    O dielétrico X7R é inviável no tamanho 1210 no mercado. Separamos a compra: usamos <strong>X5R (16V/25V)</strong> na saída de 5.4V do Buck e replicamos o capacitor <strong>C2918502 (10µF 50V)</strong> para blindar a entrada de 24V DC.
+                                    O dielétrico X7R é inviável no tamanho 1210 no mercado. Separamos a compra: usamos
+                                    <strong>X5R (16V/25V)</strong> na saída de 5.4V do Buck e replicamos o capacitor
+                                    <strong>C2918502 (10µF 50V)</strong> para blindar a entrada de 24V DC.
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>Resistor 4.7kΩ 0805</strong><br>
-                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Resistor de Precisão (C17673)</span>
+                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Resistor de Precisão
+                                        (C17673)</span>
                                 </td>
                                 <td>
-                                    <span class="gpio-badge" style="background: rgba(63,185,80,0.15); color: var(--color-success);">Genérico 4.7kΩ 1% 0805</span><br>
-                                    <span style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">LCSC High-Stock Option</span>
+                                    <span class="gpio-badge"
+                                        style="background: rgba(63,185,80,0.15); color: var(--color-success);">Genérico
+                                        4.7kΩ 1% 0805</span><br>
+                                    <span
+                                        style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">LCSC
+                                        High-Stock Option</span>
                                 </td>
                                 <td>
                                     Selecionada a opção de maior estoque na hora (precisão de 1% mantida).
@@ -1225,11 +1921,16 @@
                             <tr>
                                 <td>
                                     <strong>Resistor 33Ω 0603</strong><br>
-                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Resistor de Linha (C108661)</span>
+                                    <span style="color: var(--color-text-muted); font-size: .8rem;">Resistor de Linha
+                                        (C108661)</span>
                                 </td>
                                 <td>
-                                    <span class="gpio-badge" style="background: rgba(63,185,80,0.15); color: var(--color-success);">Genérico 33Ω 1% 0603</span><br>
-                                    <span style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">LCSC High-Stock Option</span>
+                                    <span class="gpio-badge"
+                                        style="background: rgba(63,185,80,0.15); color: var(--color-success);">Genérico
+                                        33Ω 1% 0603</span><br>
+                                    <span
+                                        style="font-family: var(--font-code); font-size: .78rem; color: var(--color-text-muted);">LCSC
+                                        High-Stock Option</span>
                                 </td>
                                 <td>
                                     Selecionada a opção de maior estoque na hora (precisão de 1% mantida).
@@ -1246,7 +1947,8 @@
         <!-- ═══════════════════ TESTES DE HARDWARE ═══════════════════ -->
         <div id="testes" class="section-block">
             <h2 class="section-title">🧪 Relatórios de Testes de Hardware</h2>
-            <p class="section-subtitle">Todos os testes de validação de hardware realizados na placa Rogue V4.1 — firmware compilado via PlatformIO (ESP-IDF + Arduino).</p>
+            <p class="section-subtitle">Todos os testes de validação de hardware realizados na placa Rogue V4.1 —
+                firmware compilado via PlatformIO (ESP-IDF + Arduino).</p>
 
             <!-- DASHBOARD -->
             <div class="dashboard-row">
@@ -1283,21 +1985,88 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>1</td><td>Comunicação Serial / Power</td><td>ESP32-S3 + CH340C</td><td><code>[env:EX_SERIAL]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>2</td><td>Tensão de Entrada V<sub>IN</sub> (24V Nom / 36V Máx)</td><td>ADC1 (GPIO 1) + Divisor</td><td><code>[env:EX_TENSAO_VIN]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>3</td><td>Módulo RTC (PCF8563)</td><td>PCF8563 + Bateria CR2032</td><td><code>[env:EX_RTC]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>4</td><td>Transdutores de Pressão</td><td>ADC1 (GPIO 5, 6, 7)</td><td><code>[env:EX_PRESSAO]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>5</td><td>Acionamento de Relés (CS2 - GPIO21)</td><td>74HC595D + ULN2803</td><td><code>[env:EX_RELES]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>6</td><td>Buzzer / Melodia</td><td>Canal 7 do 74HC595D</td><td><code>[env:EX_BUZZER]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>7</td><td>Entradas Optoacopladas (CS1 - GPIO14)</td><td>74HC165D (8 canais)</td><td><code>[env:EX_OPTO]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>8</td><td>Medição AC (PZEM-004T)</td><td>PZEM-004T v3.0 (Modbus)</td><td><code>[env:EX_PZEM]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>9</td><td>RS-485 Principal (S3)</td><td>THVD1450DR (TI)</td><td><code>[env:EX_RS485_S3]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
-                            <tr><td>10</td><td>RS-485 Auxiliar (C6)</td><td>MAX485 + ESP32-C6</td><td><code>[env:EX_RS485_C6]</code></td><td><span class="status-approved">APROVADO*</span></td></tr>
-                            <tr><td>11</td><td>Comunicação IHM + Relé</td><td>RS485 + 74HC595D</td><td><code>[env:EX_COMUNICACAO_IHM]</code></td><td><span class="status-approved">APROVADO</span></td></tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Comunicação Serial / Power</td>
+                                <td>ESP32-S3 + CH340C</td>
+                                <td><code>[env:EX_SERIAL]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Tensão de Entrada V<sub>IN</sub> (24V Nom / 36V Máx)</td>
+                                <td>ADC1 (GPIO 1) + Divisor</td>
+                                <td><code>[env:EX_TENSAO_VIN]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Módulo RTC (PCF8563)</td>
+                                <td>PCF8563 + Bateria CR2032</td>
+                                <td><code>[env:EX_RTC]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Transdutores de Pressão</td>
+                                <td>ADC1 (GPIO 5, 6, 7)</td>
+                                <td><code>[env:EX_PRESSAO]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Acionamento de Relés (CS2 - GPIO21)</td>
+                                <td>74HC595D + ULN2803</td>
+                                <td><code>[env:EX_RELES]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Buzzer / Melodia</td>
+                                <td>Canal 7 do 74HC595D</td>
+                                <td><code>[env:EX_BUZZER]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Entradas Optoacopladas (CS1 - GPIO14)</td>
+                                <td>74HC165D (8 canais)</td>
+                                <td><code>[env:EX_OPTO]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Medição AC (PZEM-004T)</td>
+                                <td>PZEM-004T v3.0 (Modbus)</td>
+                                <td><code>[env:EX_PZEM]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>RS-485 Principal (S3)</td>
+                                <td>THVD1450DR (TI)</td>
+                                <td><code>[env:EX_RS485_S3]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>RS-485 Auxiliar (C6)</td>
+                                <td>MAX485 + ESP32-C6</td>
+                                <td><code>[env:EX_RS485_C6]</code></td>
+                                <td><span class="status-approved">APROVADO*</span></td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>Comunicação IHM + Relé</td>
+                                <td>RS485 + 74HC595D</td>
+                                <td><code>[env:EX_COMUNICACAO_IHM]</code></td>
+                                <td><span class="status-approved">APROVADO</span></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-                <p style="color: var(--color-text-muted); font-size: .8rem; margin-top: 8px;">* Nota do Teste #10: Validação de código histórica. Placa v4.1 opera sem C6 auxiliar.</p>
+                <p style="color: var(--color-text-muted); font-size: .8rem; margin-top: 8px;">* Nota do Teste #10:
+                    Validação de código histórica. Placa v4.1 opera sem C6 auxiliar.</p>
             </div>
 
             <!-- ══════ ACCORDION: INDIVIDUAL TESTS ══════ -->
@@ -1308,7 +2077,8 @@
                     <div class="accordion-icon">📡</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #1 — Comunicação Serial / Power</div>
-                        <div class="accordion-desc">ESP32-S3 + CH340C — Validação de alimentação, soldagem e comunicação USB-UART</div>
+                        <div class="accordion-desc">ESP32-S3 + CH340C — Validação de alimentação, soldagem e comunicação
+                            USB-UART</div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -1317,15 +2087,20 @@
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware e Bibliotecas</h4>
                         <ul>
-                            <li><strong>Chip Conversor USB-UART:</strong> CH340C integrado na PCB para gravação de firmware e monitoramento serial.</li>
-                            <li><strong>Modificação de Estabilidade:</strong> Capacitores de 470µF substituídos por 47µF nas trilhas USB.</li>
-                            <li><strong>Comunicação Serial:</strong> USB CDC nativo do ESP32-S3 via build flags <code>ARDUINO_USB_MODE=1</code> e <code>ARDUINO_USB_CDC_ON_BOOT=1</code>.</li>
+                            <li><strong>Chip Conversor USB-UART:</strong> CH340C integrado na PCB para gravação de
+                                firmware e monitoramento serial.</li>
+                            <li><strong>Modificação de Estabilidade:</strong> Capacitores de 470µF substituídos por 47µF
+                                nas trilhas USB.</li>
+                            <li><strong>Comunicação Serial:</strong> USB CDC nativo do ESP32-S3 via build flags
+                                <code>ARDUINO_USB_MODE=1</code> e <code>ARDUINO_USB_CDC_ON_BOOT=1</code>.
+                            </li>
                             <li><strong>Velocidade:</strong> 115200 baud.</li>
                         </ul>
 
                         <h4>2. Configurações de Build (platformio.ini)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_SERIAL]
 build_src_filter = -<*> +<exemplos/SERIAL/>
 
@@ -1337,25 +2112,55 @@ build_flags =
 
                         <h4>3. O que foi feito</h4>
                         <ul>
-                            <li>Compilação e upload do código presente em <code>src/exemplos/SERIAL/main.cpp</code>.</li>
+                            <li>Compilação e upload do código presente em <code>src/exemplos/SERIAL/main.cpp</code>.
+                            </li>
                             <li>Abertura do Monitor Serial na velocidade de 115200 baud.</li>
-                            <li>Verificação do envio contínuo da string de teste (<code>"Dc Circuit labs - Teste de Serial"</code>) e verificação do comportamento elétrico da placa durante o envio.</li>
+                            <li>Verificação do envio contínuo da string de teste
+                                (<code>"Dc Circuit labs - Teste de Serial"</code>) e verificação do comportamento
+                                elétrico da placa durante o envio.</li>
                         </ul>
 
                         <h4>4. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Fonte de Alimentação</strong></td><td>As linhas de alimentação (3.3V e 5V) da PCB estão fornecendo energia estável ao ESP32-S3 e aos periféricos.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Soldagem do ESP32-S3</strong></td><td>A soldagem dos pads do módulo ESP32-S3 foi verificada e está 100% funcional.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Comunicação Serial via CH340C</strong></td><td>O chip conversor CH340C integrado converteu os dados USB-UART perfeitamente com capacitores ajustados de 47µF.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Comunicação Direta RX/TX (USB CDC)</strong></td><td>A comunicação serial direta pelos pinos RX/TX integrados foi validada graças às build_flags no platformio.ini.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Fonte de Alimentação</strong></td>
+                                    <td>As linhas de alimentação (3.3V e 5V) da PCB estão fornecendo energia estável ao
+                                        ESP32-S3 e aos periféricos.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Soldagem do ESP32-S3</strong></td>
+                                    <td>A soldagem dos pads do módulo ESP32-S3 foi verificada e está 100% funcional.
+                                    </td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Comunicação Serial via CH340C</strong></td>
+                                    <td>O chip conversor CH340C integrado converteu os dados USB-UART perfeitamente com
+                                        capacitores ajustados de 47µF.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Comunicação Direta RX/TX (USB CDC)</strong></td>
+                                    <td>A comunicação serial direta pelos pinos RX/TX integrados foi validada graças às
+                                        build_flags no platformio.ini.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>5. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — SERIAL/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — SERIAL/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 int myFunction(int, int);
@@ -1386,8 +2191,10 @@ int myFunction(int x, int y)
                 <div class="accordion-header" onclick="toggleAccordion(this)">
                     <div class="accordion-icon">⚡</div>
                     <div class="accordion-info">
-                        <div class="accordion-title">Teste #2 — Tensão de Entrada V<sub>IN</sub> (24V Nominal / máx 36V Pico)</div>
-                        <div class="accordion-desc">ADC1 (GPIO 1) — Divisor de tensão resistivo + modo Alta Impedância (Hi-Z)</div>
+                        <div class="accordion-title">Teste #2 — Tensão de Entrada V<sub>IN</sub> (24V Nominal / máx 36V
+                            Pico)</div>
+                        <div class="accordion-desc">ADC1 (GPIO 1) — Divisor de tensão resistivo + modo Alta Impedância
+                            (Hi-Z)</div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -1396,14 +2203,18 @@ int myFunction(int x, int y)
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
-                            <li><strong>Circuito:</strong> Divisor de Tensão Resistivo integrado na PCB, projetado para adequar a tensão nominal de 24V DC (pico máximo de até 36.0V DC) para 0.0V a 3.3V DC no pino do ESP32.</li>
+                            <li><strong>Circuito:</strong> Divisor de Tensão Resistivo integrado na PCB, projetado para
+                                adequar a tensão nominal de 24V DC (pico máximo de até 36.0V DC) para 0.0V a 3.3V DC no
+                                pino do ESP32.</li>
                             <li><strong>Interface:</strong> ADC1 do ESP32-S3 — Pino <code>GPIO 1</code> (ADC1_CH0).</li>
-                            <li><strong>Bibliotecas:</strong> <code>Arduino.h</code>, <code>driver/gpio.h</code> (para desativação de pull-up/pull-down).</li>
+                            <li><strong>Bibliotecas:</strong> <code>Arduino.h</code>, <code>driver/gpio.h</code> (para
+                                desativação de pull-up/pull-down).</li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_TENSAO_VIN]
 build_src_filter = -<*> +<exemplos/TENSAO_VIN/></code></pre>
                         </div>
@@ -1411,26 +2222,55 @@ build_src_filter = -<*> +<exemplos/TENSAO_VIN/></code></pre>
                         <h4>3. O que foi feito</h4>
                         <ul>
                             <li>Configuração do ADC em 12 bits (0 a 4095) e atenuação de 11dB (0 a 3.3V no GPIO1).</li>
-                            <li>Configuração do pino em Alta Impedância (Hi-Z) com <code>gpio_pullup_dis()</code> e <code>gpio_pulldown_dis()</code>.</li>
+                            <li>Configuração do pino em Alta Impedância (Hi-Z) com <code>gpio_pullup_dis()</code> e
+                                <code>gpio_pulldown_dis()</code>.
+                            </li>
                             <li>Aplicação de filtro por média móvel (16 amostras).</li>
                             <li>Exibição periódica (1s) da Tensão V<sub>IN</sub> com escala ajustada.</li>
                         </ul>
 
                         <h4>4. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Canal ADC GPIO 1</strong></td><td>Resposta e sensibilidade do bloco ADC no pino GPIO1 validadas.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Divisor de Tensão (36V Pico → 3.3V)</strong></td><td>Atenuação correta sem saturação.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Precisão e Escala (24V Nominal / 36V Max)</strong></td><td>Mapeamento ADC → range real correto.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Modo Hi-Z</strong></td><td>Desativação de pull-up/pull-down protegendo o divisor.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Filtragem de Ruído</strong></td><td>Leitura estável sem flutuações.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Canal ADC GPIO 1</strong></td>
+                                    <td>Resposta e sensibilidade do bloco ADC no pino GPIO1 validadas.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Divisor de Tensão (36V Pico → 3.3V)</strong></td>
+                                    <td>Atenuação correta sem saturação.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Precisão e Escala (24V Nominal / 36V Max)</strong></td>
+                                    <td>Mapeamento ADC → range real correto.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Modo Hi-Z</strong></td>
+                                    <td>Desativação de pull-up/pull-down protegendo o divisor.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Filtragem de Ruído</strong></td>
+                                    <td>Leitura estável sem flutuações.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>5. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — TENSAO_VIN/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — TENSAO_VIN/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 #define PIN_TENSAO_VIN 1
@@ -1489,7 +2329,8 @@ void loop()
                     <div class="accordion-icon">🕐</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #3 — Módulo RTC (PCF8563)</div>
-                        <div class="accordion-desc">I2C (GPIO 8/9) — Relógio em tempo real com bateria de backup CR2032</div>
+                        <div class="accordion-desc">I2C (GPIO 8/9) — Relógio em tempo real com bateria de backup CR2032
+                        </div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -1498,15 +2339,18 @@ void loop()
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
-                            <li><strong>Chip RTC:</strong> PCF8563 (NXP) — Relógio/Calendário de ultra-baixo consumo com I2C.</li>
+                            <li><strong>Chip RTC:</strong> PCF8563 (NXP) — Relógio/Calendário de ultra-baixo consumo com
+                                I2C.</li>
                             <li><strong>Pinos I2C:</strong> SDA = <code>GPIO 8</code>, SCL = <code>GPIO 9</code>.</li>
-                            <li><strong>Alimentação de Backup:</strong> Bateria CR2032 conectada ao pino V<sub>BAT</sub>.</li>
+                            <li><strong>Alimentação de Backup:</strong> Bateria CR2032 conectada ao pino
+                                V<sub>BAT</sub>.</li>
                             <li><strong>Biblioteca:</strong> <code>RTClib</code> (Adafruit, v2.1.1).</li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_RTC]
 build_src_filter = -<*> +<exemplos/RTC/>
 lib_deps = adafruit/RTClib @ ^2.1.1</code></pre>
@@ -1522,17 +2366,36 @@ lib_deps = adafruit/RTClib @ ^2.1.1</code></pre>
 
                         <h4>4. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Chip PCF8563</strong></td><td>Respondeu no I2C, registradores lidos/escritos sem erros.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Trilhas I2C e Soldagem</strong></td><td>SDA, SCL e resistores de pull-up validados.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Bateria Externa do RTC</strong></td><td>Após desligar e religar, o RTC manteve a hora correta.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Chip PCF8563</strong></td>
+                                    <td>Respondeu no I2C, registradores lidos/escritos sem erros.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Trilhas I2C e Soldagem</strong></td>
+                                    <td>SDA, SCL e resistores de pull-up validados.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bateria Externa do RTC</strong></td>
+                                    <td>Após desligar e religar, o RTC manteve a hora correta.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>5. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — RTC/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — RTC/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 #include &lt;Wire.h&gt;
 #include &lt;RTClib.h&gt;
@@ -1581,7 +2444,8 @@ void loop()
                     <div class="accordion-icon">🌡️</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #4 — Transdutores de Pressão (3 Canais)</div>
-                        <div class="accordion-desc">ADC1 (GPIO 5, 6, 7) — Leitura analógica 0-5V com atenuação para 3.3V</div>
+                        <div class="accordion-desc">ADC1 (GPIO 5, 6, 7) — Leitura analógica 0-5V com atenuação para 3.3V
+                        </div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -1591,31 +2455,57 @@ void loop()
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
                             <li><strong>Sensores:</strong> Transdutores de Pressão Analógicos (saída 0.0V a 5.0V).</li>
-                            <li><strong>Pinos:</strong> Transdutor 1 = <code>GPIO 5</code> (ADC1_CH4), Transdutor 2 = <code>GPIO 6</code> (ADC1_CH5), Transdutor 3 = <code>GPIO 7</code> (ADC1_CH6).</li>
+                            <li><strong>Pinos:</strong> Transdutor 1 = <code>GPIO 5</code> (ADC1_CH4), Transdutor 2 =
+                                <code>GPIO 6</code> (ADC1_CH5), Transdutor 3 = <code>GPIO 7</code> (ADC1_CH6).
+                            </li>
                             <li><strong>Condicionamento:</strong> Divisores de tensão na PCB (5V → 3.3V).</li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_PRESSAO]
 build_src_filter = -<*> +<exemplos/PRESSAO/></code></pre>
                         </div>
 
                         <h4>3. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Canais ADC (GPIO5, 6, 7)</strong></td><td>Funcionamento do bloco ADC1 e resposta à variação de sinal.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Divisores de Tensão</strong></td><td>Conversão 5V → 3.3V sem sobretensão.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Escala (0.0V — 5.0V)</strong></td><td>Reescalonamento matemático correto.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Filtragem de Sinal</strong></td><td>Leituras estáveis sem oscilações bruscas.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Canais ADC (GPIO5, 6, 7)</strong></td>
+                                    <td>Funcionamento do bloco ADC1 e resposta à variação de sinal.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Divisores de Tensão</strong></td>
+                                    <td>Conversão 5V → 3.3V sem sobretensão.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Escala (0.0V — 5.0V)</strong></td>
+                                    <td>Reescalonamento matemático correto.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Filtragem de Sinal</strong></td>
+                                    <td>Leituras estáveis sem oscilações bruscas.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>4. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — PRESSAO/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — PRESSAO/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 #define PIN_PRESSAO_1 5
@@ -1680,7 +2570,8 @@ void loop()
                     <div class="accordion-icon">🔌</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #5 — Acionamento de Relés (7 canais - SPI CS2)</div>
-                        <div class="accordion-desc">74HC595D (Shift Register) + ULN2803 — CS2 (GPIO 21), CLOCK (GPIO 12), MOSI (GPIO 11)</div>
+                        <div class="accordion-desc">74HC595D (Shift Register) + ULN2803 — CS2 (GPIO 21), CLOCK (GPIO
+                            12), MOSI (GPIO 11)</div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -1689,33 +2580,63 @@ void loop()
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
-                            <li><strong>Registrador de Deslocamento:</strong> 74HC595D — 8 bits, entrada serial e saída paralela com latch.</li>
-                            <li><strong>Driver de Potência:</strong> ULN2803 — Array de 8 transistores Darlington NPN com diodos flyback integrados.</li>
-                            <li><strong>Pinos SPI:</strong> CS2 (Latch) = <code>GPIO 21</code>, CLOCK = <code>GPIO 12</code>, MOSI = <code>GPIO 11</code>.</li>
-                            <li><strong>Nota de Boot:</strong> Comportamento residual de acionamento rápido no start-up minimizado no firmware.</li>
+                            <li><strong>Registrador de Deslocamento:</strong> 74HC595D — 8 bits, entrada serial e saída
+                                paralela com latch.</li>
+                            <li><strong>Driver de Potência:</strong> ULN2803 — Array de 8 transistores Darlington NPN
+                                com diodos flyback integrados.</li>
+                            <li><strong>Pinos SPI:</strong> CS2 (Latch) = <code>GPIO 21</code>, CLOCK =
+                                <code>GPIO 12</code>, MOSI = <code>GPIO 11</code>.
+                            </li>
+                            <li><strong>Nota de Boot:</strong> Comportamento residual de acionamento rápido no start-up
+                                minimizado no firmware.</li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_RELES]
 build_src_filter = -<*> +<exemplos/RELES/></code></pre>
                         </div>
 
                         <h4>3. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Shift Register 74HC595D</strong></td><td>Comunicação SPI/ShiftOut sem perda de bits ou glitches.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Driver ULN2803</strong></td><td>Chaveamento correto das saídas Darlington alimentando as bobinas dos relés.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Relés de Potência</strong></td><td>Resposta mecânica (clique sonoro) e comutação sequencial individual validadas.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Diodos Flyback</strong></td><td>Absorção de surtos de tensão de desenergização das bobinas.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Shift Register 74HC595D</strong></td>
+                                    <td>Comunicação SPI/ShiftOut sem perda de bits ou glitches.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Driver ULN2803</strong></td>
+                                    <td>Chaveamento correto das saídas Darlington alimentando as bobinas dos relés.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Relés de Potência</strong></td>
+                                    <td>Resposta mecânica (clique sonoro) e comutação sequencial individual validadas.
+                                    </td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Diodos Flyback</strong></td>
+                                    <td>Absorção de surtos de tensão de desenergização das bobinas.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>4. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — RELES/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — RELES/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 #define PIN_CS2_LATCH 21 // SPI CS2 - Relés
@@ -1779,7 +2700,8 @@ void loop()
                     <div class="accordion-icon">🔊</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #6 — Buzzer / Melodia (Marcha Imperial)</div>
-                        <div class="accordion-desc">Canal 7 do 74HC595D + ULN2803 — Geração de frequências por software</div>
+                        <div class="accordion-desc">Canal 7 do 74HC595D + ULN2803 — Geração de frequências por software
+                        </div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -1788,37 +2710,61 @@ void loop()
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
-                            <li><strong>Transdutor:</strong> Buzzer Piezoelétrico/Magnético conectado ao Canal 7 (Q6 / Bit 6) do 74HC595D.</li>
+                            <li><strong>Transdutor:</strong> Buzzer Piezoelétrico/Magnético conectado ao Canal 7 (Q6 /
+                                Bit 6) do 74HC595D.</li>
                             <li><strong>Driver:</strong> ULN2803 — chaveamento de alta velocidade.</li>
-                            <li><strong>Método:</strong> Geração de onda quadrada por software via <code>delayMicroseconds</code>.</li>
+                            <li><strong>Método:</strong> Geração de onda quadrada por software via
+                                <code>delayMicroseconds</code>.
+                            </li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_BUZZER]
 build_src_filter = -<*> +<exemplos/BUZZER/></code></pre>
                         </div>
 
                         <h4>3. O que foi feito</h4>
                         <ul>
-                            <li>Mapeamento das frequências das notas musicais (4ª e 5ª oitavas): G4, Eb4, Bb4, D5, Eb5, F#4, G5, F5.</li>
+                            <li>Mapeamento das frequências das notas musicais (4ª e 5ª oitavas): G4, Eb4, Bb4, D5, Eb5,
+                                F#4, G5, F5.</li>
                             <li>Síntese da melodia da Marcha Imperial de Star Wars (Tema de Darth Vader).</li>
                         </ul>
 
                         <h4>4. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Geração de Frequência via Shift Register</strong></td><td>Modulação por software produzindo frequências audíveis corretas.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Driver ULN2803 (Canal 7)</strong></td><td>Chaveamento de alta velocidade sem atenuar o tom.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Qualidade Acústica</strong></td><td>Execução da melodia com separação clara de notas e ritmo.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Geração de Frequência via Shift Register</strong></td>
+                                    <td>Modulação por software produzindo frequências audíveis corretas.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Driver ULN2803 (Canal 7)</strong></td>
+                                    <td>Chaveamento de alta velocidade sem atenuar o tom.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Qualidade Acústica</strong></td>
+                                    <td>Execução da melodia com separação clara de notas e ritmo.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>5. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — BUZZER/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — BUZZER/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 #define PIN_CS2_LATCH 21
@@ -1908,31 +2854,56 @@ void loop()
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
-                            <li><strong>CI Leitor:</strong> 74HC165D — Registrador Parallel-In / Serial-Out de 8 bits.</li>
-                            <li><strong>Pinos SPI:</strong> CS1 (Load) = <code>GPIO 14</code>, CLOCK = <code>GPIO 12</code>, MISO = <code>GPIO 13</code>.</li>
-                            <li><strong>Função:</strong> Monitoramento de 8 entradas digitais isoladas opticamente (sinalização 24V DC conforme OPTO+.png).</li>
+                            <li><strong>CI Leitor:</strong> 74HC165D — Registrador Parallel-In / Serial-Out de 8 bits.
+                            </li>
+                            <li><strong>Pinos SPI:</strong> CS1 (Load) = <code>GPIO 14</code>, CLOCK =
+                                <code>GPIO 12</code>, MISO = <code>GPIO 13</code>.
+                            </li>
+                            <li><strong>Função:</strong> Monitoramento de 8 entradas digitais isoladas opticamente
+                                (sinalização 24V DC conforme OPTO+.png).</li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_OPTO]
 build_src_filter = -<*> +<exemplos/OPTO/></code></pre>
                         </div>
 
                         <h4>3. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>CI 74HC165D</strong></td><td>Captura paralela e deserialização de 8 bits validada.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Trilhas SPI (CS1, CLOCK, MISO)</strong></td><td>Roteamento GPIO14 (CS1), GPIO12 (CLOCK), GPIO13 (MISO) validado sem interferência.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Optoacopladores</strong></td><td>Resposta às variações de sinal 24V com isolamento galvânico funcional.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>CI 74HC165D</strong></td>
+                                    <td>Captura paralela e deserialização de 8 bits validada.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Trilhas SPI (CS1, CLOCK, MISO)</strong></td>
+                                    <td>Roteamento GPIO14 (CS1), GPIO12 (CLOCK), GPIO13 (MISO) validado sem
+                                        interferência.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Optoacopladores</strong></td>
+                                    <td>Resposta às variações de sinal 24V com isolamento galvânico funcional.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>4. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — OPTO/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — OPTO/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 #define PIN_CS1_OPTO 14 // SPI CS1 - Opto
@@ -1989,7 +2960,8 @@ void loop()
                     <div class="accordion-icon">🔋</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #8 — Medição de Energia AC (PZEM-004T v3.0)</div>
-                        <div class="accordion-desc">UART2 (GPIO 15/16) — Modbus-RTU: Tensão, Corrente, Potência, Energia, Frequência, FP</div>
+                        <div class="accordion-desc">UART2 (GPIO 15/16) — Modbus-RTU: Tensão, Corrente, Potência,
+                            Energia, Frequência, FP</div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -1999,15 +2971,20 @@ void loop()
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
                             <li><strong>Módulo:</strong> PZEM-004T v3.0 (Peacefair) — Medição AC multifuncional.</li>
-                            <li><strong>Protocolo:</strong> Modbus-RTU sobre UART serial TTL (com isolamento por optoacopladores).</li>
-                            <li><strong>Pinos:</strong> RX2 = <code>GPIO 16</code> (→ TX do PZEM), TX2 = <code>GPIO 15</code> (→ RX do PZEM).</li>
-                            <li><strong>Alimentação:</strong> 5V DC da PCB para lógica TTL + Tensão AC (80V ~ 260V AC) nos bornes.</li>
+                            <li><strong>Protocolo:</strong> Modbus-RTU sobre UART serial TTL (com isolamento por
+                                optoacopladores).</li>
+                            <li><strong>Pinos:</strong> RX2 = <code>GPIO 16</code> (→ TX do PZEM), TX2 =
+                                <code>GPIO 15</code> (→ RX do PZEM).
+                            </li>
+                            <li><strong>Alimentação:</strong> 5V DC da PCB para lógica TTL + Tensão AC (80V ~ 260V AC)
+                                nos bornes.</li>
                             <li><strong>Biblioteca:</strong> <code>mandulaj/PZEM-004T-v30 @ ^1.1.2</code>.</li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_PZEM]
 build_src_filter = -<*> +<exemplos/PZEM/>
 lib_deps = mandulaj/PZEM-004T-v30 @ ^1.1.2</code></pre>
@@ -2021,18 +2998,41 @@ lib_deps = mandulaj/PZEM-004T-v30 @ ^1.1.2</code></pre>
 
                         <h4>4. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Funcionamento do PZEM-004T</strong></td><td>Respondeu aos comandos Modbus-RTU e retornou dados de medição.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Mapeamento RX2/TX2</strong></td><td>Trilhas GPIO16 (RX2) e GPIO15 (TX2) da PCB validadas.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Alimentação 5V DC</strong></td><td>Regulador de 5V DC da PCB forneceu energia estável para o PZEM.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Isolamento e Sinal TTL</strong></td><td>Transmissão/recepção via optoacopladores sem corrupção de pacote.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Funcionamento do PZEM-004T</strong></td>
+                                    <td>Respondeu aos comandos Modbus-RTU e retornou dados de medição.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mapeamento RX2/TX2</strong></td>
+                                    <td>Trilhas GPIO16 (RX2) e GPIO15 (TX2) da PCB validadas.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Alimentação 5V DC</strong></td>
+                                    <td>Regulador de 5V DC da PCB forneceu energia estável para o PZEM.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Isolamento e Sinal TTL</strong></td>
+                                    <td>Transmissão/recepção via optoacopladores sem corrupção de pacote.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>5. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — PZEM/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — PZEM/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 #include &lt;PZEM004Tv30.h&gt;
 
@@ -2082,7 +3082,8 @@ void loop()
                     <div class="accordion-icon">🔀</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #9 — RS-485 Principal (ESP32-S3 / THVD1450DR)</div>
-                        <div class="accordion-desc">UART1 (GPIO 40/41/42) — Comunicação industrial Half-Duplex @ 9600 bps</div>
+                        <div class="accordion-desc">UART1 (GPIO 40/41/42) — Comunicação industrial Half-Duplex @ 9600
+                            bps</div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -2091,32 +3092,58 @@ void loop()
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
-                            <li><strong>Transceiver:</strong> THVD1450DR (Texas Instruments) — RS-485/RS-422 Half-Duplex com alta imunidade a ruídos.</li>
-                            <li><strong>Pinos:</strong> R (RX) = <code>GPIO 41</code>, D (TX) = <code>GPIO 42</code>, RE/DE = <code>GPIO 40</code>.</li>
+                            <li><strong>Transceiver:</strong> THVD1450DR (Texas Instruments) — RS-485/RS-422 Half-Duplex
+                                com alta imunidade a ruídos.</li>
+                            <li><strong>Pinos:</strong> R (RX) = <code>GPIO 41</code>, D (TX) = <code>GPIO 42</code>,
+                                RE/DE = <code>GPIO 40</code>.</li>
                             <li><strong>Baud Rate:</strong> 9600 bps, 8N1.</li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_RS485_S3]
 build_src_filter = -<*> +<exemplos/RS485_S3/></code></pre>
                         </div>
 
                         <h4>3. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Transceiver THVD1450DR</strong></td><td>Conversão TTL ↔ diferencial RS-485 com alta imunidade a ruídos.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>GPIOs (R=41, RE/DE=40, D=42)</strong></td><td>Roteamento das trilhas físicas de RX, TX e controle de direção.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Comunicação Bidirecional</strong></td><td>Recepção de pacotes e envio de confirmação (PONG).</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Controle Half-Duplex</strong></td><td>Chaveamento RE/DE sem travamento ou colisão de dados.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Transceiver THVD1450DR</strong></td>
+                                    <td>Conversão TTL ↔ diferencial RS-485 com alta imunidade a ruídos.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>GPIOs (R=41, RE/DE=40, D=42)</strong></td>
+                                    <td>Roteamento das trilhas físicas de RX, TX e controle de direção.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Comunicação Bidirecional</strong></td>
+                                    <td>Recepção de pacotes e envio de confirmação (PONG).</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Controle Half-Duplex</strong></td>
+                                    <td>Chaveamento RE/DE sem travamento ou colisão de dados.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>4. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — RS485_S3/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — RS485_S3/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 #define PIN_RS485_R     41
@@ -2175,7 +3202,8 @@ void loop()
                     <div class="accordion-icon">🔁</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #10 — RS-485 Auxiliar (ESP32-C6 / MAX485)</div>
-                        <div class="accordion-desc">UART1 (GPIO 11/12/13) — [Validação de Firmware Mantida como Histórico - Placa V4.1 produzida sem C6 auxiliar]</div>
+                        <div class="accordion-desc">UART1 (GPIO 11/12/13) — [Validação de Firmware Mantida como
+                            Histórico - Placa V4.1 produzida sem C6 auxiliar]</div>
                     </div>
                     <span class="status-approved">APROVADO*</span>
                     <div class="accordion-chevron">▼</div>
@@ -2184,16 +3212,20 @@ void loop()
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
-                            <li><strong>Nota Importante:</strong> Nesta revisão de hardware, a placa opera <strong>sem o C6 auxiliar</strong>. A documentação deste teste é mantida como referência de firmware.</li>
+                            <li><strong>Nota Importante:</strong> Nesta revisão de hardware, a placa opera <strong>sem o
+                                    C6 auxiliar</strong>. A documentação deste teste é mantida como referência de
+                                firmware.</li>
                             <li><strong>Microcontrolador:</strong> ESP32-C6 (RISC-V 32-bit).</li>
                             <li><strong>Transceiver:</strong> MAX485 — Conversor TTL ↔ RS-485 Half-Duplex.</li>
-                            <li><strong>Pinos:</strong> RO (RX) = <code>GPIO 11</code>, DI (TX) = <code>GPIO 12</code>, DE/RE = <code>GPIO 13</code>.</li>
+                            <li><strong>Pinos:</strong> RO (RX) = <code>GPIO 11</code>, DI (TX) = <code>GPIO 12</code>,
+                                DE/RE = <code>GPIO 13</code>.</li>
                             <li><strong>Baud Rate:</strong> 9600 bps, 8N1.</li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_RS485_C6]
 platform = https://github.com/pioarduino/platform-espressif32.git
 board = esp32-c6-devkitm-1
@@ -2203,18 +3235,42 @@ build_src_filter = -<*> +<exemplos/RS485_C6/></code></pre>
 
                         <h4>3. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>ESP32-C6 (Firmware)</strong></td><td>Operação do firmware RISC-V e alocação dos periféricos UART1 validada em bancada anterior.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>CI MAX485</strong></td><td>Conversão TTL → diferencial A/B no barramento RS-485.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Controle Half-Duplex (GPIO13)</strong></td><td>Comutação HIGH/LOW sem colisão ou perda de pacotes.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Linhas RO/DI (GPIO11/GPIO12)</strong></td><td>TX e RX pela UART1 validadas a 9600 bps.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>ESP32-C6 (Firmware)</strong></td>
+                                    <td>Operação do firmware RISC-V e alocação dos periféricos UART1 validada em bancada
+                                        anterior.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CI MAX485</strong></td>
+                                    <td>Conversão TTL → diferencial A/B no barramento RS-485.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Controle Half-Duplex (GPIO13)</strong></td>
+                                    <td>Comutação HIGH/LOW sem colisão ou perda de pacotes.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Linhas RO/DI (GPIO11/GPIO12)</strong></td>
+                                    <td>TX e RX pela UART1 validadas a 9600 bps.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>4. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — RS485_C6/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ — RS485_C6/main.cpp</span><button
+                                    class="code-copy" onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 #define PIN_RS485_RO    11
@@ -2278,7 +3334,8 @@ void loop()
                     <div class="accordion-icon">🖥️</div>
                     <div class="accordion-info">
                         <div class="accordion-title">Teste #11 — Comunicação IHM + Controle de Relé</div>
-                        <div class="accordion-desc">RS485 (THVD1450DR) + 74HC595D (CS2) — Envio periódico de telemetria + comando de relé remoto</div>
+                        <div class="accordion-desc">RS485 (THVD1450DR) + 74HC595D (CS2) — Envio periódico de telemetria
+                            + comando de relé remoto</div>
                     </div>
                     <span class="status-approved">APROVADO</span>
                     <div class="accordion-chevron">▼</div>
@@ -2287,32 +3344,63 @@ void loop()
                     <div class="accordion-content">
                         <h4>1. Contexto de Hardware</h4>
                         <ul>
-                            <li><strong>Transceiver RS485:</strong> THVD1450DR (TI) — R = <code>GPIO 41</code>, D = <code>GPIO 42</code>, RE/DE = <code>GPIO 40</code>.</li>
-                            <li><strong>Controle de Relés:</strong> 74HC595D + ULN2803 — CS2 (Latch) = <code>GPIO 21</code>, Clock = <code>GPIO 12</code>, MOSI = <code>GPIO 11</code>.</li>
-                            <li><strong>Lógica:</strong> Envio de número sequencial a cada 20s via RS485. Recepção de <code>CMD:RELE1_TOGGLE</code> para alternar Relé 1.</li>
+                            <li><strong>Transceiver RS485:</strong> THVD1450DR (TI) — R = <code>GPIO 41</code>, D =
+                                <code>GPIO 42</code>, RE/DE = <code>GPIO 40</code>.
+                            </li>
+                            <li><strong>Controle de Relés:</strong> 74HC595D + ULN2803 — CS2 (Latch) =
+                                <code>GPIO 21</code>, Clock = <code>GPIO 12</code>, MOSI = <code>GPIO 11</code>.
+                            </li>
+                            <li><strong>Lógica:</strong> Envio de número sequencial a cada 20s via RS485. Recepção de
+                                <code>CMD:RELE1_TOGGLE</code> para alternar Relé 1.
+                            </li>
                         </ul>
 
                         <h4>2. Configurações de Build</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">ini</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>[env:EX_COMUNICACAO_IHM]
 build_src_filter = -<*> +<exemplos/COMUNICACAO_IHM/></code></pre>
                         </div>
 
                         <h4>3. Resultados de Hardware</h4>
                         <table>
-                            <thead><tr><th>Item Validado</th><th>Descrição</th><th>Status</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Item Validado</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td><strong>Transceiver THVD1450DR</strong></td><td>Habilitação de RE/DE (GPIO 40) e integridade dos dados.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Shift Register 74HC595D (CS2)</strong></td><td>Deslocamento de bits para acionamento individual do Relé 1 (Bit 0).</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Driver ULN2803</strong></td><td>Chaveamento sem afetar a estabilidade do ESP32-S3.</td><td><span class="status-approved">APROVADO</span></td></tr>
-                                <tr><td><strong>Temporizador 20s</strong></td><td>Envio periódico via millis() preciso e não-bloqueante.</td><td><span class="status-approved">APROVADO</span></td></tr>
+                                <tr>
+                                    <td><strong>Transceiver THVD1450DR</strong></td>
+                                    <td>Habilitação de RE/DE (GPIO 40) e integridade dos dados.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Shift Register 74HC595D (CS2)</strong></td>
+                                    <td>Deslocamento de bits para acionamento individual do Relé 1 (Bit 0).</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Driver ULN2803</strong></td>
+                                    <td>Chaveamento sem afetar a estabilidade do ESP32-S3.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Temporizador 20s</strong></td>
+                                    <td>Envio periódico via millis() preciso e não-bloqueante.</td>
+                                    <td><span class="status-approved">APROVADO</span></td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <h4>4. Código Fonte (main.cpp)</h4>
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">C++ — COMUNICACAO_IHM/main.cpp</span><button class="code-copy" onclick="copyCode(this)">Copiar</button></div>
+                            <div class="code-header"><span class="code-lang">C++ —
+                                    COMUNICACAO_IHM/main.cpp</span><button class="code-copy"
+                                    onclick="copyCode(this)">Copiar</button></div>
                             <pre><code>#include &lt;Arduino.h&gt;
 
 // RS485 (THVD1450DR)
@@ -2406,11 +3494,47 @@ void loop()
 
     </main>
 
-    <!-- LIGHTBOX MODAL PARA IMAGENS -->
-    <div id="imgModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); align-items: center; justify-content: center; flex-direction: column; padding: 20px; animation: fadeIn .2s ease-in-out;">
-        <span style="position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: color .2s;" onclick="closeImageModal()" onmouseover="this.style.color='#007BFF'" onmouseout="this.style.color='#fff'">&times;</span>
-        <img id="modalImg" style="max-width: 92%; max-height: 82vh; border-radius: 8px; border: 1px solid var(--color-border); box-shadow: 0 10px 30px rgba(0,0,0,0.8);" src="" alt="">
-        <div id="modalCaption" style="color: var(--color-white); margin-top: 18px; font-weight: 600; font-size: 1.05rem; text-align: center;"></div>
+    <!-- LIGHTBOX MODAL INTERATIVO COM ZOOM E PAN -->
+    <div id="imgModal"
+        style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.94); align-items: center; justify-content: center; flex-direction: column; padding: 20px; animation: fadeIn .2s ease-in-out; user-select: none;">
+
+        <!-- Botão Fechar -->
+        <span
+            style="position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: color .2s; z-index: 1010;"
+            onclick="closeImageModal()" onmouseover="this.style.color='#007BFF'"
+            onmouseout="this.style.color='#fff'">&times;</span>
+
+        <!-- Toolbar de Controles de Zoom -->
+        <div
+            style="position: absolute; top: 20px; display: flex; align-items: center; gap: 10px; background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 30px; border: 1px solid var(--color-border); z-index: 1005;">
+            <button onclick="zoomInModal()" title="Aumentar Zoom (+)"
+                style="background: rgba(0,123,255,0.2); border: 1px solid rgba(0,123,255,0.4); color: var(--color-blue-electric); padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;">🔍+
+                Zoom In</button>
+            <button onclick="zoomOutModal()" title="Diminuir Zoom (-)"
+                style="background: rgba(255,255,255,0.1); border: 1px solid var(--color-border); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;">🔍-
+                Zoom Out</button>
+            <span id="modalZoomBadge"
+                style="font-family: var(--font-code); font-size: 0.85rem; color: var(--color-text-muted); font-weight: 600; padding: 4px 8px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid var(--color-border);">100%</span>
+            <button onclick="resetModalZoom()" title="Resetar Zoom (100%)"
+                style="background: rgba(255,255,255,0.1); border: 1px solid var(--color-border); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.82rem; cursor: pointer;">🔄
+                Reset</button>
+        </div>
+
+        <!-- Container da Imagem com Overflow para Drag -->
+        <div id="modalImgContainer"
+            style="width: 92%; height: 75vh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; margin-top: 40px; border-radius: 8px;">
+            <img id="modalImg"
+                style="max-width: 100%; max-height: 100%; border-radius: 8px; border: 1px solid var(--color-border); box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: transform 0.1s ease-out; cursor: zoom-in;"
+                src="" alt="">
+        </div>
+
+        <!-- Legenda e Dica de Uso -->
+        <div style="margin-top: 14px; text-align: center; z-index: 1005;">
+            <div id="modalCaption" style="color: var(--color-white); font-weight: 700; font-size: 1.05rem;"></div>
+            <div style="color: var(--color-text-muted); font-size: 0.8rem; margin-top: 4px; font-weight: 500;">💡 Use a
+                roda do mouse para dar zoom. Arraste a imagem para navegar quando ampliada. Clique duplo para alternar
+                zoom.</div>
+        </div>
     </div>
 
     <footer>
@@ -2435,11 +3559,50 @@ void loop()
             });
         }
 
-        // Image Modal Lightbox
+        // --- INTERACTIVE ZOOM & PAN LIGHTBOX MODAL ---
+        let currentZoom = 1;
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let translateX = 0, translateY = 0;
+
+        function updateModalTransform() {
+            const modalImg = document.getElementById('modalImg');
+            const zoomBadge = document.getElementById('modalZoomBadge');
+            if (modalImg) {
+                modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+                modalImg.style.cursor = currentZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in';
+            }
+            if (zoomBadge) {
+                zoomBadge.textContent = `${Math.round(currentZoom * 100)}%`;
+            }
+        }
+
+        function zoomInModal() {
+            currentZoom = Math.min(currentZoom + 0.3, 5);
+            updateModalTransform();
+        }
+
+        function zoomOutModal() {
+            currentZoom = Math.max(currentZoom - 0.3, 0.5);
+            if (currentZoom <= 1) {
+                translateX = 0;
+                translateY = 0;
+            }
+            updateModalTransform();
+        }
+
+        function resetModalZoom() {
+            currentZoom = 1;
+            translateX = 0;
+            translateY = 0;
+            updateModalTransform();
+        }
+
         function openImageModal(src, caption) {
             const modal = document.getElementById('imgModal');
             const modalImg = document.getElementById('modalImg');
             const modalCaption = document.getElementById('modalCaption');
+            resetModalZoom();
             modal.style.display = 'flex';
             modalImg.src = src;
             modalCaption.textContent = caption;
@@ -2447,11 +3610,87 @@ void loop()
 
         function closeImageModal() {
             document.getElementById('imgModal').style.display = 'none';
+            resetModalZoom();
         }
 
-        // Fechar modal ao clicar fora da imagem
-        document.getElementById('imgModal').addEventListener('click', function(e) {
-            if (e.target === this) {
+        // Event Listeners for Modal Interaction
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalImg = document.getElementById('modalImg');
+            const modalContainer = document.getElementById('modalImgContainer');
+
+            if (modalImg && modalContainer) {
+                // Mouse Wheel Zoom
+                modalContainer.addEventListener('wheel', function (e) {
+                    e.preventDefault();
+                    if (e.deltaY < 0) {
+                        currentZoom = Math.min(currentZoom + 0.2, 5);
+                    } else {
+                        currentZoom = Math.max(currentZoom - 0.2, 0.5);
+                        if (currentZoom <= 1) {
+                            translateX = 0;
+                            translateY = 0;
+                        }
+                    }
+                    updateModalTransform();
+                }, { passive: false });
+
+                // Drag & Pan
+                modalImg.addEventListener('mousedown', function (e) {
+                    if (currentZoom > 1) {
+                        isDragging = true;
+                        startX = e.clientX - translateX;
+                        startY = e.clientY - translateY;
+                        modalImg.style.cursor = 'grabbing';
+                    }
+                });
+
+                window.addEventListener('mousemove', function (e) {
+                    if (isDragging && currentZoom > 1) {
+                        e.preventDefault();
+                        translateX = e.clientX - startX;
+                        translateY = e.clientY - startY;
+                        updateModalTransform();
+                    }
+                });
+
+                window.addEventListener('mouseup', function () {
+                    if (isDragging) {
+                        isDragging = false;
+                        updateModalTransform();
+                    }
+                });
+
+                // Double Click Toggle
+                modalImg.addEventListener('dblclick', function () {
+                    if (currentZoom > 1) {
+                        resetModalZoom();
+                    } else {
+                        currentZoom = 2.5;
+                        updateModalTransform();
+                    }
+                });
+            }
+        });
+
+        // Keyboard Shortcuts (Esc to close, + / - to zoom, 0 to reset)
+        window.addEventListener('keydown', function (e) {
+            const modal = document.getElementById('imgModal');
+            if (modal && modal.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                } else if (e.key === '+' || e.key === '=') {
+                    zoomInModal();
+                } else if (e.key === '-' || e.key === '_') {
+                    zoomOutModal();
+                } else if (e.key === '0') {
+                    resetModalZoom();
+                }
+            }
+        });
+
+        // Fechar modal ao clicar fora do container da imagem
+        document.getElementById('imgModal').addEventListener('click', function (e) {
+            if (e.target === this || e.target === document.getElementById('modalImgContainer')) {
                 closeImageModal();
             }
         });

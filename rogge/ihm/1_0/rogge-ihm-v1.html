@@ -1143,11 +1143,29 @@ void enviarComandoReleRS485() {
         </div>
     </main>
 
-    <!-- ───────── MODAL DE IMAGEM AMPLIADA ───────── -->
-    <div id="imgModal" class="img-modal">
+    <!-- ───────── MODAL DE IMAGEM AMPLIADA COM ZOOM E PAN ───────── -->
+    <div id="imgModal" class="img-modal" style="user-select: none;">
+        <!-- Botão Fechar -->
         <span class="img-modal-close" onclick="closeImageModal()">&times;</span>
-        <img class="img-modal-content" id="modalImg" alt="Imagem Ampliada">
-        <div class="img-modal-caption" id="modalCaption"></div>
+
+        <!-- Toolbar de Controles de Zoom -->
+        <div style="position: absolute; top: 20px; display: flex; align-items: center; gap: 10px; background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 30px; border: 1px solid var(--color-border); z-index: 1005;">
+            <button onclick="zoomInModal()" title="Aumentar Zoom (+)" style="background: rgba(0,123,255,0.2); border: 1px solid rgba(0,123,255,0.4); color: var(--color-blue-electric); padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;">🔍+ Zoom In</button>
+            <button onclick="zoomOutModal()" title="Diminuir Zoom (-)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--color-border); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;">🔍- Zoom Out</button>
+            <span id="modalZoomBadge" style="font-family: var(--font-code); font-size: 0.85rem; color: var(--color-text-muted); font-weight: 600; padding: 4px 8px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid var(--color-border);">100%</span>
+            <button onclick="resetModalZoom()" title="Resetar Zoom (100%)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--color-border); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.82rem; cursor: pointer;">🔄 Reset</button>
+        </div>
+
+        <!-- Container da Imagem com Overflow para Drag -->
+        <div id="modalImgContainer" style="width: 92%; height: 75vh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; margin-top: 40px; border-radius: 8px;">
+            <img class="img-modal-content" id="modalImg" style="max-width: 100%; max-height: 100%; border-radius: 8px; border: 1px solid var(--color-border); box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: transform 0.1s ease-out; cursor: zoom-in;" src="" alt="Imagem Ampliada">
+        </div>
+
+        <!-- Legenda e Dica de Uso -->
+        <div style="margin-top: 14px; text-align: center; z-index: 1005;">
+            <div class="img-modal-caption" id="modalCaption" style="color: var(--color-white); font-weight: 700; font-size: 1.05rem;"></div>
+            <div style="color: var(--color-text-muted); font-size: 0.8rem; margin-top: 4px; font-weight: 500;">💡 Use a roda do mouse para dar zoom. Arraste a imagem para navegar quando ampliada. Clique duplo para alternar zoom.</div>
+        </div>
     </div>
 
     <!-- ───────── FOOTER ───────── -->
@@ -1181,11 +1199,50 @@ void enviarComandoReleRS485() {
             }
         }
 
-        // Modal de Imagem
+        // --- INTERACTIVE ZOOM & PAN LIGHTBOX MODAL ---
+        let currentZoom = 1;
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let translateX = 0, translateY = 0;
+
+        function updateModalTransform() {
+            const modalImg = document.getElementById('modalImg');
+            const zoomBadge = document.getElementById('modalZoomBadge');
+            if (modalImg) {
+                modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+                modalImg.style.cursor = currentZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in';
+            }
+            if (zoomBadge) {
+                zoomBadge.textContent = `${Math.round(currentZoom * 100)}%`;
+            }
+        }
+
+        function zoomInModal() {
+            currentZoom = Math.min(currentZoom + 0.3, 5);
+            updateModalTransform();
+        }
+
+        function zoomOutModal() {
+            currentZoom = Math.max(currentZoom - 0.3, 0.5);
+            if (currentZoom <= 1) {
+                translateX = 0;
+                translateY = 0;
+            }
+            updateModalTransform();
+        }
+
+        function resetModalZoom() {
+            currentZoom = 1;
+            translateX = 0;
+            translateY = 0;
+            updateModalTransform();
+        }
+
         function openImageModal(src, caption) {
             const modal = document.getElementById('imgModal');
             const modalImg = document.getElementById('modalImg');
             const modalCaption = document.getElementById('modalCaption');
+            resetModalZoom();
             modal.style.display = 'flex';
             modalImg.src = src;
             modalCaption.textContent = caption;
@@ -1193,10 +1250,87 @@ void enviarComandoReleRS485() {
 
         function closeImageModal() {
             document.getElementById('imgModal').style.display = 'none';
+            resetModalZoom();
         }
 
-        document.getElementById('imgModal').addEventListener('click', function (e) {
-            if (e.target === this) {
+        // Event Listeners for Modal Interaction
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalImg = document.getElementById('modalImg');
+            const modalContainer = document.getElementById('modalImgContainer');
+
+            if (modalImg && modalContainer) {
+                // Mouse Wheel Zoom
+                modalContainer.addEventListener('wheel', function (e) {
+                    e.preventDefault();
+                    if (e.deltaY < 0) {
+                        currentZoom = Math.min(currentZoom + 0.2, 5);
+                    } else {
+                        currentZoom = Math.max(currentZoom - 0.2, 0.5);
+                        if (currentZoom <= 1) {
+                            translateX = 0;
+                            translateY = 0;
+                        }
+                    }
+                    updateModalTransform();
+                }, { passive: false });
+
+                // Drag & Pan
+                modalImg.addEventListener('mousedown', function (e) {
+                    if (currentZoom > 1) {
+                        isDragging = true;
+                        startX = e.clientX - translateX;
+                        startY = e.clientY - translateY;
+                        modalImg.style.cursor = 'grabbing';
+                    }
+                });
+
+                window.addEventListener('mousemove', function (e) {
+                    if (isDragging && currentZoom > 1) {
+                        e.preventDefault();
+                        translateX = e.clientX - startX;
+                        translateY = e.clientY - startY;
+                        updateModalTransform();
+                    }
+                });
+
+                window.addEventListener('mouseup', function () {
+                    if (isDragging) {
+                        isDragging = false;
+                        updateModalTransform();
+                    }
+                });
+
+                // Double Click Toggle
+                modalImg.addEventListener('dblclick', function () {
+                    if (currentZoom > 1) {
+                        resetModalZoom();
+                    } else {
+                        currentZoom = 2.5;
+                        updateModalTransform();
+                    }
+                });
+            }
+        });
+
+        // Keyboard Shortcuts (Esc to close, + / - to zoom, 0 to reset)
+        window.addEventListener('keydown', function (e) {
+            const modal = document.getElementById('imgModal');
+            if (modal && modal.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                } else if (e.key === '+' || e.key === '=') {
+                    zoomInModal();
+                } else if (e.key === '-' || e.key === '_') {
+                    zoomOutModal();
+                } else if (e.key === '0') {
+                    resetModalZoom();
+                }
+            }
+        });
+
+        // Fechar modal ao clicar fora do container da imagem
+        document.getElementById('imgModal').addEventListener('click', function(e) {
+            if (e.target === this || e.target === document.getElementById('modalImgContainer')) {
                 closeImageModal();
             }
         });
