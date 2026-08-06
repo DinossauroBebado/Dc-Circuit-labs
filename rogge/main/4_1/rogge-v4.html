@@ -682,6 +682,7 @@
         <a href="#ibom" class="nav-pill">🔍 iBOM 3D</a>
         <a href="#pinout" class="nav-pill">🔌 Pinout Completo</a>
         <a href="#spi-map" class="nav-pill">🗺️ Mapa SPI</a>
+        <a href="#comunicacao-rs485" class="nav-pill">📡 Comunicação RS-485</a>
         <a href="#observacoes" class="nav-pill">⚠️ Observações</a>
         <a href="#substituicoes" class="nav-pill">🔄 Componentes Substituídos</a>
         <a href="#testes" class="nav-pill">🧪 Testes de Hardware</a>
@@ -1724,6 +1725,335 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ COMUNICAÇÃO RS-485 E PROTOCOLO ═══════════════════ -->
+        <div id="comunicacao-rs485" class="section-block">
+            <h2 class="section-title">📡 Comunicação RS-485 & Protocolo entre Placa Principal e IHM</h2>
+            <p class="section-subtitle">Manual completo de instalação física, elétrica, topologia de rede, arquitetura dual-core em FreeRTOS, protocolo de dados binários, máquina de estados FSM e mecanismo de Heartbeat.</p>
+
+            <!-- Alerta Crítico de Alimentação -->
+            <div class="alert-box alert-danger" style="margin-bottom: 24px;">
+                <div style="font-size: 1.5rem; flex-shrink: 0;">⚠️</div>
+                <div>
+                    <strong>AVISO CRÍTICO DE ALIMENTAÇÃO DA IHM (24V PoE)</strong><br>
+                    A placa Rogge V4.1 fornece tensão de 24V DC diretamente através do cabo de rede RJ45 para a IHM. 
+                    <strong>NUNCA alimente a IHM pelo conector de borne local de 24V caso ela já esteja conectada a um cabo RJ45 vindo da Rogge V4.1.</strong> 
+                    A alimentação dupla simultânea causará conflitos elétricos no circuito e queimará a placa da IHM irreversivelmente. Utilize estritamente apenas uma via de alimentação.
+                </div>
+            </div>
+
+            <div class="doc-grid" style="margin-bottom: 24px;">
+                <!-- Card 1: Infraestrutura Física -->
+                <div class="doc-card">
+                    <h3>🔌 Infraestrutura Física e Cabeamento</h3>
+                    <p>Para garantir alta imunidade contra ruídos industriais e evitar travamentos por interferência eletromagnética (EMI):</p>
+                    <ul>
+                        <li><strong>Cabo Recomendado:</strong> Utilize exclusivamente cabos de rede par trançado blindados (CAT5e FTP/STP ou CAT6 STP com malha).</li>
+                        <li><strong>Conectores RJ45 Metálicos:</strong> É obrigatório o uso de conectores RJ45 com carcaça blindada metálica para dar continuidade à blindagem e aterrar a malha do cabo.</li>
+                        <li><strong>Transceiver RS-485:</strong> Circuito integrado industrial THVD1450DR (Half-Duplex) alimentado a 3.3V com proteção contra ESD e transientes.</li>
+                        <li><strong>Pinos da Rogge V4.1:</strong> Comunicação Half-Duplex via barramento serial industrial diferencial (A e B).</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Jumper de Terminação 120 Ohms -->
+                <div class="doc-card">
+                    <h3>⚡ Jumper de Terminação (120 Ω) & Daisy Chain</h3>
+                    <p>O sinal de dados RS-485 exige resistores de terminação para casar a impedância da linha e suprimir reflexões de sinal ("eco"):</p>
+                    <ul>
+                        <li>🟢 <strong>Jumper Fechado (Com Jumper):</strong> Colocar apenas nas <strong>duas extremidades físicas</strong> da linha (primeiro e último equipamento da rede).</li>
+                        <li>🔴 <strong>Jumper Aberto (Sem Jumper):</strong> Remover obrigatoriamente de <strong>todos os equipamentos intermediários</strong> no meio da cadeia.</li>
+                    </ul>
+                    <div style="margin-top: 14px; background: rgba(0, 123, 255, 0.08); border: 1px solid rgba(0, 123, 255, 0.25); border-radius: 8px; padding: 12px 14px;">
+                        <div style="font-weight: 700; color: #58a6ff; font-size: 0.82rem; margin-bottom: 10px;">💡 Exemplo Prático de Rede em Cascata (4 Equipamentos):</div>
+                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px;">
+                                <span style="color: var(--color-white); font-weight: 600;">1. Aparelho 1 (Rogge V4.1 - Início)</span>
+                                <span style="color: var(--color-success); font-weight: 700;">🟢 COM Jumper</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px;">
+                                <span style="color: var(--color-text-muted);">2. Aparelho 2 (Meio da linha)</span>
+                                <span style="color: var(--color-danger); font-weight: 700;">🔴 SEM Jumper</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px;">
+                                <span style="color: var(--color-text-muted);">3. Aparelho 3 (Meio da linha)</span>
+                                <span style="color: var(--color-danger); font-weight: 700;">🔴 SEM Jumper</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px;">
+                                <span style="color: var(--color-white); font-weight: 600;">4. Aparelho 4 (IHM V1.0 - Final)</span>
+                                <span style="color: var(--color-success); font-weight: 700;">🟢 COM Jumper</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Borne Verde Auxiliar -->
+                <div class="doc-card full-width">
+                    <h3>🛠️ Conectores Auxiliares de Expansão (Terminais Verdes 5.08mm)</h3>
+                    <p>Ao lado da porta RJ45, a placa conta com dois conectores de borne de parafuso para flexibilidade extra no painel elétrico:</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 12px;">
+                        <div style="background: var(--color-black-tech); padding: 14px; border-radius: 8px; border: 1px solid var(--color-border);">
+                            <h4 style="color: var(--color-blue-electric); margin-bottom: 6px; font-size: 0.9rem;">⚡ Borne de Alimentação Auxiliar (24V e GND)</h4>
+                            <p style="font-size: 0.85rem; margin: 0;">Permite alimentar a placa com fonte externa de 24V local caso <strong>NÃO</strong> esteja recebendo energia pelo cabo RJ45. Lembre-se da regra de alimentação única para não causar curto no barramento.</p>
+                        </div>
+                        <div style="background: var(--color-black-tech); padding: 14px; border-radius: 8px; border: 1px solid var(--color-border);">
+                            <h4 style="color: var(--color-blue-electric); margin-bottom: 6px; font-size: 0.9rem;">📡 Borne de Comunicação RS-485 Auxiliar (A e B)</h4>
+                            <p style="font-size: 0.85rem; margin: 0;">Interligado diretamente ao mesmo barramento do conector RJ45. É ideal para estender a rede para inversores de frequência, CLPs ou sensores de terceiros com fios descascados comuns. Ligar A com A e B com B.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arquitetura de Software e Dual-Core -->
+            <div class="doc-card full-width" style="margin-bottom: 24px;">
+                <h3>🧠 Arquitetura de Software Dual-Core (FreeRTOS / ESP32-S3)</h3>
+                <p>Para evitar travamentos de controle e perda de dados, o firmware divide o processamento de forma thread-safe entre os dois núcleos do ESP32-S3:</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0;">
+                    <div style="background: var(--color-black-tech); padding: 16px; border-radius: 8px; border: 1px solid rgba(0,123,255,0.3);">
+                        <h4 style="color: var(--color-blue-electric); font-size: 0.95rem; margin-bottom: 8px;">⚙️ CORE 0 — Comunicação, Protocolo & Heartbeat</h4>
+                        <ul style="padding-left: 18px; font-size: 0.85rem;">
+                            <li>Driver de hardware da UART RS-485 com comutação de RE/DE.</li>
+                            <li>Máquina de Estados (FSM) de parsing byte-a-byte sem funções blocantes.</li>
+                            <li>Cálculo e verificação de integridade CRC16 de cada pacote recebido.</li>
+                            <li>Envio periódico de pacotes de <i>Heartbeat</i> (300ms) e monitoramento de <i>Timeout</i> (1200ms).</li>
+                            <li>Despacho de pacotes validados para as filas do FreeRTOS (<code>xQueueRxData</code>).</li>
+                        </ul>
+                    </div>
+                    <div style="background: var(--color-black-tech); padding: 16px; border-radius: 8px; border: 1px solid rgba(63,185,80,0.3);">
+                        <h4 style="color: var(--color-success); font-size: 0.95rem; margin-bottom: 8px;">⚡ CORE 1 — Lógica de Controle, Atuadores & Segurança</h4>
+                        <ul style="padding-left: 18px; font-size: 0.85rem;">
+                            <li>Loop de controle de malha fechada, relés e saídas digitais.</li>
+                            <li>Leitura dos sensores de corrente, tensão e entradas digitais.</li>
+                            <li>Consumo dos comandos da IHM vindos da fila <code>xQueueTxCmd</code>.</li>
+                            <li>Atuação imediata de corte de emergência (Safe-State) em caso de perda de comunicação no Core 0.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Pacotes e Estrutura de Dados Binários -->
+            <div class="doc-card full-width" style="margin-bottom: 24px;">
+                <h3>📦 Estrutura de Pacotes Binários & Validação CRC16</h3>
+                <p>O protocolo utiliza quadros binários empacotados via <code>#pragma pack(push, 1)</code> para máxima eficiência e imunidade a travamentos por texto truncado:</p>
+
+                <div class="table-wrapper" style="margin: 16px 0;">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Campo</th>
+                                <th>Tipo / Tamanho</th>
+                                <th>Valor Exemplo</th>
+                                <th>Descrição & Função</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Start Bytes</strong></td>
+                                <td><code>uint8_t[2]</code> (2 Bytes)</td>
+                                <td><code>0xAA, 0x55</code></td>
+                                <td>Sequência fixa de sincronismo para localização do início de pacote pelo parser FSM.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Message ID</strong></td>
+                                <td><code>uint8_t</code> (1 Byte)</td>
+                                <td><code>0x01</code> (Telemetria) / <code>0x02</code> (Comando) / <code>0xFF</code> (Ping)</td>
+                                <td>Identificador único do tipo de dado contido no payload.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Payload Length</strong></td>
+                                <td><code>uint8_t</code> (1 Byte)</td>
+                                <td><code>N Bytes</code></td>
+                                <td>Tamanho exato do corpo da mensagem em bytes.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Payload Data</strong></td>
+                                <td><code>struct</code> (N Bytes)</td>
+                                <td>Estrutura C++ Empacotada</td>
+                                <td>Valores de medições (Volts, Amperes, Temp, Erros) ou setpoints de comandos.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Checksum CRC16</strong></td>
+                                <td><code>uint16_t</code> (2 Bytes)</td>
+                                <td>CRC-CCITT / MODBUS</td>
+                                <td>Código polinomial de validação matemática contra corrupção por ruído elétrico na linha.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Exemplo Prático de Código C++ Completo (FSM + Queues + Heartbeat) -->
+            <div class="doc-card full-width">
+                <h3>💻 Código Exemplo Unificado de Comunicação RS-485 (PlatformIO / C++)</h3>
+                <p>Implementação de referência demonstrando a Máquina de Estados FSM não blocante, FreeRTOS Queues e o gerenciador de Heartbeat com timeout:</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>src/rs485_protocol.cpp — Implementação Completa de Comunicação Não-Blocante</span>
+                        <button class="code-copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.innerText); this.innerText='Copiado!'; setTimeout(()=>this.innerText='Copiar', 2000);">Copiar</button>
+                    </div>
+                    <pre class="code-pre"><code>#include &lt;Arduino.h&gt;
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+
+// ───────── DEFINIÇÕES DO HARDWARE E PROTOCOLO ─────────
+#define PIN_RS485_RX  41
+#define PIN_RS485_TX  42
+#define PIN_RS485_DE  40  // Driver Enable (High = TX, Low = RX)
+
+#define HEADER_BYTE1  0xAA
+#define HEADER_BYTE2  0x55
+
+#define MSG_ID_TELEMETRY  0x01
+#define MSG_ID_COMMAND    0x02
+#define MSG_ID_HEARTBEAT  0xFF
+
+#define HEARTBEAT_INTERVAL_MS   300
+#define COMMUNICATION_TIMEOUT_MS 1200
+
+#pragma pack(push, 1)
+typedef struct {
+    float    tensao_v;
+    float    corrente_a;
+    uint16_t temperatura_c;
+    uint8_t  status_flags;
+} TelemetryPayload_t;
+
+typedef struct {
+    uint8_t  cmd_id;
+    float    setpoint_v;
+    float    setpoint_i;
+} CommandPayload_t;
+#pragma pack(pop)
+
+// Filas Thread-Safe do FreeRTOS
+QueueHandle_t xQueueRxTelemetry;
+QueueHandle_t xQueueTxCommand;
+
+// Globais de Controle de Conexão
+static uint32_t last_rx_timestamp = 0;
+static uint32_t last_tx_heartbeat = 0;
+static bool g_system_online = false;
+
+// ───────── FUNÇÃO DE CÁLCULO DE CRC16 ─────────
+uint16_t calculateCRC16(const uint8_t *data, size_t length) {
+    uint16_t crc = 0xFFFF;
+    for (size_t i = 0; i &lt; length; i++) {
+        crc ^= data[i];
+        for (uint8_t j = 0; j &lt; 8; j++) {
+            if (crc &amp; 0x0001) crc = (crc &gt;&gt; 1) ^ 0xA001;
+            else crc = crc &gt;&gt; 1;
+        }
+    }
+    return crc;
+}
+
+// ───────── MÁQUINA DE ESTADOS DE PARSING (FSM NÃO-BLOCANTE) ─────────
+enum ParseState { WAIT_H1, WAIT_H2, READ_ID, READ_LEN, READ_PAYLOAD, READ_CRC1, READ_CRC2 };
+
+void parseRS485Stream(HardwareSerial &amp;bus) {
+    static ParseState state = WAIT_H1;
+    static uint8_t msg_id = 0, payload_len = 0, rx_buf[256], rx_idx = 0;
+    static uint16_t rx_crc = 0;
+
+    while (bus.available() &gt; 0) {
+        uint8_t b = bus.read();
+        switch (state) {
+            case WAIT_H1:
+                if (b == HEADER_BYTE1) state = WAIT_H2;
+                break;
+
+            case WAIT_H2:
+                if (b == HEADER_BYTE2) state = READ_ID;
+                else state = WAIT_H1;
+                break;
+
+            case READ_ID:
+                msg_id = b;
+                state = READ_LEN;
+                break;
+
+            case READ_LEN:
+                payload_len = b;
+                rx_idx = 0;
+                if (payload_len &gt; 0 &amp;&amp; payload_len &lt;= sizeof(rx_buf)) state = READ_PAYLOAD;
+                else if (payload_len == 0) state = READ_CRC1;
+                else state = WAIT_H1;
+                break;
+
+            case READ_PAYLOAD:
+                rx_buf[rx_idx++] = b;
+                if (rx_idx &gt;= payload_len) state = READ_CRC1;
+                break;
+
+            case READ_CRC1:
+                rx_crc = b;
+                state = READ_CRC2;
+                break;
+
+            case READ_CRC2:
+                rx_crc |= ((uint16_t)b &lt;&lt; 8);
+                if (rx_crc == calculateCRC16(rx_buf, payload_len)) {
+                    // PACOTE VÁLIDO! Atualiza timestamp do Heartbeat
+                    last_rx_timestamp = millis();
+
+                    if (msg_id == MSG_ID_TELEMETRY) {
+                        TelemetryPayload_t telem;
+                        memcpy(&amp;telem, rx_buf, sizeof(telem));
+                        xQueueSend(xQueueRxTelemetry, &amp;telem, 0);
+                    }
+                }
+                state = WAIT_H1; // Reinicia parser
+                break;
+        }
+    }
+}
+
+// ───────── LÓGICA DE HEARTBEAT E TIMEOUT ─────────
+void checkHeartbeatStatus(HardwareSerial &amp;bus) {
+    uint32_t now = millis();
+
+    // Transmissão Periódica de Heartbeat
+    if (now - last_tx_heartbeat &gt;= HEARTBEAT_INTERVAL_MS) {
+        last_tx_heartbeat = now;
+        digitalWrite(PIN_RS485_DE, HIGH); // Ativa Transmissão
+        bus.write(HEADER_BYTE1);
+        bus.write(HEADER_BYTE2);
+        bus.write(MSG_ID_HEARTBEAT);
+        bus.write((uint8_t)0); // Sem payload
+        uint16_t crc = calculateCRC16(NULL, 0);
+        bus.write(lowByte(crc));
+        bus.write(highByte(crc));
+        bus.flush();
+        digitalWrite(PIN_RS485_DE, LOW); // Retorna para Recepção
+    }
+
+    // Monitoramento de Perda de Sinal
+    if (now - last_rx_timestamp &gt; COMMUNICATION_TIMEOUT_MS) {
+        if (g_system_online) {
+            g_system_online = false;
+            // Ação de Emergência: Dispara falha na IHM e corta comandos na Placa Principal
+        }
+    } else {
+        g_system_online = true;
+    }
+}
+
+// ───────── TASK DE COMUNICAÇÃO (EXECUTADA NO CORE 0) ─────────
+void TaskRS485Communication(void *pvParameters) {
+    HardwareSerial SerialRS485(1);
+    SerialRS485.begin(115200, SERIAL_8N1, PIN_RS485_RX, PIN_RS485_TX);
+    pinMode(PIN_RS485_DE, OUTPUT);
+    digitalWrite(PIN_RS485_DE, LOW); // Padrão: Modo Recepção
+
+    for (;;) {
+        parseRS485Stream(SerialRS485);
+        checkHeartbeatStatus(SerialRS485);
+        vTaskDelay(pdMS_TO_TICKS(5)); // Cede tempo para o scheduler do FreeRTOS
+    }
+}</code></pre>
                 </div>
             </div>
         </div>
