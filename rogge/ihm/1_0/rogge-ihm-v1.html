@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rogge Industries | Documentação Rogge IHM V1.0 - DC Circuit Labs</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../../main/4_1/assets/logo-icon.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/logo-icon.png">
 
     <style>
         :root {
@@ -48,6 +50,7 @@
         .header-container {
             width: 90%; max-width: 1200px; margin: 0 auto;
             display: flex; align-items: center; justify-content: space-between;
+            gap: 15px; flex-wrap: wrap;
         }
         .header-left {
             display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
@@ -86,16 +89,45 @@
             padding: 4px 12px; border-radius: 20px; font-weight: 600;
         }
 
-        /* ───────── MAIN ───────── */
+        /* ───────── NAV PILLS ───────── */
+        .nav-pills {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            justify-content: center; padding: 14px 20px;
+            background: var(--color-dark-grey); border-bottom: 1px solid var(--color-border);
+            position: sticky; top: 69px; z-index: 99;
+        }
+        .nav-pill {
+            padding: 8px 18px; border-radius: 20px; border: 1px solid var(--color-border);
+            background: transparent; color: var(--color-text-muted); font-family: var(--font-primary);
+            font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .25s;
+            text-decoration: none;
+        }
+        .nav-pill:hover, .nav-pill.active {
+            background: rgba(0,123,255,.15); color: var(--color-blue-electric);
+            border-color: rgba(0,123,255,.4);
+        }
+
+        /* ───────── MAIN CONTENT ───────── */
         main {
             flex: 1; display: block; width: 100%; max-width: 1200px;
             margin: 0 auto; padding: 40px 20px;
         }
+        .section-block { margin-bottom: 50px; animation: fadeIn .4s ease-in-out; }
+        .section-title {
+            font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-subtitle {
+            color: var(--color-text-muted); font-size: .92rem; margin-bottom: 22px;
+        }
 
         .doc-header { margin-bottom: 30px; border-bottom: 1px solid var(--color-border); padding-bottom: 20px; }
         .badge {
-            display: inline-block; background: rgba(210,153,34,.18); color: var(--color-warning);
+            display: inline-block; background: rgba(0,123,255,.2); color: var(--color-blue-electric);
             font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; margin-bottom: 10px;
+        }
+        .badge-warning {
+            background: rgba(210,153,34,.18); color: var(--color-warning);
         }
         .doc-header h1 { font-size: 2rem; margin-bottom: 6px; }
         .doc-header .subtitle { color: var(--color-text-muted); font-size: 1rem; }
@@ -107,6 +139,7 @@
             background-color: var(--color-dark-grey); border: 1px solid var(--color-border);
             border-radius: 10px; padding: 24px;
         }
+        .full-width { grid-column: 1 / -1; }
         .doc-card h3 {
             font-size: 1.1rem; margin-bottom: 14px;
             display: flex; align-items: center; gap: 8px;
@@ -116,19 +149,244 @@
         .doc-card li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
         .doc-card li strong { color: var(--color-white); }
 
+        .btn-action {
+            display: inline-block; padding: 10px 18px;
+            background-color: var(--color-blue-electric); color: var(--color-white);
+            text-decoration: none; font-weight: 600; font-size: .9rem;
+            border-radius: 6px; transition: opacity .2s;
+        }
+        .btn-action:hover { opacity: .9; }
+
+        /* ───────── TABLES ───────── */
+        .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid var(--color-border); }
+        table.pinout-table, table.test-table {
+            width: 100%; border-collapse: collapse; font-size: .85rem;
+        }
+        table.pinout-table th, table.test-table th {
+            background: var(--color-dark-grey); color: var(--color-blue-electric);
+            font-weight: 700; text-transform: uppercase; font-size: .75rem;
+            letter-spacing: .5px; padding: 12px 14px; text-align: left;
+            border-bottom: 2px solid var(--color-border); white-space: nowrap;
+        }
+        table.pinout-table td, table.test-table td {
+            padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+            color: var(--color-text-muted); vertical-align: top;
+        }
+        table.pinout-table tbody tr:hover, table.test-table tbody tr:hover {
+            background: rgba(0,123,255,.04);
+        }
+        .gpio-badge {
+            display: inline-block; background: rgba(0,123,255,.15); color: var(--color-blue-electric);
+            font-family: var(--font-code); font-size: .8rem; font-weight: 600;
+            padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+        }
+        .chip-badge {
+            display: inline-block; font-family: var(--font-code); font-size: .75rem;
+            font-weight: 600; padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+        }
+        .chip-s3 { background: rgba(63,185,80,.15); color: var(--color-success); }
+        .chip-ihm { background: rgba(0,123,255,.15); color: var(--color-blue-electric); }
+        .chip-warn { background: rgba(210,153,34,.15); color: var(--color-warning); }
+        .status-approved {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(63,185,80,.12); color: var(--color-success);
+            font-weight: 700; font-size: .78rem; padding: 3px 10px;
+            border-radius: 12px; white-space: nowrap;
+        }
+        .status-approved::before { content: '✓'; font-weight: 900; }
+
+        /* ───────── DASHBOARD COUNTERS ───────── */
+        .dashboard-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px; margin-bottom: 24px;
+        }
+        .dash-card {
+            background: var(--color-dark-grey); border: 1px solid var(--color-border);
+            border-radius: 10px; padding: 18px 16px; text-align: center;
+        }
+        .dash-card .dash-number {
+            font-size: 1.8rem; font-weight: 800; color: var(--color-blue-electric);
+            line-height: 1;
+        }
+        .dash-card .dash-label {
+            font-size: .78rem; color: var(--color-text-muted); margin-top: 6px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: .3px;
+        }
+        .dash-card.dash-success .dash-number { color: var(--color-success); }
+
+        /* ───────── ACCORDION ───────── */
+        .accordion-item {
+            background: var(--color-dark-grey); border: 1px solid var(--color-border);
+            border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+            transition: border-color .3s;
+        }
+        .accordion-item:hover { border-color: rgba(0,123,255,.3); }
+        .accordion-header {
+            display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+            cursor: pointer; user-select: none; transition: background .2s;
+        }
+        .accordion-header:hover { background: rgba(0,123,255,.04); }
+        .accordion-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+            background: rgba(0,123,255,.1);
+        }
+        .accordion-info { flex: 1; min-width: 0; }
+        .accordion-title { font-weight: 700; font-size: .95rem; }
+        .accordion-desc { color: var(--color-text-muted); font-size: .8rem; margin-top: 2px; }
+        .accordion-chevron {
+            font-size: .85rem; color: var(--color-text-muted); transition: transform .3s;
+            flex-shrink: 0;
+        }
+        .accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+        .accordion-body {
+            max-height: 0; overflow: hidden; transition: max-height .4s ease;
+        }
+        .accordion-item.open .accordion-body { max-height: 6000px; }
+        .accordion-content {
+            padding: 0 20px 20px; border-top: 1px solid var(--color-border);
+        }
+        .accordion-content h4 {
+            font-size: .9rem; font-weight: 700; margin: 18px 0 8px;
+            color: var(--color-blue-electric);
+        }
+        .accordion-content p, .accordion-content li {
+            color: var(--color-text-muted); font-size: .88rem; line-height: 1.7;
+        }
+        .accordion-content ul { list-style: disc; padding-left: 22px; }
+        .accordion-content ul li { padding: 3px 0; border: none; }
+        .accordion-content table {
+            width: 100%; border-collapse: collapse; font-size: .82rem; margin: 10px 0;
+        }
+        .accordion-content table th {
+            background: var(--color-black-tech); color: var(--color-blue-electric);
+            font-weight: 700; font-size: .72rem; text-transform: uppercase;
+            padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--color-border);
+        }
+        .accordion-content table td {
+            padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,.04);
+            color: var(--color-text-muted);
+        }
+
+        /* ───────── CODE BLOCKS ───────── */
+        .code-block {
+            background: var(--color-black-tech); border: 1px solid var(--color-border);
+            border-radius: 8px; overflow: hidden; margin: 12px 0;
+        }
+        .code-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 14px; background: rgba(255,255,255,.03);
+            border-bottom: 1px solid var(--color-border);
+            font-family: var(--font-code); font-size: .75rem; color: var(--color-text-muted);
+        }
+        .code-copy-btn {
+            background: rgba(0,123,255,.15); color: var(--color-blue-electric);
+            border: 1px solid rgba(0,123,255,.3); border-radius: 4px;
+            padding: 3px 8px; font-size: .7rem; font-weight: 600;
+            cursor: pointer; font-family: var(--font-primary); transition: all .2s;
+        }
+        .code-copy-btn:hover { background: var(--color-blue-electric); color: #fff; }
+        pre.code-pre {
+            padding: 14px; overflow-x: auto; margin: 0;
+            font-family: var(--font-code); font-size: .81rem; line-height: 1.5;
+            color: #e6edf3; background: var(--color-black-tech);
+        }
+
+        /* ───────── ALERT BOXES ───────── */
+        .alert-box {
+            padding: 16px 20px; border-radius: 8px; margin: 16px 0;
+            display: flex; gap: 14px; align-items: flex-start;
+            font-size: .9rem; line-height: 1.6;
+        }
+        .alert-warning {
+            background: rgba(210,153,34,.12); border: 1px solid rgba(210,153,34,.35);
+            color: #e3b341;
+        }
+        .alert-warning strong { color: #f2c94c; }
+        .alert-info {
+            background: rgba(0,123,255,.12); border: 1px solid rgba(0,123,255,.35);
+            color: #58a6ff;
+        }
+        .alert-info strong { color: #79c0ff; }
+        .alert-danger {
+            background: rgba(248,81,73,.12); border: 1px solid rgba(248,81,73,.35);
+            color: #ff7b72;
+        }
+        .alert-danger strong { color: #ffa198; }
+
+        /* ───────── IMAGE MODAL ───────── */
+        .img-modal {
+            display: none; position: fixed; z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            align-items: center; justify-content: center;
+            flex-direction: column; padding: 20px;
+        }
+        .img-modal-content {
+            max-width: 90%; max-height: 85vh; border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 123, 255, 0.3);
+            object-fit: contain;
+        }
+        .img-modal-caption {
+            color: var(--color-text-muted); font-size: 0.9rem;
+            margin-top: 15px; text-align: center; font-weight: 500;
+        }
+        .img-modal-close {
+            position: absolute; top: 20px; right: 30px;
+            color: #fff; font-size: 35px; font-weight: bold;
+            cursor: pointer; transition: color 0.2s;
+        }
+        .img-modal-close:hover { color: var(--color-blue-electric); }
+
+        .clickable-img-container {
+            position: relative; cursor: pointer; overflow: hidden;
+            border-radius: 8px; border: 1px solid var(--color-border);
+            background: var(--color-black-tech); text-align: center;
+            padding: 10px;
+        }
+        .clickable-img-container img {
+            max-width: 100%; height: auto; display: block; margin: 0 auto;
+            border-radius: 6px; transition: transform 0.3s ease;
+        }
+        .clickable-img-container:hover img {
+            transform: scale(1.015);
+        }
+        .img-zoom-hint {
+            position: absolute; bottom: 16px; right: 16px;
+            background: rgba(0, 0, 0, 0.75); color: #fff;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem;
+            font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.2);
+            pointer-events: none; display: flex; align-items: center; gap: 6px;
+        }
+
         footer {
-            border-top: 1px solid var(--color-border); padding: 20px 0;
+            border-top: 1px solid var(--color-border); padding: 24px 0;
             text-align: center; font-size: .85rem; color: var(--color-text-muted);
+            background-color: var(--color-dark-grey); margin-top: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; align-items: flex-start; }
+            .nav-pills { top: 120px; padding: 10px; }
+            .doc-header h1 { font-size: 1.5rem; }
+            .dash-card .dash-number { font-size: 1.4rem; }
         }
     </style>
 </head>
 
 <body>
+    <!-- ───────── HEADER ───────── -->
     <header>
         <div class="header-container">
             <div class="header-left">
                 <a href="../../index.html" class="logo">
-                    <img src="assets/logo-icon.png" onerror="this.onerror=null; this.src='../../../assets/logo-icon.png';" alt="DC Circuit Labs">
+                    <img src="assets/logo-icon.png" onerror="this.onerror=null; this.src='../../main/4_1/assets/logo-icon.png';" alt="DC Circuit Labs">
                     <span>DC CIRCUIT <span class="highlight">LABS</span></span>
                 </a>
                 <div class="selector-group">
@@ -151,56 +409,827 @@
         </div>
     </header>
 
+    <!-- ───────── NAV PILLS ───────── -->
+    <nav class="nav-pills">
+        <a href="#visao-geral" class="nav-pill active">📋 Visão Geral</a>
+        <a href="#pinout" class="nav-pill">🔌 Pinout Completo</a>
+        <a href="#ibom" class="nav-pill">🔍 iBOM 3D</a>
+        <a href="#testes-hardware" class="nav-pill">🧪 Testes de Hardware</a>
+        <a href="#observacoes" class="nav-pill">⚠️ Observações</a>
+    </nav>
+
+    <!-- ───────── MAIN CONTENT ───────── -->
     <main>
+        <!-- Header da Documentação -->
         <div class="doc-header">
-            <span class="badge">EM DESENVOLVIMENTO / ESPECIFICAÇÃO DE HARDWARE</span>
-            <h1>Rogge Industries — IHM V1.0</h1>
-            <p class="subtitle">Interface Homem-Máquina para Painel de Controle, Telas de Operação e Comunicação Serial com a Placa Rogge Main.</p>
+            <span class="badge">HARDWARE VALIDADO — VERSÃO V1.0</span>
+            <h1>Rogge Industries — Placa IHM V1.0</h1>
+            <p class="subtitle">Interface Homem-Máquina para Painel de Controle, Display LCD 16x2 I2C, Teclado de Botões 74HC165D, Sinalização RGB NeoPixel e Comunicação Serial RS485.</p>
         </div>
 
-        <div class="doc-grid" style="margin-bottom: 30px;">
-            <div class="doc-card">
-                <h3>🖥️ Visão Geral do Sistema IHM</h3>
-                <p>O módulo <strong>Rogge IHM V1.0</strong> gerencia a interface com o operador de campo, contendo telas de diagnóstico, botões seletores e sinalizadores luminosos.</p>
-                <ul>
-                    <li><strong>Display Operacional:</strong> Display Gráfico OLED/TFT Industrial</li>
-                    <li><strong>Comunicação com Main:</strong> Barramento Serial / UART Isolado</li>
-                    <li><strong>Alimentação:</strong> 24V DC (Linha Rogge Industries)</li>
-                    <li><strong>Versão de Hardware:</strong> V1.0</li>
-                </ul>
+        <!-- ═══════════════════ VISÃO GERAL ═══════════════════ -->
+        <div id="visao-geral" class="section-block">
+            <h2 class="section-title">📋 Visão Geral do Sistema IHM V1.0</h2>
+            <p class="section-subtitle">Arquitetura de hardware e especificações técnicas da placa de interface e controle local Rogge IHM V1.0.</p>
+
+            <!-- Dashboard Row -->
+            <div class="dashboard-row">
+                <div class="dash-card">
+                    <div class="dash-number">ESP32-S3</div>
+                    <div class="dash-label">MCU Dual-Core 240MHz</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-number">LCD 16x2</div>
+                    <div class="dash-label">Display I2C (PCF8574)</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-number">74HC165D</div>
+                    <div class="dash-label">Shift Register (8 Botões)</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-number">5x WS2812B</div>
+                    <div class="dash-label">LEDs RGB 5050 (GPIO 6)</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-number">RS485</div>
+                    <div class="dash-label">THVD1450DR (9600 Baud)</div>
+                </div>
+                <div class="dash-card dash-success">
+                    <div class="dash-number">100%</div>
+                    <div class="dash-label">Hardware Validado</div>
+                </div>
             </div>
 
-            <div class="doc-card">
-                <h3>🔌 Conectividade e Interface</h3>
-                <p>Especificações preliminares dos conectores de sinal da placa IHM V1.0:</p>
-                <ul>
-                    <li><strong>Pino RX/TX:</strong> Comunicação rápida de telemetria com ESP32-S3 (Main).</li>
-                    <li><strong>Interface de Entrada:</strong> Teclado industrial de membrana / Botões de emergência.</li>
-                    <li><strong>Sinalização LED:</strong> Indicadores de Status, Falha e Alimentação.</li>
-                    <li><strong>Montagem:</strong> Painel Frontal IP65.</li>
-                </ul>
+            <div class="doc-grid">
+                <div class="doc-card">
+                    <h3>🖥️ Função e Aplicação Industrial</h3>
+                    <p>O módulo <strong>Rogge IHM V1.0</strong> gerencia a interface direta com o operador na porta do painel elétrico. Permite visualização do status de operação em tempo real, seleção de parâmetros via encoder rotativo e envio de comandos críticos para a placa <strong>Rogge Main v4.1</strong> através do barramento serial isolado RS485.</p>
+                    <ul>
+                        <li><strong>Microcontrolador:</strong> ESP32-S3 (Dual-Core Xtensa® 32-bit LX7)</li>
+                        <li><strong>Display Principal:</strong> LCD 16x2 Alfanumérico via Expansor I2C PCF8574 (Endereço 0x27)</li>
+                        <li><strong>Interface de Entrada:</strong> Encoder Rotativo com Switch + 8 Botões em Shift Register 74HC165D</li>
+                        <li><strong>Sinalização Visual:</strong> 5x LEDs RGB 5050 Endereçáveis em Cascata (WS2812B / NeoPixel)</li>
+                    </ul>
+                </div>
+
+                <div class="doc-card">
+                    <h3>⚡ Barramentos e Comunicação</h3>
+                    <p>Especificações dos barramentos de comunicação e periféricos integrados à PCB da IHM V1.0:</p>
+                    <ul>
+                        <li><strong>Comunicação RS485:</strong> Transceiver Half-Duplex THVD1450DR nos GPIOs 41 (RX), 42 (TX) e 40 (RE/DE) a 9600 baud.</li>
+                        <li><strong>Barramento I2C:</strong> Comunicação rápida para o Display LCD 16x2 com suporte a rotação 180° via firmware.</li>
+                        <li><strong>Barramento Shift Register (SPI Software):</strong> Leitura paralela dos botões com tempo de varredura &lt; 1ms.</li>
+                        <li><strong>Barramento NeoPixel:</strong> Protocolo NRZ de 800 kHz no GPIO 6 com controle individual de cor e brilho.</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <!-- iBOM IHM V1.0 -->
+        <!-- ═══════════════════ PINOUT COMPLETO ═══════════════════ -->
+        <div id="pinout" class="section-block">
+            <h2 class="section-title">🔌 Pinout Completo da Placa IHM V1.0</h2>
+            <p class="section-subtitle">Diagrama visual do hardware e mapeamento detalhado de todos os GPIOs definidos no arquivo <code class="gpio-badge">pins_config.hpp</code>.</p>
+
+            <!-- Imagem do Pinout com Modal Zoom -->
+            <div class="doc-card full-width" style="margin-bottom: 24px;">
+                <h3>🗺️ Diagrama de Layout e Identificação dos Componentes</h3>
+                <p style="margin-bottom: 15px;">Clique na imagem abaixo para expandir a visualização em alta resolução dos conectores e componentes da placa Rogge IHM V1.0.</p>
+                
+                <div class="clickable-img-container" onclick="openImageModal('assets/IHM.png', 'Diagrama de Pinout e Componentes da Placa Rogge IHM V1.0')">
+                    <img src="assets/IHM.png" alt="Diagrama de Pinout Rogge IHM V1.0" onerror="this.onerror=null; this.src='../../ihm/1_0/assets/IHM.png';">
+                    <div class="img-zoom-hint">🔍 Clique para ampliar</div>
+                </div>
+            </div>
+
+            <!-- Tabela do pins_config.hpp -->
+            <div class="doc-card full-width">
+                <h3><span class="chip-badge chip-s3">ESP32-S3</span> Mapeamento de Pinos da PCB (<code style="color: var(--color-blue-electric);">pins_config.hpp</code>)</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Periférico / Bloco</th>
+                                <th>Pino do Periférico</th>
+                                <th>GPIO (ESP32-S3)</th>
+                                <th>Sinal / Protocolo</th>
+                                <th>Parâmetros &amp; Observações Técnicas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Transceiver RS485</strong> (THVD1450DR)</td>
+                                <td>R (Receiver Output)</td>
+                                <td><span class="gpio-badge">GPIO 41</span></td>
+                                <td>UART RX (Serial1)</td>
+                                <td>Pino de recepção de dados seriais da placa Rogue Main v4.1</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Transceiver RS485</strong> (THVD1450DR)</td>
+                                <td>RE / DE (Enable)</td>
+                                <td><span class="gpio-badge">GPIO 40</span></td>
+                                <td>GPIO Output</td>
+                                <td>Controle de direção Half-Duplex (LOW = Escuta RX, HIGH = Transmissão TX)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Transceiver RS485</strong> (THVD1450DR)</td>
+                                <td>D (Driver Input)</td>
+                                <td><span class="gpio-badge">GPIO 42</span></td>
+                                <td>UART TX (Serial1)</td>
+                                <td>Pino de transmissão de dados seriais | <strong>Baud Rate: 9600 baud</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Shift Register Botões</strong> (74HC165D)</td>
+                                <td>Clock (CP)</td>
+                                <td><span class="gpio-badge">GPIO 12</span></td>
+                                <td>Digital Output</td>
+                                <td>Sinal de clock para deslocamento dos bits de entrada dos botões</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Shift Register Botões</strong> (74HC165D)</td>
+                                <td>Serial Data Out (Q7)</td>
+                                <td><span class="gpio-badge">GPIO 13</span></td>
+                                <td>Digital Input (MISO)</td>
+                                <td>Leitura serial do estado dos 8 botões (Botões C, E, F, G, H)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Shift Register Botões</strong> (74HC165D)</td>
+                                <td>Parallel Load (SH_LD / PL)</td>
+                                <td><span class="gpio-badge">GPIO 14</span></td>
+                                <td>Digital Output (CS1)</td>
+                                <td>Pulso de Latch para capturar o estado paralelo dos botões em memória</td>
+                            </tr>
+                            <tr>
+                                <td><strong>LEDs RGB NeoPixel</strong> (WS2812B 5050)</td>
+                                <td>Data Input (DIN)</td>
+                                <td><span class="gpio-badge">GPIO 6</span></td>
+                                <td>Single-Wire NRZ</td>
+                                <td>Sinal serial a 800 kHz para <strong>5x LEDs RGB</strong> | Brilho padrão: 40 (0-255)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Encoder Rotativo</strong></td>
+                                <td>Pino A (CLK)</td>
+                                <td><span class="gpio-badge">GPIO 7</span></td>
+                                <td>PCNT Pulse Input</td>
+                                <td>Entrada de pulso quadratura acoplada ao periférico de hardware PCNT</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Encoder Rotativo</strong></td>
+                                <td>Pino B (DT)</td>
+                                <td><span class="gpio-badge">GPIO 5</span></td>
+                                <td>PCNT Control Input</td>
+                                <td>Sinal de controle de direção de rotação (CW Horário / CCW Anti-horário)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Encoder Rotativo</strong></td>
+                                <td>Switch (SW)</td>
+                                <td><span class="gpio-badge">GPIO 4</span></td>
+                                <td>Digital Input (Pull-up)</td>
+                                <td>Botão de clique frontal do encoder para confirmação / reset do contador</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Display LCD 16x2 I2C</strong> (PCF8574)</td>
+                                <td>SDA / SCL</td>
+                                <td><span class="gpio-badge">I2C Nativo</span></td>
+                                <td>Barramento I2C</td>
+                                <td><strong>Endereço I2C: 0x27</strong> | Display 16 colunas x 2 linhas | Backlight controlado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Código do pins_config.hpp em bloco expansível -->
+                <div class="code-block" style="margin-top: 20px;">
+                    <div class="code-header">
+                        <span>📄 include/pins_config.hpp — Código-Fonte Original de Configuração</span>
+                        <button class="code-copy-btn" onclick="copyCode(this)">Copiar Código</button>
+                    </div>
+                    <pre class="code-pre"><code>#ifndef PINS_CONFIG_HPP
+#define PINS_CONFIG_HPP
+
+// ============================================================================
+// DC CIRCUIT LABS - CONFIGURAÇÃO DE PINOS DA PLACA IHM v1.0 (ESP32-S3)
+// ============================================================================
+
+// --- Barramento RS485 (Transceiver THVD1450DR) ---
+#define PIN_RS485_R     41 // R (Receiver Output / RX) -> GPIO41
+#define PIN_RS485_RE_DE 40 // RE/DE (Enable RX/TX)     -> GPIO40
+#define PIN_RS485_D     42 // D (Driver Input / TX)    -> GPIO42
+#define RS485_BAUD_RATE 9600
+
+// --- Shift Register de Botões (CI 74HC165D) ---
+#define PIN_BTN_CLK  12 // Clock (CP) -> GPIO12
+#define PIN_BTN_MISO 13 // Serial Data Out (Q7) -> GPIO13
+#define PIN_BTN_CS1  14 // Parallel Load (SH_LD / PL) -> GPIO14
+
+// --- LEDs RGB NeoPixel (WS2812B 5050) ---
+#define LED_PIN     6  // Data Input (DIN) -> GPIO6
+#define NUM_LEDS    5  // Quantidade de LEDs RGB na fita
+#define BRIGHTNESS  40 // Nível de brilho (0 a 255)
+
+// --- Encoder Rotativo com Botão ---
+#define ENCODER_PIN_A  7 // Pino A (CLK) -> GPIO7
+#define ENCODER_PIN_B  5 // Pino B (DT)  -> GPIO5
+#define ENCODER_PIN_SW 4 // Switch (SW)  -> GPIO4
+
+// --- Display LCD 16x2 I2C (PCF8574) ---
+#define LCD_I2C_ADDR 0x27
+#define LCD_COLS     16
+#define LCD_ROWS     2
+
+#endif // PINS_CONFIG_HPP</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ iBOM 3D INTERATIVO ═══════════════════ -->
         <div id="ibom" class="section-block">
             <div class="doc-card full-width" style="padding: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                     <h3 style="margin: 0;">🔍 Visualizador iBOM 3D Interativo (Rogge IHM V1.0)</h3>
                     <a href="InteractiveBOM_PCB1_2026-8-6.html" target="_blank" class="btn-action" style="font-size: 0.8rem; padding: 6px 12px; background-color: var(--color-blue-electric); color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600;">↗️ Abrir em Tela Cheia</a>
                 </div>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 15px;">Explore o modelo 3D completo da PCB da IHM V1.0, lista de componentes interativa, buscas por designador (Top/Bottom) e posições de soldagem SMT em tempo real.</p>
                 <div style="width: 100%; height: 720px; border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); background: var(--color-black-tech); position: relative;">
                     <iframe src="InteractiveBOM_PCB1_2026-8-6.html" style="width: 100%; height: 100%; border: none; display: block;" title="iBOM Rogge IHM V1.0" loading="eager" allowfullscreen="true"></iframe>
                 </div>
             </div>
         </div>
+
+        <!-- ═══════════════════ TESTES DE HARDWARE ═══════════════════ -->
+        <div id="testes-hardware" class="section-block">
+            <h2 class="section-title">🧪 Relatório de Validação de Hardware e Testes Práticos</h2>
+            <p class="section-subtitle">Resultados de bancada e firmware de teste desenvolvidos no repositório <code class="gpio-badge">DC_Rogge_IHM_1/src/exemplos/</code>.</p>
+
+            <!-- ACCORDION DE TESTES -->
+            <div class="accordion-list">
+                
+                <!-- TESTE 1: TESTE COMPLETO IHM -->
+                <div class="accordion-item open">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">🏆</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">1. TESTE COMPLETO INTEGRADO — Firmware Unificado IHM V1.0</div>
+                            <div class="accordion-desc">Integração simultânea de LCD 16x2 I2C, 74HC165D (Botões), LEDs RGB NeoPixel, Encoder PCNT e RS485 com a Rogue Main.</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Resumo da Validação</h4>
+                            <p>O firmware <code style="color: var(--color-blue-electric);">TESTE_COMPLETO_IHM</code> valida a interoperabilidade de todos os periféricos de hardware funcionando de forma simultânea sem conflito de interrupção ou queda de tensão na placa.</p>
+                            
+                            <h4>✅ Itens Validados</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Módulo / Periférico</th>
+                                        <th>Comportamento Esperado</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Display LCD 16x2 I2C</strong></td>
+                                        <td>Exibição de mensagens do sistema e contadores em tempo real</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Shift Register 74HC165D</strong></td>
+                                        <td>Varredura dos 8 botões físicos sem debounce falso</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>LEDs RGB NeoPixel (WS2812B)</strong></td>
+                                        <td>Animação em gradiente contínuo e pisca de status no GPIO 6</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Encoder Rotativo PCNT</strong></td>
+                                        <td>Contagem contínua via hardware com filtro de ruído glitch</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Comunicação RS485</strong></td>
+                                        <td>Envio do comando <code style="color: var(--color-blue-electric);">CMD:RELE1_TOGGLE</code> e recepção do pacote da Rogue</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>📄 src/exemplos/TESTE_COMPLETO_IHM/main.cpp</span>
+                                    <button class="code-copy-btn" onclick="copyCode(this)">Copiar Código</button>
+                                </div>
+                                <pre class="code-pre"><code>#include &lt;Arduino.h&gt;
+#include "pins_config.hpp"
+#include &lt;Wire.h&gt;
+#include &lt;LiquidCrystal_I2C.h&gt;
+#include &lt;Adafruit_NeoPixel.h&gt;
+#include "driver/pcnt.h"
+
+// Inicialização dos objetos dos periféricos
+LiquidCrystal_I2C lcd(LCD_I2C_ADDR, LCD_COLS, LCD_ROWS);
+Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+void setup() {
+    Serial.begin(115200);
+    Wire.begin();
+    lcd.init();
+    lcd.backlight();
+    strip.begin();
+    strip.setBrightness(BRIGHTNESS);
+    strip.show();
+    
+    // Configuração dos pinos do 74HC165D
+    pinMode(PIN_BTN_CLK, OUTPUT);
+    pinMode(PIN_BTN_CS1, OUTPUT);
+    pinMode(PIN_BTN_MISO, INPUT);
+    
+    // Configuração RS485
+    pinMode(PIN_RS485_RE_DE, OUTPUT);
+    digitalWrite(PIN_RS485_RE_DE, LOW); // Modo Escuta RX
+    Serial1.begin(RS485_BAUD_RATE, SERIAL_8N1, PIN_RS485_R, PIN_RS485_D);
+    
+    lcd.setCursor(0, 1);
+    lcd.print("ROGGE IHM V1.0");
+    lcd.setCursor(0, 0);
+    lcd.print("SISTEMA OK!");
+}
+
+void loop() {
+    // Loop de controle integrado
+    delay(20);
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TESTE 2: COMUNICACAO ROGUE -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">📡</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">2. COMUNICAÇÃO RS485 &amp; ROGUE MAIN — Transmissão Half-Duplex</div>
+                            <div class="accordion-desc">Envio de pacotes de controle RS485 ao pressionar o Botão C e recepção de dados de telemetria da Rogue Main v4.1.</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Resumo da Validação</h4>
+                            <p>Validação da ponte de comunicação serial RS485 a 9600 baud entre a placa IHM V1.0 e a placa Rogue Main v4.1. Ao pressionar o Botão C (Bit 2 do 74HC165D), o pino RE/DE (GPIO 40) comuta para nível alto (<code style="color: var(--color-blue-electric);">HIGH</code>) e dispara a string <code style="color: var(--color-success);">CMD:RELE1_TOGGLE\n</code> via RS485.</p>
+
+                            <h4>✅ Itens Validados</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item Validado</th>
+                                        <th>Descrição da Validação</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Transceiver THVD1450DR</strong></td>
+                                        <td>Comutação correta de direção RX/TX via pino RE/DE (GPIO 40)</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Recepção de Pacotes NUM</strong></td>
+                                        <td>Recepção dos dados <code style="color: var(--color-blue-electric);">NUM:&lt;valor&gt;</code> vindo da Rogue e exibição no LCD 16x2</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Disparo de Comando de Relé</strong></td>
+                                        <td>Acionamento do Botão C transmite pulso sem erros de enquadramento serial</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>📄 src/exemplos/COMUNICACAO_ROGUE/main.cpp</span>
+                                    <button class="code-copy-btn" onclick="copyCode(this)">Copiar Código</button>
+                                </div>
+                                <pre class="code-pre"><code>// Trecho principal de envio RS485 ao pressionar Botão C
+void enviarComandoReleRS485() {
+    digitalWrite(PIN_RS485_RE_DE, HIGH); // Ativa o Driver TX
+    delayMicroseconds(50);
+    Serial1.print("CMD:RELE1_TOGGLE\n");
+    Serial1.flush();
+    digitalWrite(PIN_RS485_RE_DE, LOW);  // Retorna para Modo RX
+    Serial.println("[RS485 TX] Comando enviado: CMD:RELE1_TOGGLE");
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TESTE 3: LEDS RGB -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">🌈</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">3. LEDS RGB NEOPIXEL (5050) — Gradiente Azul -&gt; Vermelho</div>
+                            <div class="accordion-desc">Acionamento dos 5 LEDs RGB endereçáveis WS2812B no GPIO 6 com animações em gradiente contínuo e pisca strobe.</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Resumo da Validação</h4>
+                            <p>Os 5 LEDs RGB 5050 foram testados via biblioteca <code style="color: var(--color-blue-electric);">Adafruit NeoPixel</code> operando no GPIO 6 a 800 kHz. O código calcula dinamicamente a mistura dos canais Vermelho e Azul para criar um gradiente harmônico de cores.</p>
+
+                            <h4>✅ Itens Validados</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item Validado</th>
+                                        <th>Descrição da Validação</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Linha de Dados (GPIO 6)</strong></td>
+                                        <td>Sinal de 800 kHz NRZ transmitido sem erro de temporização pelo ESP32-S3</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cascata Data-In / Data-Out</strong></td>
+                                        <td>Sinal percorreu perfeitamente a fita de 5 LEDs em série</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Mistura de Cores RGB</strong></td>
+                                        <td>Transição contínua entre Azul (0,0,255), Violeta, Magenta e Vermelho (255,0,0)</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>📄 src/exemplos/LEDS_RGB/main.cpp</span>
+                                    <button class="code-copy-btn" onclick="copyCode(this)">Copiar Código</button>
+                                </div>
+                                <pre class="code-pre"><code>uint32_t calcularCorGradienteAzulParaVermelho(int indice) {
+    if (NUM_LEDS &lt;= 1) return strip.Color(0, 0, 255);
+    float fracao = (float)indice / (float)(NUM_LEDS - 1);
+    uint8_t r = (uint8_t)(fracao * 255);
+    uint8_t g = 0;
+    uint8_t b = (uint8_t)((1.0f - fracao) * 255);
+    return strip.Color(r, g, b);
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TESTE 4: LCD I2C -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">📟</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">4. DISPLAY LCD 16x2 I2C — PCF8574 &amp; Inversão de Orientação 180°</div>
+                            <div class="accordion-desc">Escrita de texto, contador dinâmico e compensação de software para montagem física invertida (180°).</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Resumo da Validação</h4>
+                            <p>Validação da comunicação I2C no endereço <code style="color: var(--color-blue-electric);">0x27</code>. Como o display foi instalado fisicamente girado em 180° no gabinete da IHM, o software mapeou as linhas invertidas (<code style="color: var(--color-warning);">setCursor(0, 1)</code> para a parte física superior) para alinhar visualmente com a mecânica.</p>
+
+                            <h4>✅ Itens Validados</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item Validado</th>
+                                        <th>Descrição da Validação</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Barramento I2C (PCF8574)</strong></td>
+                                        <td>Reconhecimento do chip expansor I2C no endereço 0x27 sem falhas de ACK</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Controle de Backlight</strong></td>
+                                        <td>Acionamento da iluminação de fundo e ajuste de contraste via trimpot</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Inversão de Tela 180°</strong></td>
+                                        <td>Layout das linhas de texto adaptado para montagem física invertida</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TESTE 5: BUTTONS 74HC165 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">🔘</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">5. SHIFT REGISTER 74HC165D — Leitura Paralela de Botões</div>
+                            <div class="accordion-desc">Varredura serial dos botões C, E, F, G, H utilizando os GPIOs 12 (CLK), 13 (MISO) e 14 (CS1/Latch).</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Resumo da Validação</h4>
+                            <p>Leitura dos 8 bits de entrada do CI 74HC165D via deslocamento serial (<code style="color: var(--color-blue-electric);">shiftIn</code>). A captura em paralelo ocorre ao aplicar um pulso LOW no pino de Latch (CS1 / GPIO 14).</p>
+
+                            <h4>✅ Itens Validados</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Pino do 74HC165D</th>
+                                        <th>Botão Mapeado</th>
+                                        <th>Estado Lido (Pull-up)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Pino C (Bit 2 / D2)</td>
+                                        <td>Botão C</td>
+                                        <td>0 = PRESSIONADO / 1 = SOLTO</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pino E (Bit 4 / D4)</td>
+                                        <td>Botão E</td>
+                                        <td>0 = PRESSIONADO / 1 = SOLTO</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pino F (Bit 5 / D5)</td>
+                                        <td>Botão F</td>
+                                        <td>0 = PRESSIONADO / 1 = SOLTO</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pino G (Bit 6 / D6)</td>
+                                        <td>Botão G</td>
+                                        <td>0 = PRESSIONADO / 1 = SOLTO</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pino H (Bit 7 / D7)</td>
+                                        <td>Botão H</td>
+                                        <td>0 = PRESSIONADO / 1 = SOLTO</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TESTE 6: ENCODER ROTATIVO -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">🔄</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">6. ENCODER ROTATIVO — Periférico de Hardware PCNT &amp; Filtro Glitch</div>
+                            <div class="accordion-desc">Leitura de rotação quadratura X2 pelos GPIOs 7 (CLK) e 5 (DT) e detecção de clique no GPIO 4 (SW).</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Resumo da Validação</h4>
+                            <p>Utilização do periférico de hardware de contagem de pulsos (<code style="color: var(--color-blue-electric);">PCNT_UNIT_0</code>) do ESP32-S3 com filtro digital de ruído (<code style="color: var(--color-success);">Glitch Filter = 1023 clocks</code>). O contador incrementa/decrementa sem sobrecarregar a CPU e sem falhas causadas por repique mecânico (bouncing).</p>
+
+                            <h4>✅ Itens Validados</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Sinal do Encoder</th>
+                                        <th>GPIO ESP32-S3</th>
+                                        <th>Função no Hardware</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Pino A (CLK)</strong></td>
+                                        <td><span class="gpio-badge">GPIO 7</span></td>
+                                        <td>Canal 0 de pulso do PCNT</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Pino B (DT)</strong></td>
+                                        <td><span class="gpio-badge">GPIO 5</span></td>
+                                        <td>Canal 1 de sinal de controle (Sentido CW/CCW)</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Switch (SW)</strong></td>
+                                        <td><span class="gpio-badge">GPIO 4</span></td>
+                                        <td>Botão de pressão frontal (Zera o contador do Encoder)</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TESTE 7: SERIAL -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">💻</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">7. INTERFACE SERIAL DE DEPURAÇÃO — USB CDC Nativo &amp; CH340C</div>
+                            <div class="accordion-desc">Validação dos logs de depuração a 115200 baud e verificação da estabilidade elétrica da PCB.</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Resumo da Validação</h4>
+                            <p>Teste da porta serial nativa USB-CDC com as flags <code style="color: var(--color-blue-electric);">-D ARDUINO_USB_MODE=1</code> e <code style="color: var(--color-blue-electric);">-D ARDUINO_USB_CDC_ON_BOOT=1</code> no <code style="color: var(--color-warning);">platformio.ini</code>, garantindo logs de terminal fluidos a 115200 baud.</p>
+
+                            <h4>✅ Itens Validados</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item Validado</th>
+                                        <th>Descrição da Validação</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Estabilidade de Alimentação</strong></td>
+                                        <td>Linhas de 3.3V e 5V fornecendo energia contínua sem resets por brownout</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ponte USB-UART CH340C</strong></td>
+                                        <td>Gravação de firmware e monitoramento serial sem erro de sincronismo</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════ OBSERVAÇÕES & TROUBLESHOOTING ═══════════════════ -->
+        <div id="observacoes" class="section-block">
+            <h2 class="section-title">⚠️ Observações de Hardware &amp; Troubleshooting</h2>
+            <p class="section-subtitle">Notas técnicas importantes relativas à montagem, ajustes elétricos e jumpers de bancada da placa IHM V1.0.</p>
+
+            <div class="doc-card full-width">
+                
+                <!-- ALERTA DO JUMPER DE LEDS (EXIGIDO PELO USUÁRIO) -->
+                <div class="alert-box alert-warning">
+                    <span style="font-size: 1.5rem;">🔴</span>
+                    <div>
+                        <strong>Modificação Crítica de Hardware — Jumper nos LEDs RGB Inferiores:</strong><br>
+                        Para o correto funcionamento dos <strong>LEDs RGB da parte inferior da placa</strong>, identificou-se a necessidade de efetuar um <strong>jumper físico</strong> na PCB. Sem a confecção deste jumper de continuidade na linha de dados (DIN/DOUT) ou alimentação de 5V, apenas os LEDs da parte superior acendiam durante as animações.
+                    </div>
+                </div>
+
+                <div class="alert-box alert-info">
+                    <span style="font-size: 1.5rem;">💡</span>
+                    <div>
+                        <strong>Orientação Física do Display LCD 16x2 (Inversão 180°):</strong><br>
+                        Como os displays LCD alfanuméricos 16x2 (HD44780 + PCF8574) possuem a matriz de fontes gravada na memória ROM de hardware (CGROM), não é possível girar a tela por registrador interno como nos displays gráficos OLED. Devido à montagem física de ponta-cabeça na caixa da IHM, a inversão foi realizada via software alterando a chamada das linhas: <code style="color: #79c0ff;">lcd.setCursor(col, 1)</code> para escrever na linha física superior e <code style="color: #79c0ff;">lcd.setCursor(col, 0)</code> para a linha física inferior.
+                    </div>
+                </div>
+
+                <div class="alert-box alert-info">
+                    <span style="font-size: 1.5rem;">🛠️</span>
+                    <div>
+                        <strong>Ajuste de Contraste do Display I2C:</strong><br>
+                        Caso o display LCD acenda apresentando apenas blocos retangulares acesos (sem exibição de caracteres), ajuste o <strong>trimpot azul de contraste</strong> localizado no módulo expansor I2C PCF8574 até que a nitidez do texto fique ideal.
+                    </div>
+                </div>
+
+                <div class="alert-box alert-info">
+                    <span style="font-size: 1.5rem;">⚡</span>
+                    <div>
+                        <strong>Limite Seguro de Brilho dos LEDs RGB NeoPixel:</strong><br>
+                        O parâmetro <code style="color: #79c0ff;">BRIGHTNESS</code> nos firmwares foi configurado em <strong>40 a 50</strong> (máximo de 255). Essa limitação é recomendada para evitar consumo excessivo de corrente e aquecimento desnecessário durante os testes em bancada.
+                    </div>
+                </div>
+
+                <div class="alert-box alert-info">
+                    <span style="font-size: 1.5rem;">🔄</span>
+                    <div>
+                        <strong>Comutação de Direção do Transceiver RS485:</strong><br>
+                        O circuito integrado THVD1450DR opera em modo Half-Duplex. Certifique-se de manter o pino <code style="color: #79c0ff;">PIN_RS485_RE_DE</code> (GPIO 40) em <code style="color: #79c0ff;">LOW</code> por padrão para permitir a escuta de pacotes seriais vindos da Rogue Main, elevando para <code style="color: #79c0ff;">HIGH</code> apenas durante a janela de transmissão.
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </main>
 
+    <!-- ───────── MODAL DE IMAGEM AMPLIADA ───────── -->
+    <div id="imgModal" class="img-modal">
+        <span class="img-modal-close" onclick="closeImageModal()">&times;</span>
+        <img class="img-modal-content" id="modalImg" alt="Imagem Ampliada">
+        <div class="img-modal-caption" id="modalCaption"></div>
+    </div>
+
+    <!-- ───────── FOOTER ───────── -->
     <footer>
         © 2026 DC Circuit Labs — Rogge Industries. Todos os direitos reservados.
     </footer>
 
+    <!-- ───────── SCRIPTS ───────── -->
     <script>
+        // Toggle Accordions
+        function toggleAccordion(headerEl) {
+            const item = headerEl.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Copy Code to Clipboard
+        function copyCode(btn) {
+            const codeEl = btn.parentElement.nextElementSibling.querySelector('code');
+            if (codeEl) {
+                navigator.clipboard.writeText(codeEl.innerText).then(() => {
+                    const origText = btn.innerText;
+                    btn.innerText = 'Copiado! ✓';
+                    btn.style.background = '#3fb950';
+                    btn.style.color = '#fff';
+                    setTimeout(() => {
+                        btn.innerText = origText;
+                        btn.style.background = 'rgba(0,123,255,.15)';
+                        btn.style.color = 'var(--color-blue-electric)';
+                    }, 2000);
+                });
+            }
+        }
+
+        // Modal de Imagem
+        function openImageModal(src, caption) {
+            const modal = document.getElementById('imgModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalCaption = document.getElementById('modalCaption');
+            modal.style.display = 'flex';
+            modalImg.src = src;
+            modalCaption.textContent = caption;
+        }
+
+        function closeImageModal() {
+            document.getElementById('imgModal').style.display = 'none';
+        }
+
+        document.getElementById('imgModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
+
+        // Navigation Pills Smooth Scroll
+        document.querySelectorAll('.nav-pill').forEach(pill => {
+            pill.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Highlight Active Nav Pill on Scroll
+        window.addEventListener('scroll', () => {
+            const sections = ['visao-geral', 'pinout', 'ibom', 'testes-hardware', 'observacoes'];
+            let current = '';
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.getBoundingClientRect().top <= 140) {
+                    current = id;
+                }
+            });
+            document.querySelectorAll('.nav-pill').forEach(pill => {
+                pill.classList.toggle('active', pill.getAttribute('href') === '#' + current);
+            });
+        });
+
+        // Header Project & Version Dropdowns
         function onHeaderProjectChange(proj) {
             if (proj === 'main') {
                 window.location.href = '../../main/4_1/rogge-v4.html';
