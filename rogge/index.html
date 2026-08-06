@@ -5,10 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rogge Industries | Seleção de Projetos e Versões — DC Circuit Labs</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap"
+        rel="stylesheet">
     <link rel="icon" type="image/png" href="../assets/logo-icon.png">
     <script src="./auth-guard.js"></script>
-
+    <!-- oi -->
     <style>
         :root {
             --color-black-tech: #0d1117;
@@ -24,7 +26,11 @@
             --font-code: 'Fira Code', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: var(--font-primary);
@@ -44,17 +50,35 @@
             top: 0;
             z-index: 100;
         }
+
         .header-container {
-            width: 90%; max-width: 1200px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: space-between;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+
         .logo {
-            display: flex; align-items: center; gap: 12px;
-            text-decoration: none; color: var(--color-white);
-            font-weight: 800; font-size: 1.1rem; letter-spacing: .5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--color-white);
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: .5px;
         }
-        .logo img { height: 32px; }
-        .highlight { color: var(--color-blue-electric); }
+
+        .logo img {
+            height: 32px;
+        }
+
+        .highlight {
+            color: var(--color-blue-electric);
+        }
+
         .back-link {
             color: var(--color-text-muted);
             text-decoration: none;
@@ -62,7 +86,10 @@
             font-weight: 600;
             transition: color 0.2s;
         }
-        .back-link:hover { color: var(--color-blue-electric); }
+
+        .back-link:hover {
+            color: var(--color-blue-electric);
+        }
 
         /* ───────── MAIN ───────── */
         main {
@@ -77,16 +104,16 @@
             text-align: center;
             margin-bottom: 40px;
             padding: 30px;
-            background: linear-gradient(180deg, rgba(0,123,255,0.08) 0%, rgba(13,17,23,0) 100%);
+            background: linear-gradient(180deg, rgba(0, 123, 255, 0.08) 0%, rgba(13, 17, 23, 0) 100%);
             border-radius: 16px;
-            border: 1px solid rgba(0,123,255,0.15);
+            border: 1px solid rgba(0, 123, 255, 0.15);
         }
 
         .badge-hub {
             display: inline-block;
-            background: rgba(0,123,255,0.15);
+            background: rgba(0, 123, 255, 0.15);
             color: var(--color-blue-electric);
-            border: 1px solid rgba(0,123,255,0.3);
+            border: 1px solid rgba(0, 123, 255, 0.3);
             padding: 4px 14px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -116,7 +143,7 @@
             border-radius: 14px;
             padding: 30px;
             margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .selector-box h2 {
@@ -163,9 +190,10 @@
             transition: all 0.2s;
         }
 
-        .custom-select:hover, .custom-select:focus {
+        .custom-select:hover,
+        .custom-select:focus {
             border-color: var(--color-blue-electric);
-            box-shadow: 0 0 10px rgba(0,123,255,0.2);
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
         }
 
         .btn-access {
@@ -190,7 +218,7 @@
         .btn-access:hover {
             background-color: #0069d9;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,123,255,0.35);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.35);
         }
 
         /* ───────── PROJECT CARDS ───────── */
@@ -218,9 +246,9 @@
         }
 
         .project-card:hover {
-            border-color: rgba(0,123,255,0.4);
+            border-color: rgba(0, 123, 255, 0.4);
             transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
         }
 
         .card-header {
@@ -239,9 +267,9 @@
             font-family: var(--font-code);
             font-size: 0.78rem;
             font-weight: 600;
-            background: rgba(63,185,80,0.15);
+            background: rgba(63, 185, 80, 0.15);
             color: var(--color-success);
-            border: 1px solid rgba(63,185,80,0.3);
+            border: 1px solid rgba(63, 185, 80, 0.3);
             padding: 2px 8px;
             border-radius: 6px;
         }
@@ -262,7 +290,7 @@
 
         .ftag {
             font-size: 0.75rem;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             color: var(--color-white);
             padding: 3px 10px;
             border-radius: 12px;
@@ -311,7 +339,8 @@
         <div class="hero-banner">
             <span class="badge-hub">ROGGE INDUSTRIES — CENTRAL DE DOCUMENTAÇÃO</span>
             <h1>Projetos &amp; Documentação Técnica</h1>
-            <p>Selecione abaixo o módulo do projeto (Main ou IHM) e a versão desejada para acessar o manual de hardware, pinouts, diagramas de ligação e iBOM 3D.</p>
+            <p>Selecione abaixo o módulo do projeto (Main ou IHM) e a versão desejada para acessar o manual de hardware,
+                pinouts, diagramas de ligação e iBOM 3D.</p>
         </div>
 
         <!-- SELETOR DINÂMICO DE PROJETO E VERSÃO -->
@@ -347,7 +376,8 @@
                         <h3>Rogge Main — Placa Principal</h3>
                         <span class="version-tag">V4.1 Atual</span>
                     </div>
-                    <p>Microcontrolador ESP32-S3 Dual-Core com barramento RS-485 industrial, barramento SPI, I2C, entradas analógicas com ADC1, visualizador iBOM 3D e Guia de Ligações.</p>
+                    <p>Microcontrolador ESP32-S3 Dual-Core com barramento RS-485 industrial, barramento SPI, I2C,
+                        entradas analógicas com ADC1, visualizador iBOM 3D e Guia de Ligações.</p>
                     <div class="feature-tags">
                         <span class="ftag">ESP32-S3</span>
                         <span class="ftag">RS-485</span>
@@ -368,7 +398,8 @@
                         <h3>Rogge IHM — Interface</h3>
                         <span class="version-tag">V1.0 Ativa</span>
                     </div>
-                    <p>Módulo de Interface Homem-Máquina para controle de bancada, display de operação, botões industriais e integração de comunicação serial com a Placa Main.</p>
+                    <p>Módulo de Interface Homem-Máquina para controle de bancada, display de operação, botões
+                        industriais e integração de comunicação serial com a Placa Main.</p>
                     <div class="feature-tags">
                         <span class="ftag">Display OLED/TFT</span>
                         <span class="ftag">Interface Serial</span>
