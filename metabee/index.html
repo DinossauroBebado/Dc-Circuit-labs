@@ -331,6 +331,24 @@
             gap: 10px;
         }
 
+        @media (max-width: 600px) {
+            .header-container { width: 100%; padding: 0 14px; gap: 10px; }
+            .logo { font-size: .95rem; white-space: nowrap; gap: 10px; }
+            .logo img { height: 28px; }
+            .back-label { display: none; }
+            .back-link .i { width: 20px; height: 20px; }
+            main { width: 100%; padding: 24px 14px; }
+            .hero-banner { padding: 22px 16px; margin-bottom: 28px; }
+            .hero-banner h1 { font-size: 1.6rem; }
+            .hero-banner p { font-size: .92rem; }
+            .client-logo { width: 60%; }
+            .badge-hub { font-size: .7rem; }
+            .selector-box { padding: 20px 16px; margin-bottom: 28px; }
+            .selector-box h2 { font-size: 1.05rem; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .project-card { padding: 18px; }
+        }
+
         /* ───────── FOOTER ───────── */
         footer {
             border-top: 1px solid var(--color-border);
@@ -353,7 +371,7 @@
                 <span>DC CIRCUIT <span class="highlight">LABS</span></span>
             </a>
             <div style="display: flex; align-items: center;">
-                <a href="../index.html" class="back-link client-tag"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg>Voltar ao Site Principal</a>
+                <a href="../index.html" class="back-link client-tag" title="Voltar ao site principal" aria-label="Voltar ao site principal"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg><span class="back-label">Voltar ao Site Principal</span></a>
             </div>
         </div>
     </header>

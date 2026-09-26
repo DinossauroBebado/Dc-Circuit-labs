@@ -243,7 +243,312 @@ html body *::-webkit-scrollbar-thumb:hover { background-color: #484f58 !importan
 html body *::-webkit-scrollbar-track, html body::-webkit-scrollbar-track { background-color: var(--dc-bg) !important; }
 html body * { scrollbar-color: var(--dc-border) var(--dc-bg); }
 
+/* ═══════════ SOMENTE 3D: sem tabela, sem aba lateral e sem barra do EasyEDA ═══════════ */
+html body .smt-preview-header-wrap_DzW77,
+html body .content_-9EvQ .smt-layout-left_jQfAG,
+html body .content_-9EvQ .smt-layout-right_ILmLl,
+html body .content_-9EvQ .tab_right_qiNq3,
+html body .popover_T225t { display: none !important; }
+html body .content_-9EvQ { border-top: 0 !important; }
+
+/* barra própria sobre o 3D */
+html body .dc3d-bar {
+    position: absolute; top: 12px; left: 12px; right: 12px; z-index: 6;
+    display: flex; flex-wrap: wrap; gap: 8px; pointer-events: none;
+}
+html body .dc3d-bar > * { pointer-events: auto; }
+html body .dc3d-seg {
+    display: flex; border: 1px solid var(--dc-border); border-radius: 8px; overflow: hidden;
+    background: rgba(22, 27, 34, .88); backdrop-filter: blur(6px);
+}
+html body .dc3d-seg button, html body .dc3d-btn {
+    font: 600 12px 'Montserrat', 'Roboto', sans-serif; color: var(--dc-muted);
+    background: transparent; border: 0; padding: 8px 12px; min-height: 34px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; transition: background .2s, color .2s;
+}
+html body .dc3d-seg button + button { border-left: 1px solid var(--dc-border); }
+html body .dc3d-btn {
+    border: 1px solid var(--dc-border); border-radius: 8px;
+    background: rgba(22, 27, 34, .88); backdrop-filter: blur(6px);
+}
+html body .dc3d-btn svg, html body .dc3d-seg svg { width: 15px; height: 15px; flex-shrink: 0; }
+html body .dc3d-btn .t-sm { display: none; }
+html body .dc3d-seg button:hover, html body .dc3d-btn:hover { color: var(--dc-text); background: var(--dc-blue-hover); }
+html body .dc3d-seg button.active,
+html body .dc3d-toggle[aria-pressed="true"] { background: var(--dc-blue-soft); color: var(--dc-blue); }
+html body .dc3d-toggle[aria-pressed="true"] { border-color: rgba(0, 123, 255, .45); }
+
+/* etiqueta do componente clicado */
+html body .dc3d-label {
+    position: absolute; z-index: 7; display: none; pointer-events: none;
+    transform: translate(-50%, calc(-100% - 16px));
+    background: rgba(13, 17, 23, .94); border: 1px solid var(--dc-blue); border-radius: 8px;
+    padding: 8px 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, .55);
+    font-family: 'Montserrat', 'Roboto', sans-serif; white-space: nowrap; text-align: center;
+}
+html body .dc3d-label.below { transform: translate(-50%, 16px); }
+html body .dc3d-label strong { display: block; color: var(--dc-text); font-size: 14px; font-weight: 700; }
+html body .dc3d-label span { display: block; color: var(--dc-muted); font-size: 12px; margin-top: 2px; }
+html body .dc3d-label::after {
+    content: ''; position: absolute; left: var(--ax, 50%); bottom: -7px; width: 12px; height: 12px;
+    background: rgba(13, 17, 23, .94); border-right: 1px solid var(--dc-blue); border-bottom: 1px solid var(--dc-blue);
+    transform: translateX(-50%) rotate(45deg);
+}
+html body .dc3d-label.below::after { bottom: auto; top: -7px; transform: translateX(-50%) rotate(225deg); }
+
+/* dica de uso */
+html body .dc3d-hint {
+    position: absolute; left: 14px; bottom: 16px; z-index: 5; pointer-events: none;
+    font: 500 12px 'Montserrat', 'Roboto', sans-serif; color: var(--dc-faint);
+    transition: opacity .4s; max-width: calc(100% - 230px);
+}
+html body .dc3d-hint.gone { opacity: 0; }
+@media (max-width: 600px) {
+    html body .dc3d-hint { display: none; }
+    html body .dc3d-bar { top: 8px; left: 8px; right: 8px; gap: 6px; }
+    html body .dc3d-seg button, html body .dc3d-btn { padding: 8px 10px; min-height: 38px; }
+    html body .dc3d-btn[data-act="fit"] .t-lg { display: none; }
+    html body .dc3d-btn .t-lg { display: none; }
+    html body .dc3d-btn .t-sm { display: inline; }
+    html body .dc3d-label { white-space: normal; width: max-content; max-width: 220px; }
+}
+@media (max-width: 380px) {
+    html body .dc3d-btn .t-sm { display: none; }
+    html body .dc3d-seg button, html body .dc3d-btn { padding: 8px 9px; }
+    html body .smt-preview-wrapper_pH8Ip .smt-preview-container_lCawk::after { width: 130px; height: 38px; right: 10px; bottom: 10px; }
+}
+
 		</style>
+		<script id="dc-3d">
+/* DC Circuit Labs — iBOM somente 3D, com identificação do componente ao clicar */
+(function () {
+    'use strict';
+
+    // O app do EasyEDA troca para um layout de celular (tabela embaixo, sem Top/Bottom e sem
+    // "Uncombined") apenas pelo user-agent. Como aqui só o 3D é exibido, forçamos o layout padrão:
+    // o motor 3D trata toque (girar/pinçar) da mesma forma nos dois layouts.
+    var MOBILE_UA = /(iphone|ipad|ipod|ios|android|mobile|blackberry|iemobile|mqqbrowser|juc|fennec|wosbrowser|browserng|webos|symbian|windows phone)/i;
+    if (MOBILE_UA.test(navigator.userAgent)) {
+        try {
+            Object.defineProperty(navigator, 'userAgent', {
+                configurable: true,
+                get: function () { return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36'; }
+            });
+        } catch (e) { /* navegador não permite: fica o layout de celular do app */ }
+    }
+
+    var DESC = {
+        'U2': 'ESP32-WROOM-32D · módulo Wi-Fi + Bluetooth',
+        'U1': 'AMS1117-3.3 · regulador 5 V → 3,3 V',
+        'LCD2': 'Display TFT 1.8" ST7735 + slot microSD',
+        'H1': 'Conector de gravação TTL (UART0)',
+        'PWR': 'Entrada de alimentação 5 V',
+        'SWT': 'Conector para botão externo (GPIO27)',
+        'SW1': 'Botão lateral (GPIO27)',
+        'USB1': 'USB-C 1 · alimentação 5 V (borda inferior)',
+        'USB2': 'USB-C 2 · alimentação 5 V (lateral)',
+        'U3': 'Resistor 5,1 kΩ · CC do USB-C 1',
+        'U4': 'Resistor 5,1 kΩ · CC do USB-C 1',
+        'U5': 'Resistor 5,1 kΩ · CC do USB-C 2',
+        'U6': 'Resistor 5,1 kΩ · CC do USB-C 2',
+        'R1': 'Resistor 1 kΩ · LED 3V3',
+        'R2': 'Resistor 1 kΩ · LED de status',
+        'R32': 'Resistor 1 kΩ · LED 5V',
+        'R3': 'Resistor 10 kΩ · pull-up do EN (reset)',
+        'R4': 'Resistor 10 kΩ · pull-up do BOOT (GPIO0)',
+        'R5': 'Resistor 10 kΩ · pull-up do botão (GPIO27)',
+        'C1': 'Capacitor 22 µF · saída 3V3',
+        'C25': 'Capacitor 100 nF · desacoplamento 3V3',
+        'C2': 'Capacitor 100 nF · filtro do EN (reset)',
+        'C3': 'Capacitor 1 µF · atraso do EN (reset)',
+        'C4': 'Capacitor 100 nF · debounce do botão',
+        'C22': 'Capacitor 100 nF · entrada 5 V',
+        'C23': 'Capacitor 10 µF · entrada 5 V',
+        '3V3': 'LED · indicador de 3,3 V',
+        'LED_5V_GREEN': 'LED verde · indicador de 5 V',
+        'LED_STATUS': 'LED de status (GPIO2)',
+        'LED1': 'LED 5 mm de status (GPIO2)'
+    };
+
+    var SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+    var ICON_FIT = SVG + '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
+    var ICON_TAG = SVG + '<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>';
+    var ICON_PLUS = SVG + '<path d="M5 12h14"/><path d="M12 5v14"/></svg>';
+    var ICON_MINUS = SVG + '<path d="M5 12h14"/></svg>';
+    var KEY = 'dc_ibom_show_names';
+
+    var showNames = true;
+    try { showNames = localStorage.getItem(KEY) !== '0'; } catch (e) { /* storage indisponível */ }
+
+    function qa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+    function textOf(el) { return (el.textContent || '').replace(/\s+/g, ' ').trim(); }
+
+    function waitFor(test, done) {
+        var n = 0;
+        (function tick() {
+            var r = test();
+            if (r) done(r);
+            else if (n++ < 300) setTimeout(tick, 100);
+        })();
+    }
+
+    function selected() {
+        var rows = qa('.smt-layout-left_jQfAG tbody tr').filter(function (tr) {
+            return /background/.test(tr.getAttribute('style') || '');
+        });
+        if (!rows.length) return null;
+        var cell = rows[0].querySelector('td:nth-child(2)');
+        var des = cell ? textOf(cell).split(' ')[0] : '';
+        if (!des) return null;
+        var extra = rows[0].querySelector('td:nth-child(4)');
+        return { des: des, desc: DESC[des] || (extra ? textOf(extra) : '') };
+    }
+
+    function init(container) {
+        // 1 linha = 1 componente, para saber exatamente qual foi clicado
+        qa('.router-switch-button_D9A8I button').forEach(function (b) {
+            if (/Uncombined/i.test(b.textContent)) b.click();
+        });
+
+        var bar = document.createElement('div');
+        bar.className = 'dc3d-bar';
+        bar.innerHTML =
+            '<div class="dc3d-seg" role="group" aria-label="Lado da placa">' +
+            '<button type="button" data-side="Top">Top</button>' +
+            '<button type="button" data-side="Bottom">Bottom</button></div>' +
+            '<div class="dc3d-seg" role="group" aria-label="Zoom">' +
+            '<button type="button" data-act="zoom-in" title="Aproximar" aria-label="Aproximar">' + ICON_PLUS + '</button>' +
+            '<button type="button" data-act="zoom-out" title="Afastar" aria-label="Afastar">' + ICON_MINUS + '</button></div>' +
+            '<button type="button" class="dc3d-btn" data-act="fit" title="Enquadrar a placa">' + ICON_FIT + '<span class="t-lg">Enquadrar</span></button>' +
+            '<button type="button" class="dc3d-btn dc3d-toggle" data-act="names" title="Mostrar o nome do componente ao clicar">' + ICON_TAG +
+            '<span class="t-lg">Nome ao clicar</span><span class="t-sm">Nomes</span></button>';
+        container.appendChild(bar);
+
+        var label = document.createElement('div');
+        label.className = 'dc3d-label';
+        label.setAttribute('role', 'status');
+        container.appendChild(label);
+
+        var hint = document.createElement('div');
+        hint.className = 'dc3d-hint';
+        hint.textContent = 'Arraste para girar · role para aproximar · clique num componente';
+        container.appendChild(hint);
+
+        var toggle = bar.querySelector('[data-act="names"]');
+        function syncToggle() { toggle.setAttribute('aria-pressed', showNames ? 'true' : 'false'); }
+        syncToggle();
+
+        function syncSide() {
+            var cur = document.querySelector('.layer-switch_zaoEI .is-select_m6Eib');
+            var side = cur ? textOf(cur) : '';
+            qa('[data-side]', bar).forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-side') === side); });
+        }
+        syncSide();
+
+        function appClick(sel) {
+            var el = document.querySelector(sel);
+            if (el) el.click();
+        }
+        function fit() { appClick('.adapt-window-icon_wkVsz'); }
+
+        bar.addEventListener('click', function (e) {
+            var btn = e.target.closest('button');
+            if (!btn) return;
+            var side = btn.getAttribute('data-side');
+            var act = btn.getAttribute('data-act');
+            if (side) {
+                qa('.layer-switch_zaoEI .nav-bar-item_hAuAP').forEach(function (it) {
+                    if (textOf(it) === side) it.click();
+                });
+                hide();
+                setTimeout(function () { syncSide(); fit(); }, 120);
+            } else if (act === 'fit') {
+                fit();
+                hide();
+            } else if (act === 'zoom-in' || act === 'zoom-out') {
+                appClick(act === 'zoom-in' ? '.zoom-in-icon_BU0c7' : '.zoom-out-icon_o0LnS');
+                hide();
+            } else if (btn.getAttribute('data-act') === 'names') {
+                showNames = !showNames;
+                try { localStorage.setItem(KEY, showNames ? '1' : '0'); } catch (err) { /* ok */ }
+                syncToggle();
+                if (!showNames) hide();
+            }
+        });
+
+        function hide() { label.style.display = 'none'; }
+        function show(info, x, y) {
+            label.innerHTML = '<strong></strong><span></span>';
+            label.firstChild.textContent = info.des;
+            label.lastChild.textContent = info.desc;
+            label.style.display = 'block';
+            var box = container.getBoundingClientRect();
+            var w = label.offsetWidth, h = label.offsetHeight;
+            var left = Math.min(Math.max(x - box.left, w / 2 + 8), box.width - w / 2 - 8);
+            var top = y - box.top;
+            label.classList.toggle('below', top - h - 18 < 8);
+            label.style.left = left + 'px';
+            label.style.top = top + 'px';
+            // a seta aponta para o ponto clicado mesmo quando a etiqueta encosta na borda
+            var ax = Math.min(Math.max(x - box.left - (left - w / 2), 14), w - 14);
+            label.style.setProperty('--ax', ax + 'px');
+        }
+
+        function key(info) { return info ? info.des : ''; }
+
+        var down = null, poll = null;
+        container.addEventListener('pointerdown', function (e) {
+            if (e.target.closest('.dc3d-bar')) return;
+            clearTimeout(poll);
+            down = { x: e.clientX, y: e.clientY, t: Date.now(), before: key(selected()) };
+            hide();
+            hint.classList.add('gone');
+        }, true);
+        container.addEventListener('pointerup', function (e) {
+            if (!down || e.target.closest('.dc3d-bar')) return;
+            var touch = e.pointerType === 'touch';
+            var moved = Math.abs(e.clientX - down.x) + Math.abs(e.clientY - down.y);
+            var quick = Date.now() - down.t < (touch ? 1500 : 700);
+            var wait = touch ? 1500 : 600;
+            var x = e.clientX, y = e.clientY, before = down.before, t0 = Date.now();
+            down = null;
+            if (moved > 10 || !quick || !showNames) return;
+            // no toque o app só seleciona depois de descartar o toque duplo: espera a seleção mudar
+            (function check() {
+                var info = selected();
+                if (key(info) !== before || Date.now() - t0 > wait) {
+                    if (info) show(info, x, y); else hide();
+                } else {
+                    poll = setTimeout(check, 60);
+                }
+            })();
+        }, true);
+        container.addEventListener('wheel', hide, { passive: true, capture: true });
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            hide();
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(fit, 250);
+        });
+
+        // enquadra a placa assim que o modelo 3D termina de carregar
+        setTimeout(fit, 400);
+        setTimeout(fit, 1500);
+    }
+
+    function start() {
+        waitFor(function () {
+            return document.getElementById('smt-engine-canvas') &&
+                document.querySelector('.layer-switch_zaoEI') &&
+                document.querySelector('.smt-preview-wrapper_pH8Ip .smt-preview-container_lCawk');
+        }, init);
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
+})();
+
+		</script>
 		<!-- DC-THEME:END -->
 		<style></style>
 		<script>
