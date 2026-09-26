@@ -229,7 +229,19 @@
         }
 
         /* ───────── PROJECT CARDS ───────── */
+
+        /* ───────── ÍCONES (Lucide) ───────── */
+        .i {
+            width: 1.1em; height: 1.1em; flex-shrink: 0; vertical-align: -0.18em;
+            fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; }
+        .selector-box h2 .i, .projects-title .i { color: var(--color-blue-electric); }
+
         .projects-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 1.4rem;
             font-weight: 800;
             margin-bottom: 20px;
@@ -332,6 +344,8 @@
 </head>
 
 <body>
+    <!-- Ícones: Lucide (https://lucide.dev) — licença ISC -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></symbol><symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></symbol><symbol id="i-folder-open" viewBox="0 0 24 24"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" /></symbol><symbol id="i-sliders-horizontal" viewBox="0 0 24 24"><path d="M10 5H3" /><path d="M12 19H3" /><path d="M14 3v4" /><path d="M16 17v4" /><path d="M21 12h-9" /><path d="M21 19h-5" /><path d="M21 5h-7" /><path d="M8 10v4" /><path d="M8 12H3" /></symbol></svg>
     <header>
         <div class="header-container">
             <a href="../index.html" class="logo">
@@ -339,7 +353,7 @@
                 <span>DC CIRCUIT <span class="highlight">LABS</span></span>
             </a>
             <div style="display: flex; align-items: center;">
-                <a href="../index.html" class="back-link client-tag">← Voltar ao Site Principal</a>
+                <a href="../index.html" class="back-link client-tag"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg>Voltar ao Site Principal</a>
             </div>
         </div>
     </header>
@@ -355,7 +369,7 @@
 
         <!-- SELETOR DINÂMICO DE PROJETO E VERSÃO -->
         <div class="selector-box">
-            <h2>🎛️ Menu Seletor de Projetos e Versões</h2>
+            <h2><svg class="i" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg>Menu Seletor de Projetos e Versões</h2>
             <div class="selector-grid">
                 <div class="field-group">
                     <label for="hub-project-select">Projeto:</label>
@@ -371,12 +385,12 @@
                 </div>
             </div>
             <button class="btn-access" onclick="openSelectedDoc()">
-                <span>Acessar Documentação Técnica</span> ➔
+                <span>Acessar Documentação Técnica</span> <svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg>
             </button>
         </div>
 
         <!-- CARDS DE VISÃO GERAL -->
-        <h2 class="projects-title">📑 Projetos Disponíveis</h2>
+        <h2 class="projects-title"><svg class="i" aria-hidden="true"><use href="#i-folder-open"/></svg>Projetos Disponíveis</h2>
         <div class="projects-grid">
             <!-- CARD WIFI CONNECT -->
             <div class="project-card">
@@ -397,7 +411,7 @@
                     </div>
                 </div>
                 <div>
-                    <a href="wifi-connect/1_0/metabee-wifi-connect-v1.html" class="card-footer-link">Abrir Wifi Connect V1.0 ➔</a>
+                    <a href="wifi-connect/1_0/metabee-wifi-connect-v1.html" class="card-footer-link">Abrir Wifi Connect V1.0 <svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
                 </div>
             </div>
         </div>

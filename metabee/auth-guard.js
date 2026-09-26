@@ -7,6 +7,19 @@
     const VALID_PASSWORD = "lNQtKLefX9u4Fs4Uvu4N";
     const AUTH_KEY = "metabee_authorized_session_key";
 
+    // Ícones Lucide (https://lucide.dev) — licença ISC
+    const ICONS = {
+        'lock': '<rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />',
+        'eye': '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" />',
+        'eye-off': '<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" />',
+        'triangle-alert': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" />',
+        'arrow-right': '<path d="M5 12h14" /><path d="m12 5 7 7-7 7" />'
+    };
+    function svg(name) {
+        return '<svg class="ag-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+            'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
+    }
+
     // Injeta os estilos CSS do Modal de Senha e do Botão de Logout
     function injectStyles() {
         const style = document.createElement('style');
@@ -195,6 +208,13 @@
                 margin-left: 10px;
             }
 
+            .ag-i { width: 1em; height: 1em; vertical-align: -0.15em; flex-shrink: 0; }
+            .rogge-auth-icon { display: block !important; line-height: 0; }
+            .rogge-auth-icon .ag-i { width: 44px; height: 44px; color: #007BFF; }
+            .rogge-eye-btn { display: flex; align-items: center; }
+            .rogge-eye-btn .ag-i { width: 18px; height: 18px; }
+            .rogge-logout-btn { display: inline-flex; align-items: center; gap: 6px; }
+
             .rogge-logout-btn:hover {
                 background: #f85149;
                 color: #ffffff;
@@ -222,22 +242,22 @@
             overlay.className = 'rogge-auth-overlay';
             overlay.innerHTML = `
                 <div class="rogge-auth-card">
-                    <div class="rogge-auth-icon">🔒</div>
+                    <div class="rogge-auth-icon">${svg('lock')}</div>
                     <div class="rogge-auth-badge">METABEE — ÁREA RESTRITA</div>
                     <h2>Acesso Protegido por Senha</h2>
                     <p>Digite a chave de segurança para liberar o acesso à documentação técnica da Metabee (Wifi Connect V1.0).</p>
                     
                     <div class="rogge-input-wrapper">
                         <input type="password" id="rogge-pass-input" class="rogge-pass-input" placeholder="Digite a senha de acesso..." autocomplete="current-password">
-                        <button type="button" class="rogge-eye-btn" id="rogge-eye-btn" title="Mostrar/Ocultar Senha">👁️</button>
+                        <button type="button" class="rogge-eye-btn" id="rogge-eye-btn" title="Mostrar/Ocultar Senha">${svg('eye')}</button>
                     </div>
                     
                     <div id="rogge-auth-error" class="rogge-auth-error">
-                        ⚠️ <strong>Senha Incorreta!</strong> Verifique a credencial enviada pela DC Circuit Labs.
+                        ${svg('triangle-alert')} <strong>Senha Incorreta!</strong> Verifique a credencial enviada pela DC Circuit Labs.
                     </div>
                     
                     <button type="button" id="rogge-submit-btn" class="rogge-auth-submit">
-                        <span>Desbloquear Acesso Completo</span> ➔
+                        <span>Desbloquear Acesso Completo</span> ${svg('arrow-right')}
                     </button>
                     
                     <div class="rogge-auth-footer">DC Circuit Labs — Proteção de Dados de Engenharia</div>
@@ -273,10 +293,10 @@
             eyeBtn.addEventListener('click', function () {
                 if (input.type === 'password') {
                     input.type = 'text';
-                    eyeBtn.textContent = '🙈';
+                    eyeBtn.innerHTML = svg('eye-off');
                 } else {
                     input.type = 'password';
-                    eyeBtn.textContent = '👁️';
+                    eyeBtn.innerHTML = svg('eye');
                 }
             });
 
@@ -305,7 +325,7 @@
             const logoutBtn = document.createElement('button');
             logoutBtn.id = 'rogge-logout-btn';
             logoutBtn.className = 'rogge-logout-btn';
-            logoutBtn.innerHTML = '🔒 Bloquear';
+            logoutBtn.innerHTML = svg('lock') + ' Bloquear';
             logoutBtn.title = 'Encerrar sessão protegida por senha';
             logoutBtn.onclick = function () {
                 localStorage.removeItem(AUTH_KEY);
