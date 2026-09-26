@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metabee | Documentação Wifi Connect V1.0 - DC Circuit Labs</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/logo-icon.png">
+    <script src="../../auth-guard.js"></script>
+
+    <style>
+        :root {
+            --color-black-tech: #0d1117;
+            --color-dark-grey: #161b22;
+            --color-card-bg: #21262d;
+            --color-blue-electric: #007BFF;
+            --color-blue-deep: #003366;
+            --color-white: #FFFFFF;
+            --color-text-muted: #8b949e;
+            --color-danger: #f85149;
+            --color-success: #3fb950;
+            --color-warning: #d29922;
+            --color-border: #30363d;
+            --font-primary: 'Montserrat', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--color-black-tech);
+            color: var(--color-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ───────── HEADER ───────── */
+        header {
+            background-color: var(--color-dark-grey);
+            border-bottom: 1px solid var(--color-border);
+            padding: 18px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-container {
+            width: 90%; max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 15px; flex-wrap: wrap;
+        }
+        .header-left {
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+        }
+        .logo {
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: var(--color-white);
+            font-weight: 800; font-size: 1.1rem; letter-spacing: .5px;
+        }
+        .logo img { height: 32px; }
+        .highlight { color: var(--color-blue-electric); }
+
+        .selector-group {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255, 255, 255, 0.05); padding: 4px 10px;
+            border-radius: 8px; border: 1px solid var(--color-border);
+        }
+        .selector-item {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.78rem; color: var(--color-text-muted); font-weight: 600;
+        }
+        .header-select {
+            background: var(--color-black-tech); color: var(--color-blue-electric);
+            border: 1px solid rgba(0, 123, 255, 0.3); padding: 4px 8px;
+            border-radius: 6px; font-family: var(--font-primary);
+            font-size: 0.8rem; font-weight: 700; cursor: pointer; outline: none;
+            transition: all 0.2s;
+        }
+        .header-select:hover, .header-select:focus {
+            border-color: var(--color-blue-electric);
+        }
+
+        .client-tag {
+            font-size: .85rem; background: rgba(0,123,255,.15);
+            color: var(--color-blue-electric); border: 1px solid rgba(0,123,255,.3);
+            padding: 4px 12px; border-radius: 20px; font-weight: 600;
+        }
+
+        /* ───────── NAV PILLS ───────── */
+        .nav-pills {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            justify-content: center; padding: 14px 20px;
+            background: var(--color-dark-grey); border-bottom: 1px solid var(--color-border);
+            position: sticky; top: 69px; z-index: 99;
+        }
+        .nav-pill {
+            padding: 8px 18px; border-radius: 20px; border: 1px solid var(--color-border);
+            background: transparent; color: var(--color-text-muted); font-family: var(--font-primary);
+            font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .25s;
+            text-decoration: none;
+        }
+        .nav-pill:hover, .nav-pill.active {
+            background: rgba(0,123,255,.15); color: var(--color-blue-electric);
+            border-color: rgba(0,123,255,.4);
+        }
+
+        /* ───────── MAIN CONTENT ───────── */
+        main {
+            flex: 1; display: block; width: 100%; max-width: 1200px;
+            margin: 0 auto; padding: 40px 20px;
+        }
+        .section-block { margin-bottom: 50px; animation: fadeIn .4s ease-in-out; }
+        .section-title {
+            font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-subtitle {
+            color: var(--color-text-muted); font-size: .92rem; margin-bottom: 22px;
+        }
+
+        .doc-header { margin-bottom: 30px; border-bottom: 1px solid var(--color-border); padding-bottom: 20px; }
+        .badge {
+            display: inline-block; background: rgba(0,123,255,.2); color: var(--color-blue-electric);
+            font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; margin-bottom: 10px;
+        }
+        .badge-warning {
+            background: rgba(210,153,34,.18); color: var(--color-warning);
+        }
+        .doc-header h1 { font-size: 2rem; margin-bottom: 6px; }
+        .doc-header .subtitle { color: var(--color-text-muted); font-size: 1rem; }
+
+        .doc-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;
+        }
+        .doc-card {
+            background-color: var(--color-dark-grey); border: 1px solid var(--color-border);
+            border-radius: 10px; padding: 24px;
+        }
+        .full-width { grid-column: 1 / -1; }
+        .doc-card h3 {
+            font-size: 1.1rem; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .doc-card p, .doc-card li { color: var(--color-text-muted); font-size: .95rem; line-height: 1.6; }
+        .doc-card ul { list-style: none; }
+        .doc-card li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+        .doc-card li strong { color: var(--color-white); }
+
+        .btn-action {
+            display: inline-block; padding: 10px 18px;
+            background-color: var(--color-blue-electric); color: var(--color-white);
+            text-decoration: none; font-weight: 600; font-size: .9rem;
+            border-radius: 6px; transition: opacity .2s;
+        }
+        .btn-action:hover { opacity: .9; }
+
+        /* ───────── TABLES ───────── */
+        .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid var(--color-border); }
+        table.pinout-table, table.test-table {
+            width: 100%; border-collapse: collapse; font-size: .85rem;
+        }
+        table.pinout-table th, table.test-table th {
+            background: var(--color-dark-grey); color: var(--color-blue-electric);
+            font-weight: 700; text-transform: uppercase; font-size: .75rem;
+            letter-spacing: .5px; padding: 12px 14px; text-align: left;
+            border-bottom: 2px solid var(--color-border); white-space: nowrap;
+        }
+        table.pinout-table td, table.test-table td {
+            padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+            color: var(--color-text-muted); vertical-align: top;
+        }
+        table.pinout-table tbody tr:hover, table.test-table tbody tr:hover {
+            background: rgba(0,123,255,.04);
+        }
+        .gpio-badge {
+            display: inline-block; background: rgba(0,123,255,.15); color: var(--color-blue-electric);
+            font-family: var(--font-code); font-size: .8rem; font-weight: 600;
+            padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+        }
+        .chip-badge {
+            display: inline-block; font-family: var(--font-code); font-size: .75rem;
+            font-weight: 600; padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+        }
+        .chip-s3 { background: rgba(63,185,80,.15); color: var(--color-success); }
+        .chip-ihm { background: rgba(0,123,255,.15); color: var(--color-blue-electric); }
+        .chip-warn { background: rgba(210,153,34,.15); color: var(--color-warning); }
+        .status-approved {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(63,185,80,.12); color: var(--color-success);
+            font-weight: 700; font-size: .78rem; padding: 3px 10px;
+            border-radius: 12px; white-space: nowrap;
+        }
+        .status-approved::before { content: '✓'; font-weight: 900; }
+
+        /* ───────── DASHBOARD COUNTERS ───────── */
+        .dashboard-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px; margin-bottom: 24px;
+        }
+        .dash-card {
+            background: var(--color-dark-grey); border: 1px solid var(--color-border);
+            border-radius: 10px; padding: 18px 16px; text-align: center;
+        }
+        .dash-card .dash-number {
+            font-size: 1.8rem; font-weight: 800; color: var(--color-blue-electric);
+            line-height: 1;
+        }
+        .dash-card .dash-label {
+            font-size: .78rem; color: var(--color-text-muted); margin-top: 6px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: .3px;
+        }
+        .dash-card.dash-success .dash-number { color: var(--color-success); }
+
+        /* ───────── ACCORDION ───────── */
+        .accordion-item {
+            background: var(--color-dark-grey); border: 1px solid var(--color-border);
+            border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+            transition: border-color .3s;
+        }
+        .accordion-item:hover { border-color: rgba(0,123,255,.3); }
+        .accordion-header {
+            display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+            cursor: pointer; user-select: none; transition: background .2s;
+        }
+        .accordion-header:hover { background: rgba(0,123,255,.04); }
+        .accordion-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+            background: rgba(0,123,255,.1);
+        }
+        .accordion-info { flex: 1; min-width: 0; }
+        .accordion-title { font-weight: 700; font-size: .95rem; }
+        .accordion-desc { color: var(--color-text-muted); font-size: .8rem; margin-top: 2px; }
+        .accordion-chevron {
+            font-size: .85rem; color: var(--color-text-muted); transition: transform .3s;
+            flex-shrink: 0;
+        }
+        .accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+        .accordion-body {
+            max-height: 0; overflow: hidden; transition: max-height .4s ease;
+        }
+        .accordion-item.open .accordion-body { max-height: 6000px; }
+        .accordion-content {
+            padding: 0 20px 20px; border-top: 1px solid var(--color-border);
+        }
+        .accordion-content h4 {
+            font-size: .9rem; font-weight: 700; margin: 18px 0 8px;
+            color: var(--color-blue-electric);
+        }
+        .accordion-content p, .accordion-content li {
+            color: var(--color-text-muted); font-size: .88rem; line-height: 1.7;
+        }
+        .accordion-content ul { list-style: disc; padding-left: 22px; }
+        .accordion-content ul li { padding: 3px 0; border: none; }
+        .accordion-content table {
+            width: 100%; border-collapse: collapse; font-size: .82rem; margin: 10px 0;
+        }
+        .accordion-content table th {
+            background: var(--color-black-tech); color: var(--color-blue-electric);
+            font-weight: 700; font-size: .72rem; text-transform: uppercase;
+            padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--color-border);
+        }
+        .accordion-content table td {
+            padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,.04);
+            color: var(--color-text-muted);
+        }
+
+        /* ───────── CODE BLOCKS ───────── */
+        .code-block {
+            background: var(--color-black-tech); border: 1px solid var(--color-border);
+            border-radius: 8px; overflow: hidden; margin: 12px 0;
+        }
+        .code-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 14px; background: rgba(255,255,255,.03);
+            border-bottom: 1px solid var(--color-border);
+            font-family: var(--font-code); font-size: .75rem; color: var(--color-text-muted);
+        }
+        .code-copy-btn {
+            background: rgba(0,123,255,.15); color: var(--color-blue-electric);
+            border: 1px solid rgba(0,123,255,.3); border-radius: 4px;
+            padding: 3px 8px; font-size: .7rem; font-weight: 600;
+            cursor: pointer; font-family: var(--font-primary); transition: all .2s;
+        }
+        .code-copy-btn:hover { background: var(--color-blue-electric); color: #fff; }
+        pre.code-pre {
+            padding: 14px; overflow-x: auto; margin: 0;
+            font-family: var(--font-code); font-size: .81rem; line-height: 1.5;
+            color: #e6edf3; background: var(--color-black-tech);
+        }
+
+        /* ───────── ALERT BOXES ───────── */
+        .alert-box {
+            padding: 16px 20px; border-radius: 8px; margin: 16px 0;
+            display: flex; gap: 14px; align-items: flex-start;
+            font-size: .9rem; line-height: 1.6;
+        }
+        .alert-warning {
+            background: rgba(210,153,34,.12); border: 1px solid rgba(210,153,34,.35);
+            color: #e3b341;
+        }
+        .alert-warning strong { color: #f2c94c; }
+        .alert-info {
+            background: rgba(0,123,255,.12); border: 1px solid rgba(0,123,255,.35);
+            color: #58a6ff;
+        }
+        .alert-info strong { color: #79c0ff; }
+        .alert-danger {
+            background: rgba(248,81,73,.12); border: 1px solid rgba(248,81,73,.35);
+            color: #ff7b72;
+        }
+        .alert-danger strong { color: #ffa198; }
+
+        /* ───────── IMAGE MODAL ───────── */
+        .img-modal {
+            display: none; position: fixed; z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            align-items: center; justify-content: center;
+            flex-direction: column; padding: 20px;
+        }
+        .img-modal-content {
+            max-width: 90%; max-height: 85vh; border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 123, 255, 0.3);
+            object-fit: contain;
+        }
+        .img-modal-caption {
+            color: var(--color-text-muted); font-size: 0.9rem;
+            margin-top: 15px; text-align: center; font-weight: 500;
+        }
+        .img-modal-close {
+            position: absolute; top: 20px; right: 30px;
+            color: #fff; font-size: 35px; font-weight: bold;
+            cursor: pointer; transition: color 0.2s;
+        }
+        .img-modal-close:hover { color: var(--color-blue-electric); }
+
+        .clickable-img-container {
+            position: relative; cursor: pointer; overflow: hidden;
+            border-radius: 8px; border: 1px solid var(--color-border);
+            background: var(--color-black-tech); text-align: center;
+            padding: 10px;
+        }
+        .clickable-img-container img {
+            max-width: 100%; height: auto; display: block; margin: 0 auto;
+            border-radius: 6px; transition: transform 0.3s ease;
+        }
+        .clickable-img-container:hover img {
+            transform: scale(1.015);
+        }
+        .img-zoom-hint {
+            position: absolute; bottom: 16px; right: 16px;
+            background: rgba(0, 0, 0, 0.75); color: #fff;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem;
+            font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.2);
+            pointer-events: none; display: flex; align-items: center; gap: 6px;
+        }
+
+        /* ───────── METABEE ───────── */
+        .doc-header-flex {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 24px; flex-wrap: wrap;
+        }
+        .doc-header-flex > div { flex: 1 1 420px; }
+        .client-logo { height: 96px; width: auto; max-width: 100%; }
+
+        .download-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px; margin-bottom: 24px;
+        }
+        .download-card {
+            background-color: var(--color-dark-grey); border: 1px solid var(--color-border);
+            border-radius: 10px; padding: 22px; display: flex; flex-direction: column; gap: 10px;
+            transition: border-color .25s, transform .25s;
+        }
+        .download-card:hover { border-color: rgba(0,123,255,.4); transform: translateY(-3px); }
+        .download-icon { font-size: 1.8rem; }
+        .download-card h3 { font-size: 1.05rem; }
+        .download-card p { color: var(--color-text-muted); font-size: .88rem; line-height: 1.55; flex: 1; }
+        .file-meta {
+            font-family: var(--font-code); font-size: .72rem; color: var(--color-text-muted);
+            word-break: break-all;
+        }
+        .download-card .btn-action { text-align: center; }
+
+        .section-block { scroll-margin-top: 130px; }
+        .accordion-table-scroll { overflow-x: auto; }
+
+        .placeholder-card { text-align: center; padding: 48px 24px; }
+        .placeholder-card p { margin-top: 10px; }
+
+        footer {
+            border-top: 1px solid var(--color-border); padding: 24px 0;
+            text-align: center; font-size: .85rem; color: var(--color-text-muted);
+            background-color: var(--color-dark-grey); margin-top: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; align-items: flex-start; }
+            .nav-pills { top: 120px; padding: 10px; }
+            .doc-header h1 { font-size: 1.5rem; }
+            .dash-card .dash-number { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ───────── HEADER ───────── -->
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <a href="../../index.html" class="logo">
+                    <img src="assets/logo-icon.png" onerror="this.onerror=null; this.src='../../../assets/logo-icon.png';" alt="DC Circuit Labs">
+                    <span>DC CIRCUIT <span class="highlight">LABS</span></span>
+                </a>
+                <div class="selector-group">
+                    <div class="selector-item">
+                        <label for="hdr-project-select">Projeto:</label>
+                        <select id="hdr-project-select" class="header-select" onchange="onHeaderProjectChange(this.value)">
+                            <option value="wifi-connect" selected>Wifi Connect</option>
+                        </select>
+                    </div>
+                    <div class="selector-item">
+                        <label for="hdr-version-select">Versão:</label>
+                        <select id="hdr-version-select" class="header-select" onchange="onHeaderVersionChange(this.value)">
+                            <option value="1_0" selected>v1.0</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <span class="client-tag">Área do Cliente</span>
+        </div>
+    </header>
+
+    <!-- ───────── NAV PILLS ───────── -->
+    <nav class="nav-pills">
+        <a href="#visao-geral" class="nav-pill active">📋 Visão Geral</a>
+        <a href="#ibom" class="nav-pill">🔍 iBOM 3D</a>
+        <a href="#pinout" class="nav-pill">🔌 Pinout</a>
+        <a href="#teste-firmware" class="nav-pill">🧪 Teste de Firmware</a>
+        <a href="#como-programar" class="nav-pill">💻 Como Programar</a>
+        <a href="#fabricacao" class="nav-pill">📦 Fabricação &amp; Engenharia</a>
+    </nav>
+
+    <!-- ───────── MAIN CONTENT ───────── -->
+    <main>
+        <!-- Header da Documentação -->
+        <div class="doc-header doc-header-flex">
+            <div>
+                <span class="badge">PCB V1.0 — FIRMWARE DE TESTE APROVADO</span>
+                <h1>Metabee — Wifi Connect V1.0</h1>
+                <p class="subtitle">Placa dedicada "Bare ESP32" com ESP32-WROOM-32D, display TFT 1.8" ST7735 com slot microSD, alimentação por USB-C, botão lateral e conector TTL de gravação.</p>
+            </div>
+            <img src="assets/metabee-logo.png" alt="MetaBee" class="client-logo">
+        </div>
+
+        <!-- ═══════════════════ VISÃO GERAL ═══════════════════ -->
+        <div id="visao-geral" class="section-block">
+            <h2 class="section-title">📋 Visão Geral do Projeto</h2>
+            <p class="section-subtitle">Resumo do projeto eletrônico, arquitetura de hardware e critérios de aceitação da placa Metabee Wifi Connect V1.0.</p>
+
+            <!-- Dashboard Row -->
+            <div class="dashboard-row">
+                <div class="dash-card">
+                    <div class="dash-number">ESP32</div>
+                    <div class="dash-label">WROOM-32D · Wi-Fi + BT</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-number">TFT 1.8"</div>
+                    <div class="dash-label">ST7735 · 128×160 SPI</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-number">microSD</div>
+                    <div class="dash-label">SPI compartilhado</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-number">2× USB-C</div>
+                    <div class="dash-label">Entrada 5 V</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-number">AMS1117</div>
+                    <div class="dash-label">Regulador 3,3 V · 1 A</div>
+                </div>
+                <div class="dash-card dash-success">
+                    <div class="dash-number">V1.0</div>
+                    <div class="dash-label">Firmware de Teste Aprovado</div>
+                </div>
+            </div>
+
+            <div class="doc-grid">
+                <div class="doc-card">
+                    <h3>🎯 Objetivo do Projeto</h3>
+                    <p>A <strong>Metabee Wifi Connect V1.0</strong> transforma o protótipo atual em uma placa de circuito impresso dedicada ("Bare ESP32"). O objetivo é reduzir o tempo de montagem, facilitar a adequação aos padrões da Anatel e preparar o produto para produção em escala.</p>
+                    <ul>
+                        <li><strong>Microcontrolador:</strong> módulo ESP32-WROOM-32D (4 MB de flash) com antena de PCB na borda da placa</li>
+                        <li><strong>Display:</strong> módulo TFT 1.8" ST7735 (128×160, SPI) soldado por barra de pinos</li>
+                        <li><strong>Armazenamento:</strong> slot microSD do próprio módulo do display, usado para guardar endereços MAC</li>
+                        <li><strong>Interface:</strong> botão lateral (SW1) posicionado para evitar toques acidentais, mais o conector SWT para botão externo</li>
+                        <li><strong>Mecânica:</strong> 4 furos de 3,2 mm (M3), alinhados com os furos do módulo do display, para fixação na carcaça plástica impressa em 3D</li>
+                    </ul>
+                </div>
+
+                <div class="doc-card">
+                    <h3>⚡ Alimentação e Barramentos</h3>
+                    <p>Principais caminhos de energia e de comunicação da placa:</p>
+                    <ul>
+                        <li><strong>Entrada 5 V:</strong> USB-C 1 (borda inferior), USB-C 2 (lateral) ou conector PWR. Os conectores USB-C servem só para alimentação.</li>
+                        <li><strong>Regulação:</strong> AMS1117-3.3 (U1) gera 3,3 V a partir de 5 V para o ESP32, o display e o cartão SD</li>
+                        <li><strong>SPI (VSPI):</strong> SCK GPIO18, MOSI GPIO23 e MISO GPIO19, compartilhados entre o display (CS GPIO5) e o microSD (CS GPIO14)</li>
+                        <li><strong>UART0:</strong> GPIO1 (TX) e GPIO3 (RX) no conector H1, para gravação e monitor serial</li>
+                        <li><strong>Gravação fechada:</strong> o conector H1 fica dentro do produto e não é acessível ao usuário final</li>
+                    </ul>
+                </div>
+
+                <div class="doc-card full-width">
+                    <h3>✅ Critérios de Aceitação do Projeto</h3>
+                    <p>Requisitos mensuráveis definidos no escopo técnico para aprovação do hardware:</p>
+                    <ul>
+                        <li><strong>Operação contínua:</strong> no mínimo 20 horas sem falhas críticas, sem superaquecimento e sem reinicializações por instabilidade de tensão.</li>
+                        <li><strong>Estabilidade operacional:</strong> nenhuma falha ou glitch visual na tela, nenhuma queda do Wi-Fi e nenhum erro de gravação ou leitura no cartão SD.</li>
+                        <li><strong>Condições de operação:</strong> funcionamento garantido nas condições ambientais especificadas, com a proteção da entrada USB-C operando conforme o projeto.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ iBOM 3D INTERATIVO ═══════════════════ -->
+        <div id="ibom" class="section-block">
+            <div class="doc-card full-width" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">🔍 Visualizador iBOM 3D Interativo (Wifi Connect V1.0)</h3>
+                    <a href="InteractiveBOM_PCB1_2026-9-26.html" target="_blank" class="btn-action" style="font-size: 0.8rem; padding: 6px 12px;">↗️ Abrir em Tela Cheia</a>
+                </div>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 15px;">Explore o modelo 3D da PCB, a lista de componentes interativa, a busca por designador (Top/Bottom) e as posições de soldagem.</p>
+                <div style="width: 100%; height: 720px; border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); background: var(--color-black-tech); position: relative;">
+                    <iframe src="InteractiveBOM_PCB1_2026-9-26.html" style="width: 100%; height: 100%; border: none; display: block;" title="iBOM Metabee Wifi Connect V1.0" loading="eager" allowfullscreen="true"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ PINOUT ═══════════════════ -->
+        <div id="pinout" class="section-block">
+            <h2 class="section-title">🔌 Pinout Completo da Placa Wifi Connect V1.0</h2>
+            <p class="section-subtitle">Diagrama dos conectores e mapeamento de todos os GPIOs do ESP32-WROOM-32D, extraído do esquemático e do netlist da PCB.</p>
+
+            <!-- Imagem do Pinout com Modal Zoom -->
+            <div class="doc-card full-width" style="margin-bottom: 24px;">
+                <h3>🗺️ Diagrama de Conectores e Componentes</h3>
+                <p style="margin-bottom: 15px;">Vista do lado dos componentes (Bottom); o display TFT fica montado no lado oposto (Top). Clique na imagem para ampliar.</p>
+
+                <div class="clickable-img-container" onclick="openImageModal('assets/pinout-metabee-v1.png', 'Pinout da Placa Metabee Wifi Connect V1.0 — Lado dos Componentes')">
+                    <img src="assets/pinout-metabee-v1.png" alt="Diagrama de Pinout Metabee Wifi Connect V1.0">
+                    <div class="img-zoom-hint">🔍 Clique para ampliar</div>
+                </div>
+            </div>
+
+            <!-- Alerta de Alimentação -->
+            <div class="alert-box alert-danger" style="margin-bottom: 24px;">
+                <div style="font-size: 1.5rem; flex-shrink: 0;">⚠️</div>
+                <div>
+                    <strong>ATENÇÃO: USE APENAS UMA FONTE DE 5 V POR VEZ</strong><br>
+                    O VBUS do <strong>USB-C 1</strong>, o VBUS do <strong>USB-C 2</strong> e o pino +5V do conector <strong>PWR</strong> estão ligados na mesma trilha de 5 V, sem diodo de isolação. Se duas fontes forem ligadas ao mesmo tempo, uma alimenta a outra de volta. Conecte só uma entrada de alimentação.
+                </div>
+            </div>
+
+            <!-- Tabela de Conectores -->
+            <div class="doc-card full-width" style="margin-bottom: 24px;">
+                <h3>🔗 Conectores da Placa</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Conector</th>
+                                <th>Pino</th>
+                                <th>Sinal (Net)</th>
+                                <th>Ligação</th>
+                                <th>Observações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="6"><strong>H1</strong> — Gravação TTL<br><span class="chip-badge chip-ihm">1×6 · 2,54 mm</span></td>
+                                <td>1</td>
+                                <td>GND</td>
+                                <td>—</td>
+                                <td>Referência comum com o adaptador USB-TTL</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>RX_ESP</td>
+                                <td><span class="gpio-badge">GPIO 3</span> (U0RXD)</td>
+                                <td>Ligar ao <strong>TX</strong> do adaptador</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>TX_ESP</td>
+                                <td><span class="gpio-badge">GPIO 1</span> (U0TXD)</td>
+                                <td>Ligar ao <strong>RX</strong> do adaptador</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>RESET</td>
+                                <td><span class="gpio-badge">EN</span></td>
+                                <td>Pull-up R3 10 kΩ; filtro C2 100 nF + C3 1 µF</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>BOOT</td>
+                                <td><span class="gpio-badge">GPIO 0</span></td>
+                                <td>Pull-up R4 10 kΩ. Em LOW durante o reset, entra em modo de gravação</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>3V3</td>
+                                <td>—</td>
+                                <td>Saída do regulador; o adaptador deve trabalhar em nível lógico de 3,3 V</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2"><strong>PWR</strong> — Alimentação<br><span class="chip-badge chip-ihm">1×2 · 2,54 mm</span></td>
+                                <td>1 (+)</td>
+                                <td>5V</td>
+                                <td>—</td>
+                                <td>Mesma trilha de 5 V dos conectores USB-C</td>
+                            </tr>
+                            <tr>
+                                <td>2 (−)</td>
+                                <td>GND</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2"><strong>SWT</strong> — Botão externo<br><span class="chip-badge chip-ihm">1×2 · 2,54 mm</span></td>
+                                <td>1</td>
+                                <td>EXT_SWITCH</td>
+                                <td><span class="gpio-badge">GPIO 27</span></td>
+                                <td>Em paralelo com o SW1; ativo em LOW</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>GND</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SW1</strong> — Botão lateral</td>
+                                <td>—</td>
+                                <td>EXT_SWITCH</td>
+                                <td><span class="gpio-badge">GPIO 27</span></td>
+                                <td>TC-6615 (6×6 mm, 260 gf); pull-up R5 10 kΩ + debounce C4 100 nF</td>
+                            </tr>
+                            <tr>
+                                <td><strong>USB-C 1</strong> — Borda inferior</td>
+                                <td>VBUS / GND</td>
+                                <td>5V</td>
+                                <td>—</td>
+                                <td>Somente alimentação; CC1/CC2 com 5,1 kΩ (U3/U4); D+/D− sem conexão</td>
+                            </tr>
+                            <tr>
+                                <td><strong>USB-C 2</strong> — Lateral</td>
+                                <td>VBUS / GND</td>
+                                <td>5V</td>
+                                <td>—</td>
+                                <td>Somente alimentação; CC1/CC2 com 5,1 kΩ (U5/U6); D+/D− sem conexão</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="4"><strong>LEDs</strong></td>
+                                <td>3V3</td>
+                                <td>3V3</td>
+                                <td>—</td>
+                                <td>Indica 3,3 V presente (R1 1 kΩ)</td>
+                            </tr>
+                            <tr>
+                                <td>LED_5V_GREEN</td>
+                                <td>5V</td>
+                                <td>—</td>
+                                <td>Indica 5 V presente (R32 1 kΩ)</td>
+                            </tr>
+                            <tr>
+                                <td>LED_STATUS</td>
+                                <td>LED_STATUS</td>
+                                <td><span class="gpio-badge">GPIO 2</span></td>
+                                <td>LED SMD no lado do display, com R2 1 kΩ</td>
+                            </tr>
+                            <tr>
+                                <td>LED1</td>
+                                <td>LED_STATUS</td>
+                                <td><span class="gpio-badge">GPIO 2</span></td>
+                                <td>LED 5 mm vermelho em paralelo com o LED_STATUS</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tabela do Display -->
+            <div class="doc-card full-width" style="margin-bottom: 24px;">
+                <h3><span class="chip-badge chip-ihm">LCD2</span> Módulo Display TFT 1.8" ST7735 + microSD (12 pinos)</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Pino do Módulo</th>
+                                <th>Serigrafia</th>
+                                <th>Sinal (Net)</th>
+                                <th>GPIO (ESP32)</th>
+                                <th>Função</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>12 · VCC</td><td>3V3</td><td>3V3</td><td>—</td><td>Alimentação do módulo em 3,3 V</td></tr>
+                            <tr><td>11 · GND</td><td>GND</td><td>GND</td><td>—</td><td>Referência</td></tr>
+                            <tr><td>10 · CS</td><td>CS</td><td>TFT_CS</td><td><span class="gpio-badge">GPIO 5</span></td><td>Chip select do display</td></tr>
+                            <tr><td>9 · RESET</td><td>RST</td><td>TFT_RST</td><td><span class="gpio-badge">GPIO 4</span></td><td>Reset do controlador ST7735</td></tr>
+                            <tr><td>8 · A0</td><td>DC</td><td>TFT_DC</td><td><span class="gpio-badge">GPIO 16</span></td><td>Seleção dado/comando</td></tr>
+                            <tr><td>7 · SDA</td><td>MOSI</td><td>SPI_MOSI</td><td><span class="gpio-badge">GPIO 23</span></td><td>Dados SPI (VSPI MOSI)</td></tr>
+                            <tr><td>6 · SCK</td><td>SCK</td><td>SPI_SCK</td><td><span class="gpio-badge">GPIO 18</span></td><td>Clock SPI (VSPI SCK)</td></tr>
+                            <tr><td>5 · LED</td><td>BL</td><td>TFT_BL</td><td><span class="gpio-badge">GPIO 17</span></td><td>Backlight, ligado em HIGH</td></tr>
+                            <tr><td>4 · SD_CS</td><td>CS</td><td>SD_CS</td><td><span class="gpio-badge">GPIO 14</span></td><td>Chip select do cartão microSD</td></tr>
+                            <tr><td>3 · SD_MOSI</td><td>MOSI</td><td>SPI_MOSI</td><td><span class="gpio-badge">GPIO 23</span></td><td>Compartilhado com o display</td></tr>
+                            <tr><td>2 · SD_MISO</td><td>MISO</td><td>SPI_MISO</td><td><span class="gpio-badge">GPIO 19</span></td><td>Leitura do cartão SD (VSPI MISO)</td></tr>
+                            <tr><td>1 · SD_SCK</td><td>SCK</td><td>SPI_SCK</td><td><span class="gpio-badge">GPIO 18</span></td><td>Compartilhado com o display</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tabela de GPIOs do ESP32 -->
+            <div class="doc-card full-width">
+                <h3><span class="chip-badge chip-s3">ESP32-WROOM-32D</span> Mapeamento de GPIOs do Módulo (U2)</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Pino do Módulo</th>
+                                <th>GPIO</th>
+                                <th>Sinal (Net)</th>
+                                <th>Função</th>
+                                <th>Observações Técnicas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>3</td><td><span class="gpio-badge">EN</span></td><td>RESET</td><td>Reset do módulo</td><td>R3 10 kΩ para 3V3; C2 100 nF + C3 1 µF para GND; H1 pino 4</td></tr>
+                            <tr><td>12</td><td><span class="gpio-badge">GPIO 27</span></td><td>EXT_SWITCH</td><td>Botão SW1 / conector SWT</td><td>Ativo em LOW; pull-up R5 10 kΩ; debounce C4 100 nF</td></tr>
+                            <tr><td>13</td><td><span class="gpio-badge">GPIO 14</span></td><td>SD_CS</td><td>Chip select microSD</td><td>Barramento VSPI compartilhado</td></tr>
+                            <tr><td>24</td><td><span class="gpio-badge">GPIO 2</span></td><td>LED_STATUS</td><td>LED de status</td><td>LED_STATUS + LED1 via R2 1 kΩ. <span class="chip-badge chip-warn">Strapping</span></td></tr>
+                            <tr><td>25</td><td><span class="gpio-badge">GPIO 0</span></td><td>BOOT</td><td>Modo de gravação</td><td>Pull-up R4 10 kΩ; H1 pino 5. <span class="chip-badge chip-warn">Strapping</span></td></tr>
+                            <tr><td>26</td><td><span class="gpio-badge">GPIO 4</span></td><td>TFT_RST</td><td>Reset do display</td><td>—</td></tr>
+                            <tr><td>27</td><td><span class="gpio-badge">GPIO 16</span></td><td>TFT_DC</td><td>Dado/comando do display</td><td>—</td></tr>
+                            <tr><td>28</td><td><span class="gpio-badge">GPIO 17</span></td><td>TFT_BL</td><td>Backlight do display</td><td>—</td></tr>
+                            <tr><td>29</td><td><span class="gpio-badge">GPIO 5</span></td><td>TFT_CS</td><td>Chip select do display</td><td><span class="chip-badge chip-warn">Strapping</span></td></tr>
+                            <tr><td>30</td><td><span class="gpio-badge">GPIO 18</span></td><td>SPI_SCK</td><td>VSPI SCK</td><td>Display + microSD</td></tr>
+                            <tr><td>31</td><td><span class="gpio-badge">GPIO 19</span></td><td>SPI_MISO</td><td>VSPI MISO</td><td>Usado apenas pelo microSD</td></tr>
+                            <tr><td>34</td><td><span class="gpio-badge">GPIO 3</span></td><td>RX_ESP</td><td>UART0 RX</td><td>H1 pino 2; gravação e monitor serial</td></tr>
+                            <tr><td>35</td><td><span class="gpio-badge">GPIO 1</span></td><td>TX_ESP</td><td>UART0 TX</td><td>H1 pino 3; gravação e monitor serial</td></tr>
+                            <tr><td>37</td><td><span class="gpio-badge">GPIO 23</span></td><td>SPI_MOSI</td><td>VSPI MOSI</td><td>Display + microSD</td></tr>
+                            <tr><td>2</td><td><span class="gpio-badge">3V3</span></td><td>3V3</td><td>Alimentação</td><td>Desacoplamento C1 22 µF + C25 100 nF próximo ao módulo</td></tr>
+                            <tr><td>1, 15, 38, 39</td><td><span class="gpio-badge">GND</span></td><td>GND</td><td>Referência</td><td>Pino 39 = pad térmico central</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert-box alert-info" style="margin-top: 20px;">
+                    <span style="font-size: 1.5rem;">🧩</span>
+                    <div>
+                        <strong>GPIOs livres (sem conexão na PCB):</strong><br>
+                        GPIO 12, 13, 15, 21, 22, 25, 26, 32 e 33 (entrada e saída) e GPIO 34, 35, 36 (SENSOR_VP) e 39 (SENSOR_VN), que são <strong>somente entrada</strong>. Os pinos 17 a 22 do módulo (SD0–SD3, CMD, CLK) são da flash interna e <strong>não podem ser usados</strong>. GPIO 12 e 15 são pinos de strapping: não os force em nível alto durante o boot.
+                    </div>
+                </div>
+
+                <!-- Referência de pinos -->
+                <div class="code-block" style="margin-top: 20px;">
+                    <div class="code-header">
+                        <span>📄 Referência de pinos da PCB V1.0 (compilada do netlist)</span>
+                        <button class="code-copy-btn" onclick="copyCode(this)">Copiar Código</button>
+                    </div>
+                    <pre class="code-pre"><code>// ============================================================================
+// DC CIRCUIT LABS - METABEE WIFI CONNECT V1.0 (ESP32-WROOM-32D)
+// Referência de pinos da PCB (SCH_MetaBee_2026-09-26 / netlist)
+// ============================================================================
+
+// --- Display TFT ST7735 1.8" (barramento VSPI) ---
+#define TFT_CS          5   // LCD2 pino 10 (CS)
+#define TFT_RST         4   // LCD2 pino 9  (RESET)
+#define TFT_DC          16  // LCD2 pino 8  (A0)
+#define TFT_LED         17  // LCD2 pino 5  (LED / backlight)
+
+// --- Barramento SPI compartilhado (display + microSD) ---
+#define SPI_SCK         18
+#define SPI_MOSI        23
+#define SPI_MISO        19  // usado apenas pelo cartão SD
+
+// --- Cartão microSD (slot do módulo do display) ---
+#define SD_CS           14  // LCD2 pino 4 (SD_CS)
+
+// --- Botão lateral SW1 / conector SWT (ativo em LOW) ---
+#define BUTTON_PIN      27  // pull-up externo R5 10k + C4 100nF
+
+// --- LED de status (LED_STATUS + LED1) ---
+#define STATUS_LED_PIN  2
+
+// --- UART0 no conector H1 (gravação / monitor serial) ---
+#define UART0_TX        1   // H1 pino 3 (TX_ESP)
+#define UART0_RX        3   // H1 pino 2 (RX_ESP)</code></pre>
+                </div>
+            </div>
+
+            <div class="alert-box alert-info" style="margin-top: 24px;">
+                <span style="font-size: 1.5rem;">💡</span>
+                <div>
+                    <strong>Display alimentado em 3,3 V:</strong><br>
+                    O pino VCC do módulo TFT está ligado ao 3V3 da placa. Ao testar o módulo fora da PCB, <strong>nunca o alimente com 5 V</strong>. Os conectores USB-C não têm linhas de dados ligadas: a gravação do firmware é feita pelo conector H1.
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ TESTE DE FIRMWARE ═══════════════════ -->
+        <div id="teste-firmware" class="section-block">
+            <h2 class="section-title">🧪 Teste de Firmware na PCB V1.0</h2>
+            <p class="section-subtitle">Firmware de teste de bancada executado na placa fabricada. Projeto PlatformIO em <code class="gpio-badge">firmware_teste_dc/</code>.</p>
+
+            <div class="accordion-list">
+
+                <!-- TESTE 1 -->
+                <div class="accordion-item open">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">🖥️</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">1. DISPLAY TFT + BOTÃO + LED DE STATUS — Firmware de Teste</div>
+                            <div class="accordion-desc">Alterna entre duas imagens gravadas na flash a cada toque no botão (GPIO 27) e acende o LED de status (GPIO 2) enquanto o botão está pressionado.</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Resumo da Validação</h4>
+                            <p>O firmware inicializa o display ST7735 pelo barramento VSPI e desenha uma imagem RGB565 de 128×160 guardada na flash do ESP32, sem depender do cartão SD. Cada toque no botão lateral (ou no botão externo ligado ao SWT) troca a imagem, com debounce de 200 ms. O LED de status acompanha o estado do botão. O monitor serial roda a 115200 baud.</p>
+
+                            <h4>✅ Itens Validados</h4>
+                            <div class="accordion-table-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Módulo / Periférico</th>
+                                        <th>Comportamento Esperado</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Display TFT ST7735 (SPI)</strong></td>
+                                        <td><code>initR(INITR_BLACKTAB)</code>, rotação 0, tela 128×160 pelo VSPI (SCK 18 / MOSI 23)</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Controle do display</strong></td>
+                                        <td>CS no GPIO 5, DC no GPIO 16 e RST no GPIO 4 respondendo corretamente</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Backlight (GPIO 17)</strong></td>
+                                        <td>Iluminação acesa ao colocar o pino em HIGH no <code>setup()</code></td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Imagens na flash</strong></td>
+                                        <td>Duas imagens RGB565 (40 KB cada, <code>PROGMEM</code>) desenhadas com <code>drawRGBBitmap</code> sem falhas</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Botão SW1 / SWT (GPIO 27)</strong></td>
+                                        <td>Leitura ativa em LOW com <code>INPUT_PULLUP</code>; alterna a imagem a cada toque, com debounce de 200 ms</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>LED de status (GPIO 2)</strong></td>
+                                        <td>LED_STATUS e LED1 acesos enquanto o botão está pressionado</td>
+                                        <td><span class="status-approved">APROVADO</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cartão microSD (GPIO 14 / 19)</strong></td>
+                                        <td>Não é exercitado por este firmware</td>
+                                        <td><span class="chip-badge chip-warn">NÃO COBERTO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>📄 src/main.cpp</span>
+                                    <button class="code-copy-btn" onclick="copyCode(this)">Copiar Código</button>
+                                </div>
+                                <pre class="code-pre"><code>/*
+ * Firmware ESP32-WROOM + display TFT ST7735 1.8" (SPI)
+ *
+ * Ao pressionar o botão no GPIO 27, alterna entre duas imagens embutidas
+ * na flash do ESP32 (não depende de cartão SD).
+ *
+ * Pinagem do display:
+ *   VCC   -&gt; 3.3V   (NUNCA 5V)
+ *   GND   -&gt; GND
+ *   CS    -&gt; GPIO 5
+ *   RESET -&gt; GPIO 4
+ *   A0/DC -&gt; GPIO 16
+ *   SDA/MOSI -&gt; GPIO 23
+ *   SCK   -&gt; GPIO 18
+ *   LED   -&gt; GPIO 17
+ *
+ *   Botão -&gt; GPIO 27 (outro terminal no GND, usa INPUT_PULLUP)
+ *   LED indicador (onboard do ESP32) -&gt; GPIO 2, acende enquanto o
+ *   botão estiver pressionado
+ *
+ * As imagens (src/img1.h e src/img2.h) são geradas a partir dos arquivos
+ * do projeto pelo script generate_headers.py (Pillow), já redimensionadas
+ * para 128x160 e convertidas para RGB565.
+ */
+
+#include &lt;Arduino.h&gt;
+#include &lt;Adafruit_GFX.h&gt;
+#include &lt;Adafruit_ST7735.h&gt;
+#include &lt;SPI.h&gt;
+
+#include "img1.h"
+#include "img2.h"
+
+// ---------- Pinos do display ----------
+#define TFT_CS    5
+#define TFT_RST   4
+#define TFT_DC    16
+// MOSI (23) e SCK (18) usam o barramento VSPI padrão do ESP32
+
+// ---------- Pino do backlight ----------
+#define TFT_LED   17
+
+// ---------- Botão ----------
+#define BUTTON_PIN  27
+#define DEBOUNCE_MS 200
+
+// ---------- LED indicador (onboard do ESP32) ----------
+#define STATUS_LED_PIN 2
+
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+
+struct Image {
+  const uint16_t* data;
+  int16_t width;
+  int16_t height;
+};
+
+const Image IMAGES[] = {
+  { IMG1_DATA, IMG1_WIDTH, IMG1_HEIGHT },
+  { IMG2_DATA, IMG2_WIDTH, IMG2_HEIGHT },
+};
+const uint8_t NUM_IMAGES = sizeof(IMAGES) / sizeof(IMAGES[0]);
+
+uint8_t currentImage = 0;
+unsigned long lastPressTime = 0;
+
+void showImage(uint8_t index) {
+  const Image &amp;img = IMAGES[index];
+  tft.drawRGBBitmap(0, 0, img.data, img.width, img.height);
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+
+  pinMode(STATUS_LED_PIN, OUTPUT);
+  digitalWrite(STATUS_LED_PIN, LOW);
+
+  pinMode(TFT_LED, OUTPUT);
+  digitalWrite(TFT_LED, HIGH); // liga o backlight
+
+  // Inicializa o display (chip ST7735, variante comum de módulos 1.8" 128x160)
+  tft.initR(INITR_BLACKTAB);
+  tft.setRotation(0);
+  tft.fillScreen(ST77XX_BLACK);
+
+  showImage(currentImage);
+}
+
+void loop() {
+  // Botão ativo em nível baixo (INPUT_PULLUP)
+  bool pressed = (digitalRead(BUTTON_PIN) == LOW);
+
+  // LED acende enquanto o botão estiver pressionado
+  digitalWrite(STATUS_LED_PIN, pressed ? HIGH : LOW);
+
+  if (pressed) {
+    unsigned long now = millis();
+    if (now - lastPressTime &gt; DEBOUNCE_MS) {
+      lastPressTime = now;
+      currentImage = (currentImage + 1) % NUM_IMAGES;
+      showImage(currentImage);
+    }
+  }
+}</code></pre>
+                            </div>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>📄 platformio.ini</span>
+                                    <button class="code-copy-btn" onclick="copyCode(this)">Copiar Código</button>
+                                </div>
+                                <pre class="code-pre"><code>; Firmware ESP32-WROOM + display TFT ST7735 1.8" (SPI)
+; Alterna entre duas imagens (embutidas na flash) no botao do GPIO 27
+
+[env:esp32dev]
+; Versao ja validada com upload real na placa; mantida fixa por
+; estabilidade (evita puxar toolchain/framework novos sem necessidade).
+platform = espressif32@6.9.0
+board = esp32dev
+framework = arduino
+
+monitor_speed = 115200
+upload_port = /dev/ttyACM0
+monitor_port = /dev/ttyACM0
+
+lib_deps =
+    adafruit/Adafruit GFX Library@^1.11.9
+    adafruit/Adafruit ST7735 and ST7789 Library@^1.10.3</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TESTE 2 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-icon">🖼️</div>
+                        <div class="accordion-info">
+                            <div class="accordion-title">2. GERAÇÃO DAS IMAGENS — Conversão PNG → RGB565 (generate_headers.py)</div>
+                            <div class="accordion-desc">Script Python (Pillow) que converte as imagens do projeto em arrays C para gravar na flash do ESP32.</div>
+                        </div>
+                        <div class="accordion-chevron">▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <h4>📋 Como Funciona</h4>
+                            <p>Cada imagem é redimensionada para caber em 128×160 sem distorção, centralizada em fundo preto (letterbox) e convertida para RGB565 (16 bits por pixel). O resultado é gravado em <code style="color: var(--color-blue-electric);">src/img1.h</code> e <code style="color: var(--color-blue-electric);">src/img2.h</code> como arrays <code style="color: var(--color-success);">const uint16_t … PROGMEM</code>, com 20.480 pixels (40.960 bytes) cada. Rode o script sempre que trocar as imagens, antes de compilar.</p>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>📄 generate_headers.py</span>
+                                    <button class="code-copy-btn" onclick="copyCode(this)">Copiar Código</button>
+                                </div>
+                                <pre class="code-pre"><code>#!/usr/bin/env python3
+"""Converte as imagens do projeto em arrays C (RGB565) para embutir na flash do ESP32."""
+from PIL import Image
+import os
+
+SRC_DIR = "/home/dino/DC_labs_proj/clistenes/firmware_teste_dc"
+OUT_DIR = os.path.join(SRC_DIR, "src")
+
+W, H = 128, 160
+
+FILES = [
+    ("2.png", "img1.h", "IMG1"),
+    ("dccircuit_labs.png", "img2.h", "IMG2"),
+]
+
+def to_rgb565(r, g, b):
+    return ((r &amp; 0xF8) &lt;&lt; 8) | ((g &amp; 0xFC) &lt;&lt; 3) | (b &gt;&gt; 3)
+
+for src_name, header_name, macro_prefix in FILES:
+    src_path = os.path.join(SRC_DIR, src_name)
+    im = Image.open(src_path).convert("RGB")
+
+    src_ratio = im.width / im.height
+    dst_ratio = W / H
+    if src_ratio &gt; dst_ratio:
+        new_w = W
+        new_h = round(W / src_ratio)
+    else:
+        new_h = H
+        new_w = round(H * src_ratio)
+
+    im_resized = im.resize((new_w, new_h), Image.LANCZOS)
+    canvas = Image.new("RGB", (W, H), (0, 0, 0))
+    off_x = (W - new_w) // 2
+    off_y = (H - new_h) // 2
+    canvas.paste(im_resized, (off_x, off_y))
+
+    pixels = list(canvas.getdata())
+    values = [to_rgb565(r, g, b) for (r, g, b) in pixels]
+
+    out_path = os.path.join(OUT_DIR, header_name)
+    with open(out_path, "w") as f:
+        f.write(f"// Gerado automaticamente a partir de {src_name} ({W}x{H}, RGB565)\n")
+        f.write("#pragma once\n")
+        f.write("#include &lt;Arduino.h&gt;\n\n")
+        f.write(f"#define {macro_prefix}_WIDTH  {W}\n")
+        f.write(f"#define {macro_prefix}_HEIGHT {H}\n\n")
+        f.write(f"const uint16_t {macro_prefix}_DATA[{macro_prefix}_WIDTH * {macro_prefix}_HEIGHT] PROGMEM = {{\n")
+        line = "  "
+        for i, v in enumerate(values):
+            line += f"0x{v:04X},"
+            if (i + 1) % 16 == 0:
+                f.write(line + "\n")
+                line = "  "
+        if line.strip():
+            f.write(line + "\n")
+        f.write("};\n")
+
+    print(f"{src_name} -&gt; src/{header_name} ({len(values)} pixels, {len(values)*2} bytes)")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════ COMO PROGRAMAR ═══════════════════ -->
+        <div id="como-programar" class="section-block">
+            <h2 class="section-title">💻 Como Programar</h2>
+            <p class="section-subtitle">Procedimento de gravação do firmware na placa Wifi Connect V1.0.</p>
+
+            <div class="doc-card full-width placeholder-card">
+                <span class="badge badge-warning">EM ELABORAÇÃO</span>
+                <p>O conteúdo desta seção será publicado em breve.</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ FABRICAÇÃO & ENGENHARIA ═══════════════════ -->
+        <div id="fabricacao" class="section-block">
+            <h2 class="section-title">📦 Material para Fabricação &amp; Projeto de Engenharia</h2>
+            <p class="section-subtitle">Esquemático, arquivos de fabricação da PCB, lista de materiais e modelo 3D da revisão V1.0 (26/09/2026).</p>
+
+            <div class="download-grid">
+                <div class="download-card">
+                    <div class="download-icon">📐</div>
+                    <h3>Esquemático Elétrico</h3>
+                    <p>Diagrama completo da placa: ESP32, display, USB-C, regulador, LEDs, botões e conector de gravação.</p>
+                    <div class="file-meta">SCH_MetaBee_2026-09-26.pdf · PDF · 176 KB</div>
+                    <a href="fabricacao/SCH_MetaBee_2026-09-26.pdf" target="_blank" class="btn-action">📄 Abrir PDF</a>
+                </div>
+                <div class="download-card">
+                    <div class="download-icon">🗺️</div>
+                    <h3>Layout, Montagem &amp; BOM</h3>
+                    <p>7 páginas: desenhos de montagem (Top/Bottom), lista de materiais, vistas da placa e furação.</p>
+                    <div class="file-meta">PCB_PCB1_2026-09-26.pdf · PDF · 721 KB</div>
+                    <a href="fabricacao/PCB_PCB1_2026-09-26.pdf" target="_blank" class="btn-action">📄 Abrir PDF</a>
+                </div>
+                <div class="download-card">
+                    <div class="download-icon">🏭</div>
+                    <h3>Arquivos Gerber</h3>
+                    <p>Pacote pronto para envio ao fabricante de PCB: 2 camadas, 34,5 × 66,0 mm.</p>
+                    <div class="file-meta">Gerber_Metabee_V1.0_2026-09-26.zip · ZIP · 195 KB</div>
+                    <a href="fabricacao/Gerber_Metabee_V1.0_2026-09-26.zip" download class="btn-action">⬇️ Baixar Gerber</a>
+                </div>
+                <div class="download-card">
+                    <div class="download-icon">🧾</div>
+                    <h3>Lista de Materiais (BOM)</h3>
+                    <p>30 componentes em 16 linhas, com part numbers de fabricante e códigos LCSC.</p>
+                    <div class="file-meta">BOM_Metabee_WifiConnect_V1.0.csv · CSV · 2 KB</div>
+                    <a href="fabricacao/BOM_Metabee_WifiConnect_V1.0.csv" download class="btn-action">⬇️ Baixar BOM</a>
+                </div>
+                <div class="download-card">
+                    <div class="download-icon">🧊</div>
+                    <h3>Modelo 3D (STEP)</h3>
+                    <p>Placa montada com componentes, para o projeto mecânico da carcaça.</p>
+                    <div class="file-meta">wifi_gate_way_pcb.step · STEP · 25 MB</div>
+                    <a href="fabricacao/wifi_gate_way_pcb.step" download class="btn-action">⬇️ Baixar STEP</a>
+                </div>
+                <div class="download-card">
+                    <div class="download-icon">🔍</div>
+                    <h3>iBOM Interativo</h3>
+                    <p>Visualizador 3D com busca por designador, útil para montagem manual e conferência.</p>
+                    <div class="file-meta">InteractiveBOM_PCB1_2026-9-26.html · HTML · 10 MB</div>
+                    <a href="InteractiveBOM_PCB1_2026-9-26.html" target="_blank" class="btn-action">↗️ Abrir iBOM</a>
+                </div>
+            </div>
+
+            <!-- Camadas Gerber -->
+            <div class="doc-card full-width" style="margin-bottom: 24px;">
+                <h3>🏭 Conteúdo do Pacote Gerber</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>Arquivo</th>
+                                <th>Camada / Função</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>Gerber_TopLayer.GTL</code></td><td>Cobre — Top</td></tr>
+                            <tr><td><code>Gerber_BottomLayer.GBL</code></td><td>Cobre — Bottom</td></tr>
+                            <tr><td><code>Gerber_TopSolderMaskLayer.GTS</code> / <code>Gerber_BottomSolderMaskLayer.GBS</code></td><td>Máscara de solda</td></tr>
+                            <tr><td><code>Gerber_TopSilkscreenLayer.GTO</code> / <code>Gerber_BottomSilkscreenLayer.GBO</code></td><td>Serigrafia</td></tr>
+                            <tr><td><code>Gerber_TopPasteMaskLayer.GTP</code> / <code>Gerber_BottomPasteMaskLayer.GBP</code></td><td>Pasta de solda (stencil)</td></tr>
+                            <tr><td><code>Gerber_BoardOutlineLayer.GKO</code></td><td>Contorno da placa</td></tr>
+                            <tr><td><code>Drill_PTH_Through.DRL</code> / <code>Drill_PTH_Through_Via.DRL</code></td><td>Furação metalizada (pads e vias)</td></tr>
+                            <tr><td><code>Drill_NPTH_Through.DRL</code></td><td>Furação não metalizada</td></tr>
+                            <tr><td><code>Gerber_DrillDrawingLayer.GDD</code> / <code>Gerber_DocumentLayer.GDL</code></td><td>Desenho de furação e documentação</td></tr>
+                            <tr><td><code>FlyingProbeTesting.json</code></td><td>Netlist para teste elétrico (flying probe)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- BOM -->
+            <div class="doc-card full-width">
+                <h3>🧾 Lista de Materiais (BOM)</h3>
+                <div class="table-wrapper">
+                    <table class="pinout-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Designadores</th>
+                                <th>Qtd</th>
+                                <th>Valor</th>
+                                <th>Footprint</th>
+                                <th>Fabricante / Part Number</th>
+                                <th>LCSC</th>
+                                <th>Lado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>3V3, LED_5V_GREEN, LED_STATUS</strong></td>
+                                <td>3</td>
+                                <td>NCD0805R1</td>
+                                <td><code>LED0805-RD</code></td>
+                                <td>NATIONSTAR<br><span style="font-family: var(--font-code); font-size: .75rem;">NCD0805R1</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C84256.html" target="_blank" rel="noopener" class="gpio-badge">C84256</a></td>
+                                <td>Bottom/Top</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>C1</strong></td>
+                                <td>1</td>
+                                <td>22uF</td>
+                                <td><code>C0805</code></td>
+                                <td>SAMSUNG<br><span style="font-family: var(--font-code); font-size: .75rem;">CL21A226MPQNNNE</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C29277.html" target="_blank" rel="noopener" class="gpio-badge">C29277</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>C2, C4, C22, C25</strong></td>
+                                <td>4</td>
+                                <td>100nF</td>
+                                <td><code>C0805</code></td>
+                                <td>YAGEO<br><span style="font-family: var(--font-code); font-size: .75rem;">CC0805KRX7R9BB104</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C49678.html" target="_blank" rel="noopener" class="gpio-badge">C49678</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><strong>C3</strong></td>
+                                <td>1</td>
+                                <td>1uF</td>
+                                <td><code>C0805</code></td>
+                                <td>SAMSUNG<br><span style="font-family: var(--font-code); font-size: .75rem;">CL21B105KOFNNNE</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C24123.html" target="_blank" rel="noopener" class="gpio-badge">C24123</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><strong>C23</strong></td>
+                                <td>1</td>
+                                <td>10uF</td>
+                                <td><code>C1210</code></td>
+                                <td>SAMWHA<br><span style="font-family: var(--font-code); font-size: .75rem;">CS3225X7R106K500NRL</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C2918502.html" target="_blank" rel="noopener" class="gpio-badge">C2918502</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td><strong>H1</strong></td>
+                                <td>1</td>
+                                <td>2.54-1x6P直针</td>
+                                <td><code>HDR-TH_6P-P2.54-V-M-1</code></td>
+                                <td>BOOMELE<br><span style="font-family: var(--font-code); font-size: .75rem;">2.54-1x6P直针</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C37208.html" target="_blank" rel="noopener" class="gpio-badge">C37208</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td><strong>LCD2</strong></td>
+                                <td>1</td>
+                                <td>1.8 inch TFT LCD module</td>
+                                <td><code>1.8_inch_TFT_LCD_module</code></td>
+                                <td>—<br><span style="font-family: var(--font-code); font-size: .75rem;">—</span></td>
+                                <td><span class="chip-badge chip-warn">Módulo à parte</span></td>
+                                <td>Top</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td><strong>LED1</strong></td>
+                                <td>1</td>
+                                <td>333-2SURD/S530-A3</td>
+                                <td><code>LED-TH_BD5.9-P2.54-RD_RED</code></td>
+                                <td>EVERLIGHT<br><span style="font-family: var(--font-code); font-size: .75rem;">333-2SURD/S530-A3</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C87271.html" target="_blank" rel="noopener" class="gpio-badge">C87271</a></td>
+                                <td>Top</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td><strong>PWR, SWT</strong></td>
+                                <td>2</td>
+                                <td>PZ254V-11-02P</td>
+                                <td><code>HDR-TH_2P-P2.54-V-M</code></td>
+                                <td>XFCN<br><span style="font-family: var(--font-code); font-size: .75rem;">PZ254V-11-02P</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C492401.html" target="_blank" rel="noopener" class="gpio-badge">C492401</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td><strong>R1, R2, R32</strong></td>
+                                <td>3</td>
+                                <td>1kΩ</td>
+                                <td><code>R0805</code></td>
+                                <td>FOJAN<br><span style="font-family: var(--font-code); font-size: .75rem;">FRC0805J102 TS</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C2907295.html" target="_blank" rel="noopener" class="gpio-badge">C2907295</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td><strong>R3, R4, R5</strong></td>
+                                <td>3</td>
+                                <td>10kΩ</td>
+                                <td><code>R0805</code></td>
+                                <td>FOJAN<br><span style="font-family: var(--font-code); font-size: .75rem;">FRC0805J103TS</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C2930231.html" target="_blank" rel="noopener" class="gpio-badge">C2930231</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td><strong>SW1</strong></td>
+                                <td>1</td>
+                                <td>TC-6615-5-260G</td>
+                                <td><code>SW-TH_4P-L7.5-W5.0-P4.50</code></td>
+                                <td>HCTL<br><span style="font-family: var(--font-code); font-size: .75rem;">TC-6615-5-260G</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C2845270.html" target="_blank" rel="noopener" class="gpio-badge">C2845270</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td><strong>U1</strong></td>
+                                <td>1</td>
+                                <td>AMS1117-3.3</td>
+                                <td><code>SOT-223-4_L6.5-W3.5-P2.30-LS7.0-BR</code></td>
+                                <td>UMW<br><span style="font-family: var(--font-code); font-size: .75rem;">AMS1117-3.3</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C347222.html" target="_blank" rel="noopener" class="gpio-badge">C347222</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td><strong>U2</strong></td>
+                                <td>1</td>
+                                <td>2.4GHz</td>
+                                <td><code>WIFIM-SMD_39P-L25.5-W18.0-P1.27-BL</code></td>
+                                <td>ESPRESSIF<br><span style="font-family: var(--font-code); font-size: .75rem;">ESP32-WROOM-32D-N4</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C473012.html" target="_blank" rel="noopener" class="gpio-badge">C473012</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td><strong>U3, U4, U5, U6</strong></td>
+                                <td>4</td>
+                                <td>5.1kΩ</td>
+                                <td><code>R0805</code></td>
+                                <td>FOJAN<br><span style="font-family: var(--font-code); font-size: .75rem;">FRC0805J512TS</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C2930296.html" target="_blank" rel="noopener" class="gpio-badge">C2930296</a></td>
+                                <td>Bottom/Top</td>
+                            </tr>
+                            <tr>
+                                <td>16</td>
+                                <td><strong>USB1, USB2</strong></td>
+                                <td>2</td>
+                                <td>TYPE-C 16PIN 2MD(073)</td>
+                                <td><code>USB-C-SMD_TYPE-C-16PIN-2MD-073</code></td>
+                                <td>SHOU HAN<br><span style="font-family: var(--font-code); font-size: .75rem;">TYPE-C 16PIN 2MD(073)</span></td>
+                                <td><a href="https://www.lcsc.com/product-detail/C2765186.html" target="_blank" rel="noopener" class="gpio-badge">C2765186</a></td>
+                                <td>Bottom</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert-box alert-info" style="margin-top: 16px;">
+                    <span style="font-size: 1.5rem;">ℹ️</span>
+                    <div>
+                        C2, C4 e C25 aparecem com o código LCSC incompleto ("F") no PDF exportado. Eles usam o mesmo part number do C22 (<strong>CC0805KRX7R9BB104</strong>, LCSC <strong>C49678</strong>) e foram agrupados com ele. O módulo TFT 1.8" (LCD2) é comprado à parte e não tem código LCSC.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ───────── MODAL DE IMAGEM AMPLIADA COM ZOOM E PAN ───────── -->
+    <div id="imgModal" class="img-modal" style="user-select: none;">
+        <!-- Botão Fechar -->
+        <span class="img-modal-close" onclick="closeImageModal()">&times;</span>
+
+        <!-- Toolbar de Controles de Zoom -->
+        <div style="position: absolute; top: 20px; display: flex; align-items: center; gap: 10px; background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 30px; border: 1px solid var(--color-border); z-index: 1005;">
+            <button onclick="zoomInModal()" title="Aumentar Zoom (+)" style="background: rgba(0,123,255,0.2); border: 1px solid rgba(0,123,255,0.4); color: var(--color-blue-electric); padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;">🔍+ Zoom In</button>
+            <button onclick="zoomOutModal()" title="Diminuir Zoom (-)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--color-border); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;">🔍- Zoom Out</button>
+            <span id="modalZoomBadge" style="font-family: var(--font-code); font-size: 0.85rem; color: var(--color-text-muted); font-weight: 600; padding: 4px 8px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid var(--color-border);">100%</span>
+            <button onclick="resetModalZoom()" title="Resetar Zoom (100%)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--color-border); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.82rem; cursor: pointer;">🔄 Reset</button>
+        </div>
+
+        <!-- Container da Imagem com Overflow para Drag -->
+        <div id="modalImgContainer" style="width: 92%; height: 75vh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; margin-top: 40px; border-radius: 8px;">
+            <img class="img-modal-content" id="modalImg" style="max-width: 100%; max-height: 100%; border-radius: 8px; border: 1px solid var(--color-border); box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: transform 0.1s ease-out; cursor: zoom-in;" src="" alt="Imagem Ampliada">
+        </div>
+
+        <!-- Legenda e Dica de Uso -->
+        <div style="margin-top: 14px; text-align: center; z-index: 1005;">
+            <div class="img-modal-caption" id="modalCaption" style="color: var(--color-white); font-weight: 700; font-size: 1.05rem;"></div>
+            <div style="color: var(--color-text-muted); font-size: 0.8rem; margin-top: 4px; font-weight: 500;">💡 Use a roda do mouse para dar zoom. Arraste a imagem para navegar quando ampliada. Clique duplo para alternar zoom.</div>
+        </div>
+    </div>
+
+    <!-- ───────── FOOTER ───────── -->
+    <footer>
+        © 2026 DC Circuit Labs — Metabee. Todos os direitos reservados.
+    </footer>
+
+    <!-- ───────── SCRIPTS ───────── -->
+    <script>
+        // Toggle Accordions
+        function toggleAccordion(headerEl) {
+            const item = headerEl.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Copy Code to Clipboard
+        function copyCode(btn) {
+            const codeEl = btn.parentElement.nextElementSibling.querySelector('code');
+            if (codeEl) {
+                navigator.clipboard.writeText(codeEl.innerText).then(() => {
+                    const origText = btn.innerText;
+                    btn.innerText = 'Copiado! ✓';
+                    btn.style.background = '#3fb950';
+                    btn.style.color = '#fff';
+                    setTimeout(() => {
+                        btn.innerText = origText;
+                        btn.style.background = 'rgba(0,123,255,.15)';
+                        btn.style.color = 'var(--color-blue-electric)';
+                    }, 2000);
+                });
+            }
+        }
+
+        // --- INTERACTIVE ZOOM & PAN LIGHTBOX MODAL ---
+        let currentZoom = 1;
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let translateX = 0, translateY = 0;
+
+        function updateModalTransform() {
+            const modalImg = document.getElementById('modalImg');
+            const zoomBadge = document.getElementById('modalZoomBadge');
+            if (modalImg) {
+                modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+                modalImg.style.cursor = currentZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in';
+            }
+            if (zoomBadge) {
+                zoomBadge.textContent = `${Math.round(currentZoom * 100)}%`;
+            }
+        }
+
+        function zoomInModal() {
+            currentZoom = Math.min(currentZoom + 0.3, 5);
+            updateModalTransform();
+        }
+
+        function zoomOutModal() {
+            currentZoom = Math.max(currentZoom - 0.3, 0.5);
+            if (currentZoom <= 1) {
+                translateX = 0;
+                translateY = 0;
+            }
+            updateModalTransform();
+        }
+
+        function resetModalZoom() {
+            currentZoom = 1;
+            translateX = 0;
+            translateY = 0;
+            updateModalTransform();
+        }
+
+        function openImageModal(src, caption) {
+            const modal = document.getElementById('imgModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalCaption = document.getElementById('modalCaption');
+            resetModalZoom();
+            modal.style.display = 'flex';
+            modalImg.src = src;
+            modalCaption.textContent = caption;
+        }
+
+        function closeImageModal() {
+            document.getElementById('imgModal').style.display = 'none';
+            resetModalZoom();
+        }
+
+        // Event Listeners for Modal Interaction
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalImg = document.getElementById('modalImg');
+            const modalContainer = document.getElementById('modalImgContainer');
+
+            if (modalImg && modalContainer) {
+                // Mouse Wheel Zoom
+                modalContainer.addEventListener('wheel', function (e) {
+                    e.preventDefault();
+                    if (e.deltaY < 0) {
+                        currentZoom = Math.min(currentZoom + 0.2, 5);
+                    } else {
+                        currentZoom = Math.max(currentZoom - 0.2, 0.5);
+                        if (currentZoom <= 1) {
+                            translateX = 0;
+                            translateY = 0;
+                        }
+                    }
+                    updateModalTransform();
+                }, { passive: false });
+
+                // Drag & Pan
+                modalImg.addEventListener('mousedown', function (e) {
+                    if (currentZoom > 1) {
+                        isDragging = true;
+                        startX = e.clientX - translateX;
+                        startY = e.clientY - translateY;
+                        modalImg.style.cursor = 'grabbing';
+                    }
+                });
+
+                window.addEventListener('mousemove', function (e) {
+                    if (isDragging && currentZoom > 1) {
+                        e.preventDefault();
+                        translateX = e.clientX - startX;
+                        translateY = e.clientY - startY;
+                        updateModalTransform();
+                    }
+                });
+
+                window.addEventListener('mouseup', function () {
+                    if (isDragging) {
+                        isDragging = false;
+                        updateModalTransform();
+                    }
+                });
+
+                // Double Click Toggle
+                modalImg.addEventListener('dblclick', function () {
+                    if (currentZoom > 1) {
+                        resetModalZoom();
+                    } else {
+                        currentZoom = 2.5;
+                        updateModalTransform();
+                    }
+                });
+            }
+        });
+
+        // Keyboard Shortcuts (Esc to close, + / - to zoom, 0 to reset)
+        window.addEventListener('keydown', function (e) {
+            const modal = document.getElementById('imgModal');
+            if (modal && modal.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                } else if (e.key === '+' || e.key === '=') {
+                    zoomInModal();
+                } else if (e.key === '-' || e.key === '_') {
+                    zoomOutModal();
+                } else if (e.key === '0') {
+                    resetModalZoom();
+                }
+            }
+        });
+
+        // Fechar modal ao clicar fora do container da imagem
+        document.getElementById('imgModal').addEventListener('click', function(e) {
+            if (e.target === this || e.target === document.getElementById('modalImgContainer')) {
+                closeImageModal();
+            }
+        });
+
+        // Navigation Pills Smooth Scroll
+        document.querySelectorAll('.nav-pill').forEach(pill => {
+            pill.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Highlight Active Nav Pill on Scroll
+        window.addEventListener('scroll', () => {
+            const sections = ['visao-geral', 'ibom', 'pinout', 'teste-firmware', 'como-programar', 'fabricacao'];
+            let current = '';
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.getBoundingClientRect().top <= 140) {
+                    current = id;
+                }
+            });
+            document.querySelectorAll('.nav-pill').forEach(pill => {
+                pill.classList.toggle('active', pill.getAttribute('href') === '#' + current);
+            });
+        });
+
+        // Header Project & Version Dropdowns
+        function onHeaderProjectChange(proj) {
+            if (proj === 'wifi-connect') {
+                window.location.href = 'metabee-wifi-connect-v1.html';
+            }
+        }
+        function onHeaderVersionChange(ver) {
+            if (ver === '1_0') {
+                window.location.href = 'metabee-wifi-connect-v1.html';
+            }
+        }
+    </script>
+</body>
+
+</html>
