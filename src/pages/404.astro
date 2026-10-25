@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import { t, urlPagina } from '../i18n';
+
+const d = t('pt');
+const en = t('en');
+---
+
+<Base lang="pt" caminho="" titulo={d.erro.titulo} descricao={d.erro.texto} semIndexar>
+  <CabecalhoPagina eyebrow="404" titulo={d.erro.h1} lead={d.erro.texto}>
+    <div class="botoes acoes">
+      <a class="btn btn--primario" href={urlPagina('pt', 'home')}>{d.erro.voltar}</a>
+      <a class="btn btn--secundario" href={urlPagina('en', 'home')} lang="en">{en.erro.voltar}</a>
+    </div>
+  </CabecalhoPagina>
+</Base>
+
+<style>
+  .acoes {
+    margin-top: var(--space-7);
+    padding-bottom: var(--secao);
+  }
+</style>

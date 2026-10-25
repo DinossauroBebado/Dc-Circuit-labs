@@ -1,0 +1,494 @@
+---
+import Base from '../layouts/Base.astro';
+import Midia from '../components/Midia.astro';
+import Icone from '../components/Icone.astro';
+import CardServico from '../components/CardServico.astro';
+import Visualizador3D from '../components/Visualizador3D.astro';
+import Processo from '../components/Processo.astro';
+import CtaFases from '../components/CtaFases.astro';
+import { t, urlPagina, type Idioma } from '../i18n';
+import { SERVICOS } from '../data/servicos';
+import { APOIOS, CASES, visiveis } from '../data/autorizacoes';
+import { organizacao } from '../lib/schema';
+
+interface Props {
+  lang: Idioma;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const h = d.home;
+const cases = visiveis(CASES);
+const apoios = visiveis(APOIOS);
+---
+
+<Base lang={lang} caminho="" titulo={h.titulo} descricao={h.descricao} schemas={[organizacao(lang)]}>
+  <!-- Hero -->
+  <section class="hero escura">
+    <div class="hero__midia">
+      <Midia id="hero-laboratorio" lang={lang} variante="hero" prioridade />
+    </div>
+    <div class="hero__veu" aria-hidden="true"></div>
+    <div class="container hero__conteudo">
+      <p class="eyebrow hero__eyebrow"><span class="no-ciano" aria-hidden="true"></span>{h.hero.eyebrow}</p>
+      <h1 class="display">{d.marca.tagline}</h1>
+      <p class="lead">{h.hero.texto}</p>
+      <div class="botoes">
+        <a class="btn btn--primario" href={urlPagina(lang, 'contato')}>{d.comum.iniciarProjeto}</a>
+        <a class="btn btn--secundario" href={urlPagina(lang, 'servicos')}>{d.comum.nossosServicos}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prazo: o diferencial em semanas -->
+  <section class="secao prazo">
+    <div class="container centro">
+      <p class="eyebrow revelar">{h.prazo.eyebrow}</p>
+      <p class="prazo__numero revelar" aria-label={`${h.prazo.numero} ${h.prazo.unidade}`}>
+        <span class="prazo__digito">{h.prazo.numero}</span>
+        <span class="prazo__unidade">{h.prazo.unidade}<sup>*</sup></span>
+      </p>
+      <p class="lead revelar">{h.prazo.texto}</p>
+      <p class="nota prazo__nota revelar">* {d.comum.prazoNota}</p>
+    </div>
+  </section>
+
+  <!-- Como funciona: trilha de circuito que acende com o scroll -->
+  <section class="secao escura modelo">
+    <div class="container modelo__grade">
+      <header class="modelo__cabecalho">
+        <p class="eyebrow">{h.modelo.eyebrow}</p>
+        <h2 class="titulo-secao">{h.modelo.titulo}</h2>
+      </header>
+      <div class="modelo__trilhado" data-trilha>
+        <span class="trilha" aria-hidden="true"><span class="trilha__luz"></span></span>
+        <ol class="modelo__passos">
+          {
+            h.modelo.passos.map((p) => (
+              <li class="modelo__passo">
+                <span class="modelo__no" data-no aria-hidden="true" />
+                <h3>{p.t}</h3>
+                <p>{p.d}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Serviços -->
+  <section class="secao sutil">
+    <div class="container">
+      <header class="cabecalho-secao revelar">
+        <p class="eyebrow">{h.servicos.eyebrow}</p>
+        <h2 class="titulo-secao">{h.servicos.titulo}</h2>
+        <p class="lead">{h.servicos.texto}</p>
+      </header>
+      <div class="grade-servicos">
+        {SERVICOS.map((_, i) => <CardServico lang={lang} indice={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Visualizador 3D -->
+  <section class="secao escura visualizador">
+    <div class="container visualizador__grade">
+      <div class="revelar">
+        <p class="eyebrow">{h.visualizador.eyebrow}</p>
+        <h2 class="titulo-secao">{h.visualizador.titulo}</h2>
+        <p class="lead">{h.visualizador.texto}</p>
+      </div>
+      <div class="revelar">
+        <Visualizador3D id="modelo-placa" lang={lang} />
+      </div>
+    </div>
+  </section>
+
+  <!-- Para quem -->
+  <section class="secao">
+    <div class="container">
+      <header class="cabecalho-secao revelar">
+        <p class="eyebrow">{h.paraQuem.eyebrow}</p>
+        <h2 class="titulo-secao">{h.paraQuem.titulo}</h2>
+      </header>
+      <div class="perfis">
+        {
+          h.paraQuem.perfis.map((p, i) => (
+            <article class="perfil card-brilho revelar" style={`--atraso: ${i * 0.1}s`}>
+              <span class="perfil__letra" aria-hidden="true">
+                {i === 0 ? 'A' : 'B'}
+              </span>
+              <h3>{p.t}</h3>
+              <p>{p.d}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <Processo lang={lang} eyebrow={h.processo.eyebrow} titulo={h.processo.titulo} />
+
+  <!-- Cases (só os autorizados por escrito vão para produção) -->
+  {
+    cases.length > 0 && (
+      <section class="secao sutil">
+        <div class="container">
+          <header class="cabecalho-secao cabecalho-linha revelar">
+            <div>
+              <p class="eyebrow">{h.cases.eyebrow}</p>
+              <h2 class="titulo-secao">{h.cases.titulo}</h2>
+            </div>
+            <a class="link-seta" href={urlPagina(lang, 'cases')}>
+              {h.cases.link}
+              <Icone nome="arrow-right" />
+            </a>
+          </header>
+          <div class="grade-cases">
+            {cases.map((c, i) => {
+              const textos = d.cases.itens[c.id as keyof typeof d.cases.itens];
+              return (
+                <a
+                  class="card-case card-brilho revelar"
+                  href={`${urlPagina(lang, 'cases')}#${c.id}`}
+                  style={`--atraso: ${i * 0.08}s`}
+                >
+                  <div class="card-case__midia">
+                    <Midia id={c.midia} lang={lang} />
+                  </div>
+                  <div class="card-case__corpo">
+                    {!c.autorizado && <span class="selo-pendente">{d.comum.pendente}</span>}
+                    <p class="card-case__cliente">
+                      {textos.cliente} · {textos.setor}
+                    </p>
+                    <h3 class="titulo-card">{textos.titulo}</h3>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Apoios -->
+  {
+    apoios.length > 0 && (
+      <section class="secao apoios-chamada">
+        <div class="container apoios-chamada__grade">
+          <div class="apoios-chamada__midia revelar">
+            <Midia id={apoios[0].midia} lang={lang} />
+          </div>
+          <div class="revelar">
+            <p class="eyebrow">{h.apoios.eyebrow}</p>
+            <h2 class="titulo-secao">{h.apoios.titulo}</h2>
+            <p class="lead">{h.apoios.texto}</p>
+            <a class="link-seta" href={urlPagina(lang, 'apoios')}>
+              {h.apoios.link}
+              <Icone nome="arrow-right" />
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaFases lang={lang} eyebrow={h.cta.eyebrow} titulo={h.cta.titulo} texto={h.cta.texto} />
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-items: end;
+    padding-block: calc(var(--altura-header) + 64px) clamp(64px, 10vh, 120px);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero__midia,
+  .hero__veu {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .hero__veu {
+    background: linear-gradient(180deg, rgb(18 18 18 / 0.2) 0%, rgb(18 18 18 / 0.55) 55%, rgb(18 18 18 / 0.92) 100%);
+  }
+  .hero__conteudo {
+    max-width: 1200px;
+  }
+  .hero h1 {
+    max-width: 18ch;
+  }
+  .hero .lead {
+    margin-block: var(--space-5) var(--space-7);
+    color: rgb(255 255 255 / 0.82);
+    max-width: 52ch;
+  }
+  .hero__eyebrow {
+    color: #fff;
+    margin-bottom: var(--space-5);
+  }
+
+  /* ---------- Prazo ---------- */
+  .prazo__numero {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.12em;
+    line-height: 0.85;
+    color: var(--ink-strong);
+    margin-block: var(--space-4) var(--space-5);
+  }
+  .prazo__digito {
+    font-size: clamp(9rem, 5rem + 18vw, 17rem);
+    font-weight: 800;
+    letter-spacing: -0.06em;
+    background: linear-gradient(180deg, var(--brand-blue) 0%, var(--brand-blue-deep) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .prazo__unidade {
+    font-size: clamp(2rem, 1rem + 4vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .prazo__unidade sup {
+    font-size: 0.4em;
+    color: var(--brand-blue);
+  }
+  .prazo__nota {
+    margin-top: var(--space-5);
+  }
+
+  /* ---------- Como funciona + trilha ---------- */
+  .modelo__grade {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+  .modelo__cabecalho {
+    position: sticky;
+    top: calc(var(--altura-header) + 48px);
+  }
+  .modelo__trilhado {
+    position: relative;
+    padding-left: 64px;
+  }
+  .modelo__passos {
+    display: grid;
+    gap: clamp(72px, 14vh, 160px);
+    padding: 0;
+    list-style: none;
+  }
+  .trilha {
+    position: absolute;
+    left: 11px;
+    top: 0.6em;
+    bottom: 0;
+    width: 2px;
+    background: rgb(255 255 255 / 0.1);
+  }
+  .trilha__luz {
+    position: absolute;
+    inset: 0 0 auto;
+    height: calc(var(--progresso, 0) * 100%);
+    background: linear-gradient(180deg, var(--brand-blue), var(--accent-cyan));
+    box-shadow: 0 0 10px rgb(0 237 255 / 0.6);
+  }
+  .trilha__luz::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    bottom: -5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 14px 5px rgb(0 237 255 / 0.55);
+  }
+  .modelo__passo {
+    position: relative;
+    transition: opacity 0.5s var(--suave);
+  }
+  :global(html.js) .modelo__passo:not(:has(.aceso)) {
+    opacity: 0.3;
+  }
+  .modelo__no {
+    position: absolute;
+    left: -62px;
+    top: 0.45em;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgb(255 255 255 / 0.25);
+    background: var(--ink-strong);
+    transition: border-color 0.4s, box-shadow 0.4s, background 0.4s;
+  }
+  .modelo__no.aceso {
+    border-color: var(--accent-cyan);
+    background: radial-gradient(circle, #fff 0 3px, var(--ink-strong) 4px);
+    box-shadow: var(--cyan-brilho);
+  }
+  .modelo__passo h3 {
+    font-size: clamp(1.75rem, 1rem + 2.4vw, 2.75rem);
+    margin-bottom: var(--space-3);
+  }
+  .modelo__passo p {
+    font-size: 1.125rem;
+    max-width: 40ch;
+  }
+
+  /* ---------- Grade de serviços: 3 + 4 ---------- */
+  .grade-servicos {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--space-5);
+  }
+  .grade-servicos > :global(*) {
+    grid-column: span 4;
+  }
+  .grade-servicos > :global(:nth-child(n + 4)) {
+    grid-column: span 3;
+  }
+
+  /* ---------- Visualizador ---------- */
+  .visualizador__grade {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: clamp(40px, 6vw, 96px);
+    align-items: center;
+  }
+  .visualizador .lead {
+    margin-top: var(--space-5);
+    color: rgb(255 255 255 / 0.78);
+  }
+
+  /* ---------- Perfis ---------- */
+  .perfis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+  }
+  .perfil {
+    padding: clamp(32px, 4vw, 56px);
+    border-radius: var(--radius-md);
+    background: var(--surface-subtle);
+  }
+  .perfil__letra {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: var(--space-5);
+    border-radius: 50%;
+    border: 2px solid var(--brand-blue);
+    color: var(--brand-blue);
+    font-weight: 700;
+  }
+  .perfil h3 {
+    font-size: clamp(1.5rem, 1rem + 1.4vw, 2.1rem);
+    margin-bottom: var(--space-4);
+  }
+  .perfil p {
+    font-size: 1.0625rem;
+  }
+
+  /* ---------- Cases ---------- */
+  .cabecalho-linha {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: var(--space-5);
+  }
+  .grade-cases {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-5);
+  }
+  .card-case {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.4s var(--suave);
+  }
+  .card-case:hover {
+    transform: translateY(-6px);
+  }
+  .card-case__midia {
+    aspect-ratio: 4 / 3;
+  }
+  .card-case__corpo {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    padding: var(--space-6);
+  }
+  .card-case__cliente {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--brand-blue);
+  }
+
+  /* ---------- Chamada de apoios ---------- */
+  .apoios-chamada__grade {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(40px, 6vw, 96px);
+    align-items: center;
+  }
+  .apoios-chamada__midia {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .apoios-chamada .lead {
+    margin-block: var(--space-5) var(--space-6);
+  }
+
+  @media (max-width: 1024px) {
+    .grade-servicos > :global(*),
+    .grade-servicos > :global(:nth-child(n + 4)) {
+      grid-column: span 6;
+    }
+    .grade-servicos > :global(:last-child) {
+      grid-column: span 12;
+    }
+    .modelo__grade,
+    .visualizador__grade,
+    .apoios-chamada__grade {
+      grid-template-columns: 1fr;
+    }
+    .modelo__cabecalho {
+      position: static;
+    }
+  }
+  @media (max-width: 680px) {
+    .grade-servicos > :global(*),
+    .grade-servicos > :global(:nth-child(n + 4)),
+    .grade-servicos > :global(:last-child) {
+      grid-column: span 12;
+    }
+    .perfis {
+      grid-template-columns: 1fr;
+    }
+    .modelo__trilhado {
+      padding-left: 48px;
+    }
+    .modelo__no {
+      left: -46px;
+    }
+  }
+</style>

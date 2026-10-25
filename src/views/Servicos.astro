@@ -1,0 +1,111 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import Midia from '../components/Midia.astro';
+import Icone from '../components/Icone.astro';
+import Processo from '../components/Processo.astro';
+import CtaFases from '../components/CtaFases.astro';
+import { t, urlPagina, type Idioma } from '../i18n';
+import { SERVICOS } from '../data/servicos';
+
+interface Props {
+  lang: Idioma;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const p = d.servicosPagina;
+---
+
+<Base lang={lang} caminho="servicos/" titulo={p.titulo} descricao={p.descricao}>
+  <CabecalhoPagina eyebrow={p.eyebrow} titulo={p.h1} lead={p.lead} />
+
+  <section class="secao lista-servicos">
+    <div class="container">
+      {
+        SERVICOS.map((s, i) => {
+          const textos = d.servicos[s.slug];
+          return (
+            <article class="linha-servico">
+              <a class="linha-servico__midia revelar" href={urlPagina(lang, 'servico', s.slug)} tabindex="-1" aria-hidden="true">
+                <Midia id={s.midia} lang={lang} />
+              </a>
+              <div class="linha-servico__texto revelar">
+                <span class="linha-servico__numero">{String(i + 1).padStart(2, '0')}</span>
+                <span class="linha-servico__icone">
+                  <Icone nome={s.icone} tamanho={30} />
+                </span>
+                <h2 class="titulo-secao">{textos.nome}</h2>
+                <p class="lead">{textos.lead}</p>
+                <ul class="chips">
+                  {textos.stack.map((item) => (
+                    <li class="chip">{item}</li>
+                  ))}
+                </ul>
+                <a class="link-seta" href={urlPagina(lang, 'servico', s.slug)}>
+                  {d.comum.saibaMais}
+                  <span class="visualmente-oculto">: {textos.nome}</span>
+                  <Icone nome="arrow-right" />
+                </a>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <Processo lang={lang} eyebrow={d.servico.processo} titulo={d.home.processo.titulo} />
+  <CtaFases lang={lang} eyebrow={d.home.cta.eyebrow} titulo={d.servico.ctaTitulo} texto={d.servico.ctaTexto} />
+</Base>
+
+<style>
+  .lista-servicos {
+    padding-top: 0;
+  }
+  .linha-servico {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(32px, 6vw, 96px);
+    align-items: center;
+    padding-block: clamp(48px, 7vw, 96px);
+    border-top: 1px solid rgb(18 18 18 / 0.08);
+  }
+  .linha-servico:nth-child(even) .linha-servico__midia {
+    order: 2;
+  }
+  .linha-servico__midia {
+    display: block;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .linha-servico__texto {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+  .linha-servico__numero {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--ink);
+  }
+  .linha-servico__icone {
+    color: var(--brand-blue);
+  }
+  .linha-servico .titulo-secao {
+    font-size: clamp(1.9rem, 1.2rem + 2.2vw, 3rem);
+  }
+  .linha-servico .chips {
+    margin-block: var(--space-2);
+  }
+  @media (max-width: 860px) {
+    .linha-servico {
+      grid-template-columns: 1fr;
+    }
+    .linha-servico:nth-child(even) .linha-servico__midia {
+      order: 0;
+    }
+  }
+</style>

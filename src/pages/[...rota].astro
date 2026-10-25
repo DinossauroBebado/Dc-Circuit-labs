@@ -1,0 +1,43 @@
+---
+// Uma única rota gera todas as páginas nos três idiomas a partir de src/i18n/rotas.ts:
+//   /            /servicos/firmware/   …  (português, sem prefixo)
+//   /en/         /en/servicos/firmware/ …
+//   /zh/         /zh/servicos/firmware/ …
+import type { GetStaticPaths } from 'astro';
+import { IDIOMAS, IDIOMA_PADRAO, PAGINAS, type Idioma, type Pagina } from '../i18n';
+import Home from '../views/Home.astro';
+import Servicos from '../views/Servicos.astro';
+import Servico from '../views/Servico.astro';
+import Cases from '../views/Cases.astro';
+import Apoios from '../views/Apoios.astro';
+import Sobre from '../views/Sobre.astro';
+import Faq from '../views/Faq.astro';
+import Contato from '../views/Contato.astro';
+
+export const getStaticPaths = (() =>
+  IDIOMAS.flatMap((lang) =>
+    PAGINAS.map((pagina) => {
+      const caminho = (lang === IDIOMA_PADRAO ? '' : `${lang}/`) + pagina.caminho;
+      return {
+        params: { rota: caminho.replace(/\/$/, '') || undefined },
+        props: { lang, pagina },
+      };
+    }),
+  )) satisfies GetStaticPaths;
+
+interface Props {
+  lang: Idioma;
+  pagina: Pagina;
+}
+
+const { lang, pagina } = Astro.props;
+---
+
+{pagina.id === 'home' && <Home lang={lang} />}
+{pagina.id === 'servicos' && <Servicos lang={lang} />}
+{pagina.id === 'servico' && pagina.slug && <Servico lang={lang} slug={pagina.slug} />}
+{pagina.id === 'cases' && <Cases lang={lang} />}
+{pagina.id === 'apoios' && <Apoios lang={lang} />}
+{pagina.id === 'sobre' && <Sobre lang={lang} />}
+{pagina.id === 'faq' && <Faq lang={lang} />}
+{pagina.id === 'contato' && <Contato lang={lang} />}

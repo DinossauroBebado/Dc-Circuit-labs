@@ -1,0 +1,39 @@
+---
+interface Props {
+  eyebrow: string;
+  titulo: string;
+  lead?: string;
+  centro?: boolean;
+}
+
+const { eyebrow, titulo, lead, centro = false } = Astro.props;
+---
+
+<section class:list={['cabecalho-pagina', { centro }]}>
+  <div class="container">
+    <p class="eyebrow revelar"><span class="no-ciano" aria-hidden="true"></span>{eyebrow}</p>
+    <h1 class="display revelar">{titulo}</h1>
+    {lead && <p class="lead revelar">{lead}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .cabecalho-pagina {
+    padding-block: calc(var(--altura-header) + clamp(56px, 9vw, 120px)) clamp(48px, 7vw, 96px);
+  }
+  .cabecalho-pagina h1 {
+    max-width: 20ch;
+  }
+  .centro h1 {
+    margin-inline: auto;
+  }
+  .cabecalho-pagina .lead {
+    margin-top: var(--space-5);
+    max-width: 52ch;
+  }
+  .eyebrow .no-ciano {
+    width: 8px;
+    height: 8px;
+  }
+</style>

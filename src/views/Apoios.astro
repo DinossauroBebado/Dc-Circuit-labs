@@ -1,0 +1,85 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import Midia from '../components/Midia.astro';
+import CtaFases from '../components/CtaFases.astro';
+import { t, type Idioma } from '../i18n';
+import { APOIOS, visiveis } from '../data/autorizacoes';
+
+interface Props {
+  lang: Idioma;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const a = d.apoios;
+const apoios = visiveis(APOIOS);
+---
+
+<Base lang={lang} caminho="apoios/" titulo={a.titulo} descricao={a.descricao}>
+  <CabecalhoPagina eyebrow={a.eyebrow} titulo={a.h1} lead={a.lead} />
+
+  <section class="secao apoios">
+    <div class="container">
+      {apoios.length === 0 && <p class="lead">{a.vazio}</p>}
+      {
+        apoios.map((item) => {
+          const textos = a.itens[item.id as keyof typeof a.itens];
+          return (
+            <article class="apoio" id={item.id}>
+              <div class="apoio__midia revelar">
+                <Midia id={item.midia} lang={lang} />
+              </div>
+              <div class="apoio__texto revelar">
+                {!item.autorizado && <span class="selo-pendente">{d.comum.pendente}</span>}
+                <p class="eyebrow">{textos.tipo}</p>
+                <h2 class="titulo-secao">{textos.nome}</h2>
+                <p class="lead">{textos.texto}</p>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <CtaFases lang={lang} eyebrow={d.home.cta.eyebrow} titulo={d.home.cta.titulo} texto={d.home.cta.texto} />
+</Base>
+
+<style>
+  .apoios {
+    padding-top: 0;
+  }
+  .apoio {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(32px, 6vw, 96px);
+    align-items: center;
+    padding-block: clamp(48px, 7vw, 96px);
+    border-top: 1px solid rgb(18 18 18 / 0.08);
+  }
+  .apoio:nth-child(even) .apoio__midia {
+    order: 2;
+  }
+  .apoio__midia {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .apoio__texto {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-4);
+  }
+  .apoio__texto .eyebrow {
+    margin-bottom: 0;
+  }
+  @media (max-width: 860px) {
+    .apoio {
+      grid-template-columns: 1fr;
+    }
+    .apoio:nth-child(even) .apoio__midia {
+      order: 0;
+    }
+  }
+</style>

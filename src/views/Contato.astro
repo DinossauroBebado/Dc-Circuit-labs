@@ -1,0 +1,343 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import Icone from '../components/Icone.astro';
+import { CONTATO, t, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const c = d.contato;
+
+// Textos usados pelo script do fluxo para montar a mensagem no idioma da página.
+const textos = JSON.stringify({
+  mensagem: c.mensagem,
+  fases: Object.fromEntries(c.fases.map((f) => [f.id, { t: f.t, resposta: f.resposta }])),
+  perfis: Object.fromEntries(c.perfis.map((p) => [p.id, p.t])),
+});
+---
+
+<Base lang={lang} caminho="contato/" titulo={c.titulo} descricao={c.descricao}>
+  <CabecalhoPagina eyebrow={c.eyebrow} titulo={c.h1} lead={c.lead} />
+
+  <section class="secao contato">
+    <div class="container contato__grade">
+      <form
+        class="fluxo"
+        id="fluxo"
+        data-fluxo
+        data-whatsapp={CONTATO.whatsapp}
+        data-email={CONTATO.email}
+        data-textos={textos}
+        novalidate
+      >
+        <p class="fluxo__progresso" aria-live="polite">
+          {c.etapa} <span data-etapa-atual>1</span>
+          {c.de} 3
+        </p>
+        <div class="fluxo__barra" aria-hidden="true"><span data-barra></span></div>
+
+        <fieldset class="etapa-fluxo" data-etapa="1">
+          <legend class="etapa-fluxo__pergunta">{c.perguntaFase}</legend>
+          <div class="opcoes opcoes--fases">
+            {
+              c.fases.map((f) => (
+                <label class="opcao card-brilho">
+                  <input type="radio" name="fase" value={f.id} required />
+                  <strong>{f.t}</strong>
+                  <span>{f.d}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <p class="fluxo__resposta" data-resposta hidden aria-live="polite">
+          <span class="no-ciano" aria-hidden="true"></span><span data-resposta-texto></span>
+        </p>
+
+        <fieldset class="etapa-fluxo" data-etapa="2" hidden>
+          <legend class="etapa-fluxo__pergunta">{c.perguntaPerfil}</legend>
+          <div class="opcoes">
+            {
+              c.perfis.map((p) => (
+                <label class="opcao opcao--linha card-brilho">
+                  <input type="radio" name="perfil" value={p.id} required />
+                  <strong>{p.t}</strong>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="etapa-fluxo" data-etapa="3" hidden>
+          <legend class="etapa-fluxo__pergunta">{c.perguntaProjeto}</legend>
+          <div class="campos">
+            <label class="campo">
+              <span>{c.campos.nome}</span>
+              <input type="text" name="nome" autocomplete="name" required />
+            </label>
+            <label class="campo">
+              <span>{c.campos.empresa}</span>
+              <input type="text" name="empresa" autocomplete="organization" />
+            </label>
+            <label class="campo campo--largo">
+              <span>{c.campos.projeto}</span>
+              <textarea name="projeto" rows="4" required placeholder={c.campos.projetoExemplo}></textarea>
+            </label>
+          </div>
+          <div class="botoes">
+            <button type="submit" class="btn btn--primario">
+              <Icone nome="message-circle" />{c.whatsapp}
+            </button>
+            <button type="button" class="btn btn--secundario" data-enviar-email>
+              <Icone nome="mail" />{c.email}
+            </button>
+          </div>
+          <p class="nota">{c.privacidade}</p>
+        </fieldset>
+
+        <div class="fluxo__navegacao">
+          <button type="button" class="fluxo__voltar" data-voltar hidden>
+            ← {c.voltar}
+          </button>
+        </div>
+      </form>
+
+      <aside class="direto">
+        <h2 class="titulo-card">{c.direto}</h2>
+        <dl>
+          <div>
+            <dt>{c.rotuloWhatsapp}</dt>
+            <dd><a href={`https://wa.me/${CONTATO.whatsapp}`} target="_blank" rel="noopener">{CONTATO.whatsappExibicao}</a></dd>
+          </div>
+          <div>
+            <dt>{c.rotuloEmail}</dt>
+            <dd><a href={`mailto:${CONTATO.email}`}>{CONTATO.email}</a></dd>
+          </div>
+          <div>
+            <dt>{c.rotuloRegiao}</dt>
+            <dd>{d.marca.regiao}</dd>
+          </div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '../scripts/contato';
+</script>
+
+<style>
+  .contato {
+    padding-top: 0;
+  }
+  .contato__grade {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+
+  /* O fluxo depende de JS; sem ele, ficam só os contatos diretos. */
+  .fluxo {
+    display: none;
+  }
+  :global(html.js) .fluxo {
+    display: block;
+  }
+
+  .fluxo__progresso {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .fluxo__barra {
+    height: 2px;
+    margin: var(--space-3) 0 var(--space-7);
+    background: rgb(18 18 18 / 0.1);
+  }
+  .fluxo__barra span {
+    display: block;
+    height: 100%;
+    width: calc(var(--etapa, 1) / 3 * 100%);
+    background: linear-gradient(90deg, var(--brand-blue), var(--accent-cyan));
+    box-shadow: 0 0 8px rgb(0 237 255 / 0.5);
+    transition: width 0.5s var(--suave);
+  }
+  .etapa-fluxo {
+    border: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .etapa-fluxo__pergunta {
+    padding: 0;
+    margin-bottom: var(--space-6);
+    font-size: clamp(1.6rem, 1rem + 2vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+  .opcoes {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .opcoes--fases {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .opcao {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    padding: var(--space-5);
+    border: 1px solid rgb(18 18 18 / 0.14);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s var(--suave);
+  }
+  .opcao:hover {
+    transform: translateY(-2px);
+  }
+  .opcao input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .opcao strong {
+    color: var(--ink-strong);
+    font-size: 1.125rem;
+  }
+  .opcao span {
+    font-size: 0.95rem;
+  }
+  .opcao:has(input:checked) {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 1px var(--brand-blue), 0 0 22px rgb(0 237 255 / 0.25);
+  }
+  .opcao:has(input:focus-visible) {
+    outline: 2px solid var(--brand-blue);
+    outline-offset: 3px;
+  }
+  .opcao--linha strong {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .fluxo__resposta {
+    display: flex;
+    gap: var(--space-3);
+    align-items: baseline;
+    margin-bottom: var(--space-7);
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+    background: var(--surface-subtle);
+    color: var(--ink-strong);
+    font-weight: 500;
+  }
+  .fluxo__resposta .no-ciano {
+    top: 1px;
+  }
+  .campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+  }
+  .campo {
+    display: grid;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink-strong);
+  }
+  .campo--largo {
+    grid-column: 1 / -1;
+  }
+  .campo input,
+  .campo textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid rgb(18 18 18 / 0.18);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-weight: 400;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .campo input:focus,
+  .campo textarea:focus {
+    outline: none;
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 3px rgb(0 123 255 / 0.15);
+  }
+  .campo :user-invalid {
+    border-color: #c62828;
+  }
+  .etapa-fluxo .nota {
+    margin-top: var(--space-5);
+  }
+  .fluxo__navegacao {
+    margin-top: var(--space-6);
+  }
+  .fluxo__voltar {
+    border: 0;
+    background: none;
+    padding: 0;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .fluxo__voltar:hover {
+    color: var(--brand-blue);
+  }
+
+  .direto {
+    padding: clamp(28px, 3vw, 40px);
+    border-radius: var(--radius-md);
+    background: var(--surface-subtle);
+  }
+  .direto dl {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+  }
+  .direto dt {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .direto dd {
+    margin: 4px 0 0;
+    font-weight: 600;
+    color: var(--ink-strong);
+  }
+  .direto a {
+    color: var(--brand-blue);
+    text-decoration: none;
+  }
+  .direto a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 960px) {
+    .contato__grade {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 680px) {
+    .opcoes--fases,
+    .campos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

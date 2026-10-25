@@ -1,0 +1,49 @@
+---
+// Lockup horizontal: ícone original (PNG da marca) + wordmark em texto.
+// "DC CIRCUIT" em ink-strong e "LABS" em brand-blue (Design System). O ícone tem traços pretos,
+// então só aparece sobre fundo claro — no rodapé escuro usamos só o wordmark.
+import { Image } from 'astro:assets';
+import icone from '../assets/marca/icone.png';
+
+interface Props {
+  href: string;
+  rotulo: string;
+  semIcone?: boolean;
+  escuro?: boolean;
+}
+
+const { href, rotulo, semIcone = false, escuro = false } = Astro.props;
+---
+
+<a class:list={['logo', { 'logo--escuro': escuro }]} href={href} aria-label={rotulo}>
+  {!semIcone && <Image src={icone} alt="" width={36} height={36} densities={[1, 2]} loading="eager" />}
+  <span class="logo__texto" aria-hidden="true">DC CIRCUIT <span class="logo__labs">LABS</span></span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    flex: none;
+  }
+  .logo img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+  }
+  .logo__texto {
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+    color: var(--ink-strong);
+    white-space: nowrap;
+  }
+  .logo__labs {
+    color: var(--brand-blue);
+  }
+  .logo--escuro .logo__texto {
+    color: #fff;
+  }
+</style>

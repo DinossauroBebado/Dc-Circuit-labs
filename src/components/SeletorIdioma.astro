@@ -1,0 +1,65 @@
+---
+// Troca de idioma. O idioma inicial é decidido pelo Nginx a partir do IP do visitante
+// (deploy/nginx/idioma-por-ip.conf). Escolher aqui grava o cookie `lang`, que passa a valer
+// mais que o IP. O `?lang=` no link faz o mesmo mesmo sem JavaScript: o Nginx grava o cookie e
+// redireciona para a URL limpa.
+import { IDIOMAS, t, url, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+  caminho: string;
+  escuro?: boolean;
+}
+
+const { lang, caminho, escuro = false } = Astro.props;
+---
+
+<nav class:list={['idiomas', { 'idiomas--escuro': escuro }]} aria-label={t(lang).nav.idioma}>
+  {
+    IDIOMAS.map((l) => (
+      <a
+        href={`${url(l, caminho)}?lang=${l}`}
+        hreflang={t(l).meta.tag}
+        lang={t(l).meta.tag}
+        data-idioma={l}
+        aria-current={l === lang ? 'true' : undefined}
+      >
+        {t(l).meta.sigla}
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .idiomas {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .idiomas a {
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--ink);
+    transition: color 0.2s, background-color 0.2s;
+  }
+  .idiomas a:hover {
+    color: var(--brand-blue);
+  }
+  .idiomas a[aria-current] {
+    color: var(--ink-strong);
+    background: var(--surface-subtle);
+  }
+  .idiomas--escuro a {
+    color: var(--ink-muted);
+  }
+  .idiomas--escuro a:hover {
+    color: #fff;
+  }
+  .idiomas--escuro a[aria-current] {
+    color: #fff;
+    background: rgb(255 255 255 / 0.08);
+  }
+</style>

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+
+# Vídeos e fotos brutos (centenas de MB) — só os arquivos processados vão para public/media
+midia-bruta/
+
+# Teste local do Nginx (base GeoIP baixada)
+deploy/teste-local/geoip/

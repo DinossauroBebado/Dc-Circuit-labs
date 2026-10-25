@@ -1,0 +1,215 @@
+---
+import Logo from './Logo.astro';
+import Icone from './Icone.astro';
+import SeletorIdioma from './SeletorIdioma.astro';
+import { t, urlPagina, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+  caminho: string;
+}
+
+const { lang, caminho } = Astro.props;
+const d = t(lang);
+
+const links = [
+  { href: urlPagina(lang, 'servicos'), rotulo: d.nav.servicos, ativo: caminho.startsWith('servicos/') },
+  { href: urlPagina(lang, 'cases'), rotulo: d.nav.cases, ativo: caminho === 'cases/' },
+  { href: urlPagina(lang, 'apoios'), rotulo: d.nav.apoios, ativo: caminho === 'apoios/' },
+  { href: urlPagina(lang, 'sobre'), rotulo: d.nav.sobre, ativo: caminho === 'sobre/' },
+  { href: urlPagina(lang, 'faq'), rotulo: d.nav.faq, ativo: caminho === 'faq/' },
+];
+---
+
+<header class="topo" data-topo>
+  <div class="topo__barra container">
+    <Logo href={urlPagina(lang, 'home')} rotulo={`DC Circuit Labs — ${d.nav.inicio}`} />
+
+    <nav class="topo__nav" aria-label="Principal">
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} class="topo__link" aria-current={l.ativo ? 'page' : undefined}>
+                {l.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="topo__acoes">
+      <SeletorIdioma lang={lang} caminho={caminho} />
+      <a href={urlPagina(lang, 'contato')} class="btn btn--primario topo__cta">{d.nav.iniciar}</a>
+      <button
+        class="topo__menu"
+        type="button"
+        aria-expanded="false"
+        aria-controls="menu-movel"
+        data-menu-abrir
+        data-rotulo-abrir={d.nav.menu}
+        data-rotulo-fechar={d.nav.fechar}
+      >
+        <span class="visualmente-oculto" data-menu-rotulo>{d.nav.menu}</span>
+        <span class="topo__menu-icone" data-icone="abrir"><Icone nome="menu" /></span>
+        <span class="topo__menu-icone" data-icone="fechar" hidden><Icone nome="x" /></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="menu-movel" id="menu-movel" data-menu hidden>
+    <nav class="container" aria-label="Principal">
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} aria-current={l.ativo ? 'page' : undefined}>
+                {l.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href={urlPagina(lang, 'contato')} class="btn btn--primario">{d.nav.iniciar}</a>
+      <SeletorIdioma lang={lang} caminho={caminho} />
+    </nav>
+  </div>
+</header>
+
+<style>
+  .topo {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 1000;
+    height: var(--altura-header);
+    background: rgb(255 255 255 / 0.78);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background-color 0.3s;
+  }
+  .topo.rolou {
+    border-bottom-color: rgb(18 18 18 / 0.08);
+    background: rgb(255 255 255 / 0.9);
+  }
+  .topo__barra {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+  }
+  .topo__nav ul {
+    display: flex;
+    gap: 28px;
+    padding: 0;
+    list-style: none;
+  }
+  .topo__link {
+    position: relative;
+    padding-block: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink-strong);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  /* Trilha de circuito que se desenha sob o link, terminando num nó ciano */
+  .topo__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--brand-blue), var(--accent-cyan));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--suave);
+  }
+  .topo__link::before {
+    content: '';
+    position: absolute;
+    right: -3px;
+    bottom: -2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    box-shadow: var(--cyan-brilho);
+    opacity: 0;
+    transition: opacity 0.2s 0.15s;
+  }
+  .topo__link:hover,
+  .topo__link[aria-current] {
+    color: var(--brand-blue);
+  }
+  .topo__link:hover::after,
+  .topo__link[aria-current]::after {
+    transform: scaleX(1);
+  }
+  .topo__link:hover::before,
+  .topo__link[aria-current]::before {
+    opacity: 1;
+  }
+  .topo__acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .topo__cta {
+    padding: 6px 18px;
+    font-size: 0.9rem;
+  }
+  .topo__menu {
+    display: none;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--ink-strong);
+    cursor: pointer;
+  }
+
+  .menu-movel {
+    position: fixed;
+    inset: var(--altura-header) 0 0;
+    background: var(--surface);
+    padding-block: var(--space-7);
+    overflow-y: auto;
+  }
+  .menu-movel ul {
+    padding: 0;
+    list-style: none;
+    margin-bottom: var(--space-7);
+  }
+  .menu-movel li a {
+    display: block;
+    padding-block: 14px;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--ink-strong);
+    text-decoration: none;
+    border-bottom: 1px solid rgb(18 18 18 / 0.08);
+  }
+  .menu-movel li a[aria-current] {
+    color: var(--brand-blue);
+  }
+  .menu-movel .btn {
+    width: 100%;
+    margin-bottom: var(--space-5);
+  }
+
+  @media (max-width: 1024px) {
+    .topo__nav,
+    .topo__acoes > :global(.idiomas),
+    .topo__cta {
+      display: none;
+    }
+    .topo__menu {
+      display: grid;
+    }
+  }
+</style>

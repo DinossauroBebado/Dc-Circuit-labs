@@ -1,0 +1,19 @@
+# DC Circuit Labs — buscadores e ferramentas de IA podem ler todo o site.
+
+User-agent: *
+Allow: /
+
+# Crawlers de IA liberados explicitamente (para aparecer em respostas do ChatGPT, Claude, Perplexity e Gemini)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://dccircuitlabs.com/sitemap.xml

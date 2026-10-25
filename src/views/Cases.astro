@@ -1,0 +1,133 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import Midia from '../components/Midia.astro';
+import Visualizador3D from '../components/Visualizador3D.astro';
+import CtaFases from '../components/CtaFases.astro';
+import { t, type Idioma } from '../i18n';
+import { CASES, visiveis } from '../data/autorizacoes';
+
+interface Props {
+  lang: Idioma;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const c = d.cases;
+const cases = visiveis(CASES);
+---
+
+<Base lang={lang} caminho="cases/" titulo={c.titulo} descricao={c.descricao}>
+  <CabecalhoPagina eyebrow={c.eyebrow} titulo={c.h1} lead={c.lead} />
+
+  {
+    cases.length === 0 && (
+      <section class="secao vazio">
+        <div class="container centro">
+          <p class="lead">{c.vazio}</p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    cases.map((item, i) => {
+      const textos = c.itens[item.id as keyof typeof c.itens];
+      return (
+        <article id={item.id} class:list={['secao', 'case', { escura: i % 2 === 1 }]}>
+          <div class="container">
+            <header class="case__cabecalho revelar">
+              {!item.autorizado && <span class="selo-pendente">{d.comum.pendente}</span>}
+              <p class="eyebrow">
+                {textos.cliente} · {textos.setor}
+              </p>
+              <h2 class="titulo-secao">{textos.titulo}</h2>
+            </header>
+            <div class="case__midia revelar">
+              <Midia id={item.midia} lang={lang} />
+            </div>
+            <dl class="case__historia">
+              <div class="revelar">
+                <dt>{c.desafio}</dt>
+                <dd>{textos.desafio}</dd>
+              </div>
+              <div class="revelar" style="--atraso: .08s">
+                <dt>{c.solucao}</dt>
+                <dd>{textos.solucao}</dd>
+              </div>
+              <div class="revelar" style="--atraso: .16s">
+                <dt>{c.resultado}</dt>
+                <dd>{textos.resultado}</dd>
+              </div>
+            </dl>
+            {item.modelo && (
+              <div class="case__modelo revelar">
+                <p class="eyebrow">{c.explore}</p>
+                <Visualizador3D id={item.modelo.midia} lang={lang} explodido={item.modelo.explodido} />
+              </div>
+            )}
+          </div>
+        </article>
+      );
+    })
+  }
+
+  <CtaFases lang={lang} eyebrow={d.home.cta.eyebrow} titulo={d.home.cta.titulo} texto={d.home.cta.texto} />
+</Base>
+
+<style>
+  .case__cabecalho {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+  .case__cabecalho .eyebrow {
+    margin-bottom: 0;
+  }
+  .case__cabecalho h2 {
+    max-width: 22ch;
+  }
+  .case__midia {
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .case__historia {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-7);
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+  .case__historia dt {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brand-blue);
+    margin-bottom: var(--space-3);
+  }
+  .escura .case__historia dt {
+    color: var(--accent-cyan);
+  }
+  .case__historia dd {
+    margin: 0;
+    font-size: 1.0625rem;
+  }
+  .case__modelo {
+    margin-top: clamp(48px, 7vw, 96px);
+    max-width: 900px;
+  }
+  .case:not(.escura) .case__modelo :global(.v3d__explosao) {
+    color: var(--ink);
+  }
+  .case:not(.escura) .case__modelo :global(.v3d__dica) {
+    color: var(--ink);
+  }
+  @media (max-width: 860px) {
+    .case__historia {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+  }
+</style>

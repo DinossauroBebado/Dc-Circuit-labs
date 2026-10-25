@@ -1,0 +1,137 @@
+---
+import Logo from './Logo.astro';
+import SeletorIdioma from './SeletorIdioma.astro';
+import { CONTATO, t, urlPagina, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+  caminho: string;
+}
+
+const { lang, caminho } = Astro.props;
+const d = t(lang);
+const ano = new Date().getFullYear();
+---
+
+<footer class="rodape escura">
+  <div class="container rodape__grade">
+    <div class="rodape__marca">
+      <Logo href={urlPagina(lang, 'home')} rotulo={`DC Circuit Labs — ${d.nav.inicio}`} semIcone escuro />
+      <p>{d.marca.tagline}</p>
+      <p class="rodape__regiao">{d.marca.regiao}</p>
+    </div>
+
+    <nav aria-labelledby="rodape-nav">
+      <h2 id="rodape-nav" class="rodape__titulo">{d.rodape.navegacao}</h2>
+      <ul>
+        <li><a href={urlPagina(lang, 'servicos')}>{d.nav.servicos}</a></li>
+        <li><a href={urlPagina(lang, 'cases')}>{d.nav.cases}</a></li>
+        <li><a href={urlPagina(lang, 'apoios')}>{d.nav.apoios}</a></li>
+        <li><a href={urlPagina(lang, 'sobre')}>{d.nav.sobre}</a></li>
+        <li><a href={urlPagina(lang, 'faq')}>{d.nav.faq}</a></li>
+        <li><a href={urlPagina(lang, 'contato')}>{d.nav.contato}</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="rodape__titulo">{d.rodape.contato}</h2>
+      <ul>
+        <li><a href={`mailto:${CONTATO.email}`}>{CONTATO.email}</a></li>
+        <li><a href={`https://wa.me/${CONTATO.whatsapp}`} rel="noopener" target="_blank">WhatsApp {CONTATO.whatsappExibicao}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container rodape__base">
+    <p>© {ano} DC Circuit Labs. {d.rodape.direitos} · CNPJ {CONTATO.cnpj}</p>
+    <div class="rodape__base-acoes">
+      {/* Crédito exigido pela licença CC BY 4.0 da base de países usada para escolher o idioma */}
+      <a class="rodape__credito" href="https://db-ip.com" rel="noopener" target="_blank">{d.rodape.geoip}</a>
+      <button type="button" class="rodape__cookies" data-abrir-consentimento hidden>{d.rodape.cookies}</button>
+      <SeletorIdioma lang={lang} caminho={caminho} escuro />
+    </div>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    background: var(--surface-dark);
+    padding-block: var(--space-8) var(--space-7);
+    font-size: 0.9rem;
+  }
+  .rodape__grade {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.3fr;
+    gap: var(--space-7);
+    padding-bottom: var(--space-7);
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+  .rodape__marca p {
+    max-width: 36ch;
+    margin-top: var(--space-4);
+  }
+  .rodape__regiao {
+    color: var(--ink-muted);
+  }
+  .rodape__titulo {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: var(--space-4);
+  }
+  .rodape ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .rodape a {
+    color: rgb(255 255 255 / 0.82);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .rodape ul a:hover {
+    color: var(--accent-cyan);
+  }
+  .rodape__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding-top: var(--space-5);
+    color: var(--ink-muted);
+    font-size: 0.8rem;
+  }
+  .rodape__base-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .rodape .rodape__credito {
+    color: var(--ink-muted);
+  }
+  .rodape .rodape__credito:hover {
+    color: #fff;
+  }
+  .rodape__cookies {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--ink-muted);
+    font-size: 0.8rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .rodape__cookies:hover {
+    color: #fff;
+  }
+  @media (max-width: 760px) {
+    .rodape__grade {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

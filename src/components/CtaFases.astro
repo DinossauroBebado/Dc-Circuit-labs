@@ -1,0 +1,89 @@
+---
+// CTA qualificado: em vez de um "fale conosco" genérico, o visitante já escolhe a fase da ideia (DC-98).
+// Cada opção abre o fluxo de contato com a fase pré-selecionada.
+import Icone from './Icone.astro';
+import { t, urlPagina, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+  eyebrow: string;
+  titulo: string;
+  texto: string;
+}
+
+const { lang, eyebrow, titulo, texto } = Astro.props;
+const d = t(lang);
+const contato = urlPagina(lang, 'contato');
+---
+
+<section class="secao escura cta">
+  <div class="container centro">
+    <p class="eyebrow revelar">{eyebrow}</p>
+    <h2 class="titulo-secao revelar">{titulo}</h2>
+    <p class="lead revelar">{texto}</p>
+    <ul class="cta__fases">
+      {
+        d.contato.fases.map((f, i) => (
+          <li class="revelar" style={`--atraso: ${i * 0.08}s`}>
+            <a class="cta__fase card-brilho" href={`${contato}?fase=${f.id}#fluxo`}>
+              <strong>{f.t}</strong>
+              <span>{f.d}</span>
+              <Icone nome="arrow-right" tamanho={22} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cta .lead {
+    margin-top: var(--space-5);
+  }
+  .cta__fases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+    margin-top: clamp(40px, 6vw, 64px);
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+  .cta__fase {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    height: 100%;
+    padding: var(--space-6);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: rgb(255 255 255 / 0.7);
+    transition: border-color 0.3s, transform 0.3s var(--suave), background-color 0.3s;
+  }
+  .cta__fase strong {
+    color: #fff;
+    font-size: 1.25rem;
+  }
+  .cta__fase :global(svg) {
+    margin-top: auto;
+    padding-top: var(--space-3);
+    box-sizing: content-box;
+    color: var(--accent-cyan);
+    transition: transform 0.3s var(--suave);
+  }
+  .cta__fase:hover {
+    border-color: transparent;
+    background: rgb(255 255 255 / 0.03);
+    transform: translateY(-3px);
+  }
+  .cta__fase:hover :global(svg) {
+    transform: translateX(6px);
+  }
+  @media (max-width: 760px) {
+    .cta__fases {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

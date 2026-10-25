@@ -1,0 +1,30 @@
+{
+  "name": "dccircuitlabs-site",
+  "private": true,
+  "type": "module",
+  "version": "2.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "modelos": "node scripts/gerar-modelos-placeholder.mjs",
+    "midia": "bash scripts/processar-midia.sh"
+  },
+  "dependencies": {
+    "@fontsource-variable/montserrat": "5.3.0",
+    "@google/model-viewer": "4.4.0",
+    "astro": "5.18.2",
+    "lucide-static": "1.61.0",
+    "sharp": "0.35.5",
+    "three": "0.183.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@gltf-transform/core": "4.5.1",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "sharp": "0.35.5"
+  }
+}

@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import Midia from '../components/Midia.astro';
+import CtaFases from '../components/CtaFases.astro';
+import { t, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const s = d.sobre;
+---
+
+<Base lang={lang} caminho="sobre/" titulo={s.titulo} descricao={s.descricao}>
+  <CabecalhoPagina eyebrow={s.eyebrow} titulo={s.h1} lead={s.lead} />
+
+  <div class="container midia-sobre revelar">
+    <Midia id="sobre-laboratorio" lang={lang} prioridade />
+  </div>
+
+  <section class="secao">
+    <div class="container essencia">
+      <div class="revelar">
+        <p class="eyebrow">{s.missao}</p>
+        <p class="declaracao">{s.missaoTexto}</p>
+      </div>
+      <div class="revelar">
+        <p class="eyebrow">{s.visao}</p>
+        <p class="declaracao">{s.visaoTexto}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao escura">
+    <div class="container">
+      <header class="cabecalho-secao revelar">
+        <p class="eyebrow">{s.valores}</p>
+      </header>
+      <ol class="valores">
+        {
+          s.valoresLista.map((v, i) => (
+            <li class="valor revelar" style={`--atraso: ${i * 0.06}s`}>
+              <span class="valor__numero" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h2 class="titulo-card">{v.t}</h2>
+              <p>{v.d}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="container publico">
+      <div class="revelar">
+        <p class="eyebrow">{s.publico.eyebrow}</p>
+        <h2 class="titulo-secao">{s.publico.titulo}</h2>
+      </div>
+      <div class="revelar">
+        <p class="lead">{s.publico.texto}</p>
+        <ul class="chips">{s.publico.setores.map((setor) => <li class="chip">{setor}</li>)}</ul>
+        <p class="nota">{s.ods}</p>
+        <p class="nota regiao">{d.marca.regiao}</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaFases lang={lang} eyebrow={d.home.cta.eyebrow} titulo={d.home.cta.titulo} texto={d.home.cta.texto} />
+</Base>
+
+<style>
+  .midia-sobre {
+    aspect-ratio: 21 / 9;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .essencia {
+    display: grid;
+    gap: clamp(56px, 8vw, 112px);
+  }
+  .declaracao {
+    font-size: clamp(1.6rem, 1rem + 2.2vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+    max-width: 28ch;
+    text-wrap: balance;
+  }
+  .valores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: var(--space-7) var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+  .valor {
+    padding-top: var(--space-5);
+    border-top: 1px solid rgb(0 237 255 / 0.35);
+  }
+  .valor__numero {
+    display: block;
+    margin-bottom: var(--space-4);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent-cyan);
+  }
+  .valor h2 {
+    margin-bottom: var(--space-3);
+  }
+  .publico {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 96px);
+  }
+  .publico .chips {
+    margin-block: var(--space-6);
+  }
+  .regiao {
+    margin-top: var(--space-3);
+    font-weight: 600;
+  }
+  @media (max-width: 860px) {
+    .publico {
+      grid-template-columns: 1fr;
+    }
+    .midia-sobre {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>

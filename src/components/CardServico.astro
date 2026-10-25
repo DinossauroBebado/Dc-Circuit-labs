@@ -1,0 +1,81 @@
+---
+import Icone from './Icone.astro';
+import Midia from './Midia.astro';
+import { t, urlPagina, type Idioma } from '../i18n';
+import { SERVICOS } from '../data/servicos';
+
+interface Props {
+  lang: Idioma;
+  indice: number;
+  comMidia?: boolean;
+}
+
+const { lang, indice, comMidia = true } = Astro.props;
+const s = SERVICOS[indice];
+const d = t(lang);
+const textos = d.servicos[s.slug];
+---
+
+<a
+  class="card-servico card-brilho revelar"
+  href={urlPagina(lang, 'servico', s.slug)}
+  style={`--atraso: ${(indice % 4) * 0.06}s`}
+>
+  {
+    comMidia && (
+      <div class="card-servico__midia">
+        <Midia id={s.midia} lang={lang} />
+      </div>
+    )
+  }
+  <div class="card-servico__corpo">
+    <span class="card-servico__icone"><Icone nome={s.icone} tamanho={26} /></span>
+    <h3 class="titulo-card">{textos.nome}</h3>
+    <p>{textos.curto}</p>
+    <span class="link-seta">{d.comum.saibaMais}<Icone nome="arrow-right" /></span>
+  </div>
+</a>
+
+<style>
+  .card-servico {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.4s var(--suave), box-shadow 0.4s var(--suave);
+  }
+  .card-servico:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 44px rgb(0 123 255 / 0.12);
+  }
+  .card-servico__midia {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .card-servico__midia :global(.midia),
+  .card-servico__midia :global(.ph) {
+    transition: transform 0.8s var(--suave);
+  }
+  .card-servico:hover .card-servico__midia :global(.midia),
+  .card-servico:hover .card-servico__midia :global(.ph) {
+    transform: scale(1.04);
+  }
+  .card-servico__corpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+    padding: var(--space-7) var(--space-6);
+  }
+  .card-servico__icone {
+    color: var(--brand-blue);
+  }
+  .card-servico p {
+    flex: 1;
+  }
+</style>

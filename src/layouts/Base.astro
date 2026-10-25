@@ -1,0 +1,79 @@
+---
+import '@fontsource-variable/montserrat';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Consentimento from '../components/Consentimento.astro';
+import { IDIOMAS, t, url, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+  /** Caminho da página sem o prefixo de idioma (ex.: "servicos/firmware/"). */
+  caminho: string;
+  titulo: string;
+  descricao: string;
+  schemas?: object[];
+  semIndexar?: boolean;
+}
+
+const { lang, caminho, titulo, descricao, schemas = [], semIndexar = false } = Astro.props;
+const d = t(lang);
+const site = Astro.site ?? new URL('https://dccircuitlabs.com');
+const canonica = new URL(url(lang, caminho), site).href;
+const alternativas = IDIOMAS.map((l) => ({ tag: t(l).meta.tag, href: new URL(url(l, caminho), site).href }));
+const imagemSocial = new URL('/og.png', site).href;
+
+// IDs do Google — preencha no arquivo .env (modelo em .env.example). Vazio = nada do Google é carregado.
+const idGA = import.meta.env.PUBLIC_GA4_ID || undefined;
+const verificacaoGSC = import.meta.env.PUBLIC_GSC_VERIFICATION || undefined;
+
+const jsonLd = (dados: object) => JSON.stringify(dados).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang={d.meta.tag} data-ga={idGA}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descricao} />
+    <link rel="canonical" href={canonica} />
+    {alternativas.map((a) => <link rel="alternate" hreflang={a.tag} href={a.href} />)}
+    <link rel="alternate" hreflang="x-default" href={alternativas[0].href} />
+    {semIndexar && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DC Circuit Labs" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={imagemSocial} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={d.meta.og} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#ffffff" />
+
+    {/* Google Search Console: PUBLIC_GSC_VERIFICATION no .env */}
+    {verificacaoGSC && <meta name="google-site-verification" content={verificacaoGSC} />}
+
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    {schemas.map((s) => <script type="application/ld+json" set:html={jsonLd(s)} />)}
+  </head>
+  <body>
+    <a class="pular-link" href="#conteudo">{d.nav.pular}</a>
+    <Header lang={lang} caminho={caminho} />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <Footer lang={lang} caminho={caminho} />
+    {idGA && <Consentimento lang={lang} />}
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

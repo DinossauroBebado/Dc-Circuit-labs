@@ -1,0 +1,80 @@
+---
+// As quatro etapas do projeto. Numerais grandes em ciano sangrando sobre o card, como nos posts de processo
+// do Instagram (Design System › Redes sociais) — aqui só sobre fundo escuro.
+import { t, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+  eyebrow: string;
+  titulo?: string;
+}
+
+const { lang, eyebrow, titulo } = Astro.props;
+const etapas = t(lang).processo;
+---
+
+<section class="secao escura processo">
+  <div class="container">
+    <header class="cabecalho-secao revelar">
+      <p class="eyebrow">{eyebrow}</p>
+      {titulo && <h2 class="titulo-secao">{titulo}</h2>}
+    </header>
+    <ol class="processo__etapas">
+      {
+        etapas.map((e, i) => (
+          <li class="etapa card-brilho revelar" style={`--atraso: ${i * 0.08}s`}>
+            <span class="etapa__numero" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3 class="titulo-card">{e.t}</h3>
+            <p>{e.d}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .processo__etapas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+    padding-top: 48px;
+  }
+  .etapa {
+    padding: 0 var(--space-6) var(--space-7);
+    border: 1px solid rgb(0 237 255 / 0.32);
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 24px rgb(0 237 255 / 0.06), inset 0 0 24px rgb(0 237 255 / 0.04);
+  }
+  .etapa__numero {
+    display: block;
+    margin-top: -0.5em;
+    margin-bottom: var(--space-3);
+    font-size: clamp(5rem, 3rem + 4vw, 7.5rem);
+    font-weight: 800;
+    line-height: 0.9;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 22px rgb(0 237 255 / 0.45);
+  }
+  .etapa h3 {
+    margin-bottom: var(--space-3);
+  }
+  .etapa p {
+    font-size: 0.95rem;
+  }
+  @media (max-width: 1024px) {
+    .processo__etapas {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 72px;
+    }
+  }
+  @media (max-width: 600px) {
+    .processo__etapas {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

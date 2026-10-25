@@ -1,0 +1,117 @@
+---
+// Foto ou vídeo do manifesto src/data/midia.ts. Sem arquivo real (`src` vazio), mostra um bloco com o
+// gradiente da marca e deixa no HTML um comentário PLACEHOLDER dizendo o que entra ali.
+// Em `npm run dev` o bloco também mostra a descrição e a sugestão de arquivo do Drive.
+import Icone from './Icone.astro';
+import { MIDIA, type IdMidia, type Midia } from '../data/midia';
+import type { Idioma } from '../i18n';
+
+interface Props {
+  id: IdMidia;
+  lang: Idioma;
+  class?: string;
+  prioridade?: boolean;
+  variante?: 'padrao' | 'hero';
+}
+
+const { id, lang, class: classe, prioridade = false, variante = 'padrao' } = Astro.props;
+const m: Midia = MIDIA[id];
+const alt = m.alt[lang];
+const dev = import.meta.env.DEV;
+const icone = m.tipo === 'video' ? 'clapperboard' : 'image';
+const comentario = `<!-- PLACEHOLDER: substituir por "${m.descricao}" — src/data/midia.ts, item "${id}" -->`;
+---
+
+{
+  m.src && m.tipo === 'video' && (
+    <video
+      class:list={['midia', classe]}
+      autoplay
+      muted
+      loop
+      playsinline
+      preload={prioridade ? 'auto' : 'metadata'}
+      poster={m.poster}
+      aria-label={alt}
+      data-video-auto
+    >
+      <source src={m.src} type="video/mp4" />
+    </video>
+  )
+}
+{
+  m.src && m.tipo === 'imagem' && (
+    <img
+      class:list={['midia', classe]}
+      src={m.src}
+      alt={alt}
+      loading={prioridade ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  )
+}
+{
+  !m.src && (
+    <Fragment>
+      <Fragment set:html={comentario} />
+      <div class:list={['ph', `ph--${variante}`, classe]} role="img" aria-label={alt} data-placeholder={id}>
+        {variante !== 'hero' && <Icone nome={icone} tamanho={44} traco={1.25} class="ph__icone" />}
+        {dev && (
+          <span class="ph__rotulo">
+            Placeholder · {m.descricao}
+            {m.sugestao && <small>{m.sugestao}</small>}
+          </span>
+        )}
+      </div>
+    </Fragment>
+  )
+}
+
+<style>
+  .midia {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Placeholder: gradiente da marca + malha de trilhas de circuito bem sutil */
+  .ph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    overflow: hidden;
+    color: rgb(255 255 255 / 0.7);
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='%23ffffff' stroke-opacity='.09' stroke-width='1.5'%3E%3Cpath d='M0 30h40l20 20h60M0 90h20l30-30h30l20 20h20M70 0v20l-20 20M100 120v-20l20-20'/%3E%3Ccircle cx='60' cy='50' r='3'/%3E%3Ccircle cx='80' cy='60' r='3'/%3E%3C/svg%3E"),
+      linear-gradient(135deg, var(--brand-blue-deep) 0%, var(--brand-blue) 100%);
+  }
+  .ph--hero {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%2300edff' stroke-opacity='.08' stroke-width='1.5'%3E%3Cpath d='M0 40h50l30 30h80M0 120h30l40-40h40l30 30h20M90 0v30l-30 30M140 160v-30l20-20'/%3E%3Ccircle cx='80' cy='70' r='3.5'/%3E%3Ccircle cx='110' cy='80' r='3.5'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse at 70% 30%, rgb(0 123 255 / 0.35), transparent 60%),
+      linear-gradient(160deg, var(--ink-strong) 30%, var(--brand-blue-deep) 100%);
+  }
+  .ph__rotulo {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    right: 12px;
+    display: grid;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    background: rgb(0 0 0 / 0.45);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+  }
+  .ph__rotulo small {
+    font-weight: 400;
+    opacity: 0.8;
+  }
+</style>

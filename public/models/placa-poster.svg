@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- PLACEHOLDER: imagem estática do modelo 3D. Substituir por um render/print do modelo real da placa. -->
+  <defs>
+    <radialGradient id="fundo" cx="50%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#0b3c6e" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#121212" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="placa" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f4a86"/>
+      <stop offset="1" stop-color="#0a3360"/>
+    </linearGradient>
+    <filter id="brilho" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="800" height="600" fill="#121212"/>
+  <rect width="800" height="600" fill="url(#fundo)"/>
+  <g transform="translate(400 310) rotate(-14) skewX(18) scale(1 .62)">
+    <rect x="-230" y="-150" width="460" height="300" rx="12" fill="url(#placa)" stroke="#1d5fa8" stroke-width="2"/>
+    <g fill="none" stroke="#1d5fa8" stroke-width="3" stroke-linecap="round">
+      <path d="M-150 -60 h80 l30 30 h90"/>
+      <path d="M-150 60 h40 l40 -40 h70 l30 30 h60"/>
+      <path d="M40 -110 v40 l-30 30"/>
+    </g>
+    <rect x="-190" y="-110" width="110" height="140" rx="4" fill="#c9ccd1"/>
+    <rect x="-20" y="-40" width="70" height="70" rx="3" fill="#16181c"/>
+    <rect x="120" y="-120" width="40" height="40" rx="2" fill="#16181c"/>
+    <rect x="190" y="-30" width="50" height="44" rx="3" fill="#c9ccd1"/>
+    <g fill="#d4a94a">
+      <rect x="-80" y="118" width="6" height="6"/><rect x="-62" y="118" width="6" height="6"/><rect x="-44" y="118" width="6" height="6"/>
+      <rect x="-26" y="118" width="6" height="6"/><rect x="-8" y="118" width="6" height="6"/><rect x="10" y="118" width="6" height="6"/>
+      <rect x="28" y="118" width="6" height="6"/><rect x="46" y="118" width="6" height="6"/>
+    </g>
+    <circle cx="-200" cy="-125" r="6" fill="#00edff" filter="url(#brilho)"/>
+  </g>
+</svg>
