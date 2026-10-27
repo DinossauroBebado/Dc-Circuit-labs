@@ -184,3 +184,26 @@ if (idGA) {
     botaoPreferencias.addEventListener('click', () => (aviso.hidden = false));
   }
 }
+
+// ---------- Botão flutuante do WhatsApp e tracking GA4 ----------
+const btnFlutuante = document.querySelector<HTMLElement>('[data-whatsapp-btn="flutuante"]');
+if (btnFlutuante) {
+  let visivel = false;
+  const verificarScroll = () => {
+    const deveAparecer = window.scrollY > 400;
+    if (deveAparecer !== visivel) {
+      visivel = deveAparecer;
+      btnFlutuante.classList.toggle('visivel', visivel);
+    }
+  };
+  window.addEventListener('scroll', verificarScroll, { passive: true });
+  verificarScroll();
+}
+
+document.querySelectorAll<HTMLElement>('[data-whatsapp-btn]').forEach((el) => {
+  el.addEventListener('click', () => {
+    const local = el.dataset.whatsappBtn === 'flutuante' ? 'flutuante' : 'header';
+    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+    gtag?.('event', 'contact', { method: 'whatsapp', local });
+  });
+});

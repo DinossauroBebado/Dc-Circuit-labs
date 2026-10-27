@@ -10,3 +10,7 @@ midia-bruta/
 
 # Teste local do Nginx (base GeoIP baixada)
 deploy/teste-local/geoip/
+
+# Mídia bruta do Drive e arquivos CAD pesados (>100MB)
+assets/marketing-*/
+assets/GBL/

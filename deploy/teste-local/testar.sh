@@ -78,7 +78,7 @@ conferir "Portal mostra 'Em breve'"            "*Em breve*"                     
 conferir "Portal fora do Google (noindex)"     "*noindex*"                            "$(curl -skI --resolve "portal.dccircuitlabs.com:$PORTA:127.0.0.1" "https://portal.dccircuitlabs.com:$PORTA/" | grep -i x-robots-tag)"
 
 echo "SEO, IA e segurança"
-for arq in /robots.txt /llms.txt /sitemap.xml /favicon.ico /models/placa-placeholder.glb; do
+for arq in /robots.txt /llms.txt /sitemap.xml /favicon.ico /models/placa-metabee.glb; do
   conferir "$arq" "200 " "$(pedir dccircuitlabs.com $arq -A "$NAVEGADOR")"
 done
 conferir "Página inexistente dá 404"           "404 "  "$(pedir dccircuitlabs.com /nao-existe/ -H "X-Forwarded-For: $BR" -A "$NAVEGADOR")"
@@ -86,7 +86,7 @@ CABECALHOS=$(curl -skI --resolve "dccircuitlabs.com:$PORTA:127.0.0.1" "https://d
 conferir "HSTS"                                "*Strict-Transport-Security*"          "$CABECALHOS"
 conferir "nosniff"                             "*X-Content-Type-Options: nosniff*"    "$CABECALHOS"
 conferir "Versão do Nginx escondida"           "server: nginx"                      "$(echo "$CABECALHOS" | grep -i '^server:' | tr -d '\r')"
-conferir "GLB com tipo correto"                "*model/gltf-binary*"                  "$(curl -skI --resolve "dccircuitlabs.com:$PORTA:127.0.0.1" "https://dccircuitlabs.com:$PORTA/models/placa-placeholder.glb" | grep -i content-type)"
+conferir "GLB com tipo correto"                "*model/gltf-binary*"                  "$(curl -skI --resolve "dccircuitlabs.com:$PORTA:127.0.0.1" "https://dccircuitlabs.com:$PORTA/models/placa-metabee.glb" | grep -i content-type)"
 
 echo
 echo "$OK ok, $FALHAS falha(s)"

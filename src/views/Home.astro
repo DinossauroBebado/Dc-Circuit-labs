@@ -10,6 +10,7 @@ import { t, urlPagina, type Idioma } from '../i18n';
 import { SERVICOS } from '../data/servicos';
 import { APOIOS, CASES, visiveis } from '../data/autorizacoes';
 import { organizacao } from '../lib/schema';
+import { temMidia } from '../data/midia';
 
 interface Props {
   lang: Idioma;
@@ -20,13 +21,15 @@ const d = t(lang);
 const h = d.home;
 const cases = visiveis(CASES);
 const apoios = visiveis(APOIOS);
+// O modelo 3D é projeto de cliente: o "Veja de perto" só aparece com o case DNK autorizado por escrito.
+const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
 ---
 
 <Base lang={lang} caminho="" titulo={h.titulo} descricao={h.descricao} schemas={[organizacao(lang)]}>
   <!-- Hero -->
   <section class="hero escura">
     <div class="hero__midia">
-      <Midia id="hero-laboratorio" lang={lang} variante="hero" prioridade />
+      <Midia id="hero-laboratorio" lang={lang} prioridade />
     </div>
     <div class="hero__veu" aria-hidden="true"></div>
     <div class="container hero__conteudo">
@@ -91,19 +94,23 @@ const apoios = visiveis(APOIOS);
     </div>
   </section>
 
-  <!-- Visualizador 3D -->
-  <section class="secao escura visualizador">
-    <div class="container visualizador__grade">
-      <div class="revelar">
-        <p class="eyebrow">{h.visualizador.eyebrow}</p>
-        <h2 class="titulo-secao">{h.visualizador.titulo}</h2>
-        <p class="lead">{h.visualizador.texto}</p>
-      </div>
-      <div class="revelar">
-        <Visualizador3D id="modelo-placa" lang={lang} />
-      </div>
-    </div>
-  </section>
+  <!-- Visualizador 3D (modelo de cliente: só com o case autorizado) -->
+  {
+    modeloHome && temMidia(modeloHome.midia) && (
+      <section class="secao escura visualizador">
+        <div class="container visualizador__grade">
+          <div class="revelar">
+            <p class="eyebrow">{h.visualizador.eyebrow}</p>
+            <h2 class="titulo-secao">{h.visualizador.titulo}</h2>
+            <p class="lead">{h.visualizador.texto}</p>
+          </div>
+          <div class="revelar">
+            <Visualizador3D id={modeloHome.midia} lang={lang} explodido={modeloHome.explodido} />
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   <!-- Para quem -->
   <section class="secao">
@@ -154,9 +161,11 @@ const apoios = visiveis(APOIOS);
                   href={`${urlPagina(lang, 'cases')}#${c.id}`}
                   style={`--atraso: ${i * 0.08}s`}
                 >
-                  <div class="card-case__midia">
-                    <Midia id={c.midia} lang={lang} />
-                  </div>
+                  {temMidia(c.midia) && (
+                    <div class="card-case__midia">
+                      <Midia id={c.midia} lang={lang} />
+                    </div>
+                  )}
                   <div class="card-case__corpo">
                     {!c.autorizado && <span class="selo-pendente">{d.comum.pendente}</span>}
                     <p class="card-case__cliente">
@@ -178,9 +187,11 @@ const apoios = visiveis(APOIOS);
     apoios.length > 0 && (
       <section class="secao apoios-chamada">
         <div class="container apoios-chamada__grade">
-          <div class="apoios-chamada__midia revelar">
-            <Midia id={apoios[0].midia} lang={lang} />
-          </div>
+          {temMidia(apoios[0].midia) && (
+            <div class="apoios-chamada__midia revelar">
+              <Midia id={apoios[0].midia} lang={lang} />
+            </div>
+          )}
           <div class="revelar">
             <p class="eyebrow">{h.apoios.eyebrow}</p>
             <h2 class="titulo-secao">{h.apoios.titulo}</h2>
@@ -443,6 +454,9 @@ const apoios = visiveis(APOIOS);
   }
 
   /* ---------- Chamada de apoios ---------- */
+  .apoios-chamada__grade:not(:has(.apoios-chamada__midia)) {
+    grid-template-columns: minmax(0, 60ch);
+  }
   .apoios-chamada__grade {
     display: grid;
     grid-template-columns: 1.2fr 1fr;

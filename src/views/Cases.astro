@@ -6,6 +6,7 @@ import Visualizador3D from '../components/Visualizador3D.astro';
 import CtaFases from '../components/CtaFases.astro';
 import { t, type Idioma } from '../i18n';
 import { CASES, visiveis } from '../data/autorizacoes';
+import { temMidia } from '../data/midia';
 
 interface Props {
   lang: Idioma;
@@ -43,9 +44,11 @@ const cases = visiveis(CASES);
               </p>
               <h2 class="titulo-secao">{textos.titulo}</h2>
             </header>
-            <div class="case__midia revelar">
-              <Midia id={item.midia} lang={lang} />
-            </div>
+            {temMidia(item.midia) && (
+              <div class="case__midia revelar">
+                <Midia id={item.midia} lang={lang} />
+              </div>
+            )}
             <dl class="case__historia">
               <div class="revelar">
                 <dt>{c.desafio}</dt>

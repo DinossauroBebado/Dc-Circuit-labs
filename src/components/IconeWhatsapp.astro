@@ -1,0 +1,32 @@
+---
+// Ícone oficial do WhatsApp via simple-icons (CC0), renderizado estaticamente no build — sem JS no cliente.
+import { siWhatsapp } from 'simple-icons';
+
+interface Props {
+  tamanho?: number;
+  class?: string;
+}
+
+const { tamanho = 18, class: classe = '' } = Astro.props;
+---
+
+<svg
+  role="img"
+  viewBox="0 0 24 24"
+  width={tamanho}
+  height={tamanho}
+  fill="currentColor"
+  class:list={['icone-whatsapp', classe]}
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={siWhatsapp.path} />
+</svg>
+
+<style>
+  .icone-whatsapp {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+</style>

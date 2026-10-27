@@ -7,6 +7,7 @@ import Processo from '../components/Processo.astro';
 import CtaFases from '../components/CtaFases.astro';
 import { t, urlPagina, type Idioma } from '../i18n';
 import { SERVICOS, type SlugServico } from '../data/servicos';
+import { temMidia } from '../data/midia';
 import { servico, trilhaDeNavegacao } from '../lib/schema';
 
 interface Props {
@@ -41,9 +42,13 @@ const schemas = [
     </div>
   </CabecalhoPagina>
 
-  <div class="container midia-destaque revelar">
-    <Midia id={dados.midia} lang={lang} prioridade />
-  </div>
+  {
+    temMidia(dados.midia) && (
+      <div class="container midia-destaque revelar">
+        <Midia id={dados.midia} lang={lang} prioridade />
+      </div>
+    )
+  }
 
   <section class="secao">
     <div class="container">

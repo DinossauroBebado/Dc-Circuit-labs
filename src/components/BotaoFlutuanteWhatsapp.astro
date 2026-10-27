@@ -1,0 +1,77 @@
+---
+// Botão flutuante do WhatsApp fixo no canto inferior direito.
+// Aparece após rolar ~400 px, com animação suave e respeitando safe-area no iOS.
+import IconeWhatsapp from './IconeWhatsapp.astro';
+import { CONTATO, t, type Idioma } from '../i18n';
+
+interface Props {
+  lang: Idioma;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const linkWhatsapp = `https://wa.me/${CONTATO.whatsapp}?text=${encodeURIComponent(d.comum.msgWhatsapp)}`;
+---
+
+<a
+  href={linkWhatsapp}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="whatsapp-flutuante"
+  data-whatsapp-btn="flutuante"
+  aria-label={`${d.nav.entreEmContato} (${d.contato.rotuloWhatsapp})`}
+>
+  <IconeWhatsapp tamanho={28} />
+  <span class="whatsapp-flutuante__texto">{d.nav.entreEmContato}</span>
+</a>
+
+<style>
+  .whatsapp-flutuante {
+    position: fixed;
+    right: max(20px, env(safe-area-inset-right));
+    bottom: max(24px, env(safe-area-inset-bottom));
+    z-index: 1400; /* abaixo do aviso de consentimento LGPD (z-index: 1500) */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: var(--brand-blue);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 20px rgb(0 0 0 / 0.25), 0 0 0 1px rgb(0 237 255 / 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+    transition:
+      opacity 0.3s var(--suave),
+      visibility 0.3s var(--suave),
+      transform 0.3s var(--suave),
+      background-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .whatsapp-flutuante.visivel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .whatsapp-flutuante:hover {
+    background: var(--brand-blue-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgb(0 237 255 / 0.75), 0 8px 26px rgb(0 237 255 / 0.35);
+  }
+
+  @media (max-width: 600px) {
+    .whatsapp-flutuante {
+      padding: 14px;
+      border-radius: 50%;
+    }
+    .whatsapp-flutuante__texto {
+      display: none;
+    }
+  }
+</style>

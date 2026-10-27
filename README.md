@@ -45,20 +45,23 @@ Também são gerados no build: `sitemap.xml` (com `hreflang`), `llms.txt` (PT + 
 
 ## Fotos, vídeos e modelos 3D
 
-Tudo que ainda não existe aparece como um bloco com o gradiente da marca. No HTML fica um comentário
-`<!-- PLACEHOLDER: substituir por "…" — src/data/midia.ts, item "…" -->` e, em `npm run dev`, o próprio bloco mostra
-o que deve entrar ali e qual arquivo da pasta do Drive serve.
+Todas as mídias do site são centralizadas e declaradas em `src/data/midia.ts`.
+Itens sem `src` não renderizam nada (o layout se ajusta dinamicamente). Mídias de projetos de clientes (cases e modelos 3D) só vão ao ar se o item estiver com `autorizado: true` em `src/data/autorizacoes.ts`.
 
-Para trocar por material real:
+Para processar a mídia:
 
-1. Baixe o bruto do Drive para `midia-bruta/` (fora do git).
-2. `npm run midia -- midia-bruta/VIDEO.mp4 hero-laboratorio 00:00:04 8` (início e duração do trecho) — ou só `npm run midia -- midia-bruta/FOTO.jpg sobre-laboratorio` para foto.
-3. Copie as linhas `src`/`poster` que o script imprime para o item em `src/data/midia.ts` e apague o comentário PLACEHOLDER.
-
-**Modelos 3D:** os dois visualizadores usam modelos genéricos gerados por `npm run modelos`. Quando o CAD exportar os reais
-em `.glb`, salve em `public/models/` e troque o `src` em `src/data/midia.ts`. O controle DNK em vista explodida precisa ter
-uma animação chamada `explodir` (montado → explodido); o controle deslizante da página manda nela.
-Troque também o `poster` (imagem estática mostrada antes de carregar e em conexão lenta) por um print do modelo real.
+- **Fotos e vídeos do site:** gerados em lote a partir do material bruto com `npm run midia:site` (`scripts/gerar-midia-site.sh`). Para processar um arquivo individual: `npm run midia -- midia-bruta/ARQUIVO.ext nome-saida [inicio] [duracao]`. Arquivos são salvos em `public/media/`.
+- **Modelo do Controle DNK Agro (`public/models/controle-dnk.glb`):** gerado via `npm run modelo:controle -- <arquivo-do-solidworks.glb>` (`scripts/preparar-modelo-controle.mjs`). O script orienta o modelo para a posição de uso, cria a animação linear `explodir` (58 peças móveis), simplifica malhas e quantiza vértices (`KHR_mesh_quantization`). Se necessário ajustar a fidelidade de peças pequenas, passe `ERRO_SIMPLIFICACAO=0.0002`.
+- **Modelo da Placa Metabee (`public/models/placa-metabee.glb`):** convertido do STEP oficial (`metabee/wifi-connect/1_0/fabricacao/wifi_gate_way_pcb.step`) para GLB via Python `cascadio`:
+  ```bash
+  python3 -m venv /tmp/step && /tmp/step/bin/pip install cascadio numpy
+  /tmp/step/bin/python -c "import cascadio; cascadio.step_to_glb('placa.step', 'placa-bruta.glb', tol_linear=0.02, tol_angular=0.5, merge_primitives=True)"
+  ```
+  Em seguida, otimizado e rotacionado via `scripts/otimizar-glb.mjs`:
+  ```bash
+  node scripts/otimizar-glb.mjs placa-bruta.glb public/models/placa-metabee.glb --girar x:-90
+  ```
+- **Posters e renders estáticos:** gerados a partir do render real dos modelos (`public/models/controle-dnk-poster.webp`, `public/models/placa-metabee-poster.webp` e `public/media/case-dnk.webp`).
 
 ## Autorizações
 
@@ -96,9 +99,9 @@ Veja [deploy/README.md](deploy/README.md) — VPS Hostinger, Nginx, HTTPS, porta
 
 ## Pendências antes de ir ao ar
 
-- Autorizações por escrito (DC-87, DC-88) e resultados reais dos cases.
-- Fotos/vídeos reais e os dois modelos 3D (DC-116).
-- Revisão da tradução para o chinês.
-- IDs do GA4 e do Search Console no `.env`.
-- Migrar para **Node 22 + Astro 7**: o Astro 5 (usado aqui porque a máquina tem Node 20) tem alertas de segurança corrigidos só na v7. Quase todos afetam só sites com servidor (SSR); este site é estático, mas vale atualizar antes de publicar.
-- As pastas antigas `dnk/`, `metabee/` e `rogge/` (documentação de clientes) não fazem parte do build novo: quando o DNS for para o VPS, esses links deixam de funcionar. Decidir antes se vão para o portal (DC-117).
+- **Autorizações por escrito (DC-87, DC-88):** confirmar e marcar `autorizado: true` em `src/data/autorizacoes.ts` para DNK Agro, Metabee, case industrial anônimo e Copa Pinhão.
+- **Resultados dos cases:** preencher as métricas e resultados reais com os clientes (atualmente com `[A preencher com o cliente…]`).
+- **Revisão da tradução para o chinês:** validação por falante nativo antes do lançamento público.
+- **Configuração de produção no `.env`:** preencher `PUBLIC_GA4_ID` e `PUBLIC_GSC_VERIFICATION`.
+- **Migração de plataforma (Node 22 + Astro 7):** atualizar o ambiente de Node 20 para Node 22 para permitir a migração para Astro 7 e resolver apontamentos do `npm audit`.
+- **Destino das pastas de clientes (`dnk/`, `metabee/`, `rogge/`):** definir migração/proteção desses arquivos antes do corte de DNS para o VPS (DC-117).

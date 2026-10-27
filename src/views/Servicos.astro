@@ -7,6 +7,7 @@ import Processo from '../components/Processo.astro';
 import CtaFases from '../components/CtaFases.astro';
 import { t, urlPagina, type Idioma } from '../i18n';
 import { SERVICOS } from '../data/servicos';
+import { temMidia } from '../data/midia';
 
 interface Props {
   lang: Idioma;
@@ -27,9 +28,11 @@ const p = d.servicosPagina;
           const textos = d.servicos[s.slug];
           return (
             <article class="linha-servico">
-              <a class="linha-servico__midia revelar" href={urlPagina(lang, 'servico', s.slug)} tabindex="-1" aria-hidden="true">
-                <Midia id={s.midia} lang={lang} />
-              </a>
+              {temMidia(s.midia) && (
+                <a class="linha-servico__midia revelar" href={urlPagina(lang, 'servico', s.slug)} tabindex="-1" aria-hidden="true">
+                  <Midia id={s.midia} lang={lang} />
+                </a>
+              )}
               <div class="linha-servico__texto revelar">
                 <span class="linha-servico__numero">{String(i + 1).padStart(2, '0')}</span>
                 <span class="linha-servico__icone">
@@ -62,6 +65,9 @@ const p = d.servicosPagina;
 <style>
   .lista-servicos {
     padding-top: 0;
+  }
+  .linha-servico:not(:has(.linha-servico__midia)) {
+    grid-template-columns: minmax(0, 60ch);
   }
   .linha-servico {
     display: grid;

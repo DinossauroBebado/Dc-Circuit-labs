@@ -4,6 +4,7 @@ import CabecalhoPagina from '../components/CabecalhoPagina.astro';
 import Midia from '../components/Midia.astro';
 import CtaFases from '../components/CtaFases.astro';
 import { t, type Idioma } from '../i18n';
+import { temMidia } from '../data/midia';
 
 interface Props {
   lang: Idioma;
@@ -17,9 +18,13 @@ const s = d.sobre;
 <Base lang={lang} caminho="sobre/" titulo={s.titulo} descricao={s.descricao}>
   <CabecalhoPagina eyebrow={s.eyebrow} titulo={s.h1} lead={s.lead} />
 
-  <div class="container midia-sobre revelar">
-    <Midia id="sobre-laboratorio" lang={lang} prioridade />
-  </div>
+  {
+    temMidia('sobre-laboratorio') && (
+      <div class="container midia-sobre revelar">
+        <Midia id="sobre-laboratorio" lang={lang} prioridade />
+      </div>
+    )
+  }
 
   <section class="secao">
     <div class="container essencia">

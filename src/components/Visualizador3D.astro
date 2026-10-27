@@ -15,16 +15,12 @@ interface Props {
 const { id, lang, explodido = false } = Astro.props;
 const m: Midia = MIDIA[id];
 const d = t(lang);
-const ilustrativo = m.src?.includes('placeholder') ?? true;
-const comentario = ilustrativo
-  ? `<!-- PLACEHOLDER: modelo 3D genérico — substituir por "${m.descricao}" em src/data/midia.ts, item "${id}" -->`
-  : '';
 ---
 
+{m.src && (
 <figure class="v3d" data-v3d>
-  <Fragment set:html={comentario} />
   <div class="v3d__palco">
-    <img class="v3d__poster" src={m.poster} alt={m.alt[lang]} loading="lazy" decoding="async" />
+    {m.poster && <img class="v3d__poster" src={m.poster} alt={m.alt[lang]} loading="lazy" decoding="async" />}
     <model-viewer
       src={m.src}
       alt={m.alt[lang]}
@@ -39,11 +35,6 @@ const comentario = ilustrativo
       loading="lazy"
       reveal="auto"
       animation-name={explodido ? 'explodir' : undefined}></model-viewer>
-    {
-      ilustrativo && (
-        <span class="v3d__selo">{d.comum.ilustrativo}</span>
-      )
-    }
     <button type="button" class="btn btn--secundario v3d__carregar" data-v3d-carregar hidden>
       {d.comum.carregar3d}
     </button>
@@ -68,6 +59,7 @@ const comentario = ilustrativo
   }
   <figcaption class="v3d__dica">{d.comum.dica3d}</figcaption>
 </figure>
+)}
 
 <script>
   import '../scripts/visualizador';
@@ -105,20 +97,6 @@ const comentario = ilustrativo
   }
   .v3d.carregado .v3d__poster {
     opacity: 0;
-  }
-  .v3d__selo {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    padding: 4px 10px;
-    border: 1px solid rgb(0 237 255 / 0.55);
-    border-radius: 999px;
-    color: var(--accent-cyan);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    pointer-events: none;
   }
   .v3d__carregar {
     position: absolute;

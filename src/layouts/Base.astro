@@ -3,6 +3,7 @@ import '@fontsource-variable/montserrat';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BotaoFlutuanteWhatsapp from '../components/BotaoFlutuanteWhatsapp.astro';
 import Consentimento from '../components/Consentimento.astro';
 import { IDIOMAS, t, url, type Idioma } from '../i18n';
 
@@ -70,6 +71,7 @@ const jsonLd = (dados: object) => JSON.stringify(dados).replace(/</g, '\\u003c')
     <main id="conteudo">
       <slot />
     </main>
+    <BotaoFlutuanteWhatsapp lang={lang} />
     <Footer lang={lang} caminho={caminho} />
     {idGA && <Consentimento lang={lang} />}
     <script>

@@ -3,6 +3,7 @@ import Icone from './Icone.astro';
 import Midia from './Midia.astro';
 import { t, urlPagina, type Idioma } from '../i18n';
 import { SERVICOS } from '../data/servicos';
+import { temMidia } from '../data/midia';
 
 interface Props {
   lang: Idioma;
@@ -22,7 +23,7 @@ const textos = d.servicos[s.slug];
   style={`--atraso: ${(indice % 4) * 0.06}s`}
 >
   {
-    comMidia && (
+    comMidia && temMidia(s.midia) && (
       <div class="card-servico__midia">
         <Midia id={s.midia} lang={lang} />
       </div>
@@ -57,12 +58,10 @@ const textos = d.servicos[s.slug];
     aspect-ratio: 16 / 9;
     overflow: hidden;
   }
-  .card-servico__midia :global(.midia),
-  .card-servico__midia :global(.ph) {
+  .card-servico__midia :global(.midia) {
     transition: transform 0.8s var(--suave);
   }
-  .card-servico:hover .card-servico__midia :global(.midia),
-  .card-servico:hover .card-servico__midia :global(.ph) {
+  .card-servico:hover .card-servico__midia :global(.midia) {
     transform: scale(1.04);
   }
   .card-servico__corpo {

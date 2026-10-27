@@ -1,8 +1,9 @@
 ---
 import Logo from './Logo.astro';
 import Icone from './Icone.astro';
+import IconeWhatsapp from './IconeWhatsapp.astro';
 import SeletorIdioma from './SeletorIdioma.astro';
-import { t, urlPagina, type Idioma } from '../i18n';
+import { CONTATO, t, urlPagina, type Idioma } from '../i18n';
 
 interface Props {
   lang: Idioma;
@@ -19,6 +20,8 @@ const links = [
   { href: urlPagina(lang, 'sobre'), rotulo: d.nav.sobre, ativo: caminho === 'sobre/' },
   { href: urlPagina(lang, 'faq'), rotulo: d.nav.faq, ativo: caminho === 'faq/' },
 ];
+
+const linkWhatsapp = `https://wa.me/${CONTATO.whatsapp}?text=${encodeURIComponent(d.comum.msgWhatsapp)}`;
 ---
 
 <header class="topo" data-topo>
@@ -41,7 +44,16 @@ const links = [
 
     <div class="topo__acoes">
       <SeletorIdioma lang={lang} caminho={caminho} />
-      <a href={urlPagina(lang, 'contato')} class="btn btn--primario topo__cta">{d.nav.iniciar}</a>
+      <a
+        href={linkWhatsapp}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn--primario topo__cta"
+        data-whatsapp-btn="header"
+      >
+        <IconeWhatsapp tamanho={18} class="topo__cta-icone" />
+        <span>{d.nav.entreEmContato}</span>
+      </a>
       <button
         class="topo__menu"
         type="button"
@@ -71,7 +83,16 @@ const links = [
           ))
         }
       </ul>
-      <a href={urlPagina(lang, 'contato')} class="btn btn--primario">{d.nav.iniciar}</a>
+      <a
+        href={linkWhatsapp}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn--primario topo__cta-movel"
+        data-whatsapp-btn="header"
+      >
+        <IconeWhatsapp tamanho={20} class="topo__cta-icone" />
+        <span>{d.nav.entreEmContato}</span>
+      </a>
       <SeletorIdioma lang={lang} caminho={caminho} />
     </nav>
   </div>
@@ -159,8 +180,14 @@ const links = [
     gap: var(--space-4);
   }
   .topo__cta {
-    padding: 6px 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
     font-size: 0.9rem;
+  }
+  .topo__cta-icone {
+    flex-shrink: 0;
   }
   .topo__menu {
     display: none;
@@ -197,8 +224,14 @@ const links = [
   .menu-movel li a[aria-current] {
     color: var(--brand-blue);
   }
-  .menu-movel .btn {
+  .topo__cta-movel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     width: 100%;
+    padding: 14px 24px;
+    font-size: 1.1rem;
     margin-bottom: var(--space-5);
   }
 
