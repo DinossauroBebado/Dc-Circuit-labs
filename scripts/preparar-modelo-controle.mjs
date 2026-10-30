@@ -11,7 +11,7 @@
 
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
-import { dedup, prune, quantize, simplify, weld } from '@gltf-transform/functions';
+import { dedup, join, prune, quantize, simplifyPrimitive, weld } from '@gltf-transform/functions';
 import { MeshoptSimplifier } from 'meshoptimizer';
 import { statSync } from 'node:fs';
 
@@ -22,7 +22,7 @@ if (!entrada) {
   process.exit(1);
 }
 
-const erroSimplificacao = Number(process.env.ERRO_SIMPLIFICACAO ?? 0.0005);
+const erroSimplificacao = Number(process.env.ERRO_SIMPLIFICACAO ?? 0.002);
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
 const doc = await io.read(entrada);
 const cena = doc.getRoot().listScenes()[0];
@@ -46,10 +46,53 @@ controle.addChild(montagem);
 cena.addChild(controle);
 
 const verticesAntes = contarVertices();
+
+// Peso no navegador: parafusos, porcas, insertos e espaçadores ficam escondidos dentro do corpo e
+// somam centenas de milhares de vértices — saem do modelo do site.
+const FIXACAO = /screw|nut|rivet|inserto|spacer/i;
+for (const peca of montagem.listChildren()) {
+  if (FIXACAO.test(peca.getName())) peca.dispose();
+}
+
+// O SolidWorks exporta dezenas de materiais quase iguais; cada um vira um shader para compilar.
+// Junta os que têm cor e acabamento parecidos.
+const porChave = new Map();
+for (const material of doc.getRoot().listMaterials()) {
+  const r = (v, passo) => Math.round(v / passo) * passo;
+  const chave = [...material.getBaseColorFactor().map((v) => r(v, 0.08)), r(material.getMetallicFactor(), 0.5), r(material.getRoughnessFactor(), 0.25)].join();
+  const igual = porChave.get(chave);
+  if (!igual) {
+    porChave.set(chave, material);
+    continue;
+  }
+  for (const pai of material.listParents()) {
+    if (pai.propertyType === 'Primitive') pai.setMaterial(igual);
+  }
+  material.dispose();
+}
+
+// Placas e tela: centenas de componentes SMD que só aparecem na vista explodida. Sem normais (sombreamento
+// plano, que fica bem em CAD) o simplificador consegue reduzir muito mais; o resto mantém mais detalhe.
+const DETALHE_INTERNO = /PCB|HMI/i;
+const internas = new Set();
+for (const peca of montagem.listChildren()) {
+  if (!DETALHE_INTERNO.test(peca.getName())) continue;
+  peca.traverse((no) => no.getMesh()?.listPrimitives().forEach((p) => internas.add(p)));
+}
+for (const p of internas) p.setAttribute('NORMAL', null);
+
+await MeshoptSimplifier.ready;
+await doc.transform(dedup(), weld());
+for (const malha of doc.getRoot().listMeshes()) {
+  for (const p of malha.listPrimitives()) {
+    const erro = internas.has(p) ? erroSimplificacao * 6 : erroSimplificacao;
+    simplifyPrimitive(p, { simplifier: MeshoptSimplifier, ratio: 0, error: erro });
+  }
+}
 await doc.transform(
-  dedup(),
-  weld(),
-  simplify({ simplifier: MeshoptSimplifier, ratio: 0, error: erroSimplificacao }),
+  // Menos chamadas de desenho: junta as partes de cada peça que usam o mesmo material
+  // (sem juntar peças diferentes, que precisam se mover separadas na vista explodida).
+  join({ keepMeshes: true, keepNamed: false }),
   prune(),
   quantize(),
 );

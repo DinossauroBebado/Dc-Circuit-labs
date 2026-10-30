@@ -25,10 +25,27 @@ const alternativas = IDIOMAS.map((l) => ({ tag: t(l).meta.tag, href: new URL(url
 const imagemSocial = new URL('/og.png', site).href;
 
 // IDs do Google — preencha no arquivo .env (modelo em .env.example). Vazio = nada do Google é carregado.
-const idGA = import.meta.env.PUBLIC_GA4_ID || undefined;
+// GA4 da DC Circuit Labs. PUBLIC_GA4_ID no .env só serve para trocar o ID (ex.: uma propriedade de teste).
+const idGA = import.meta.env.PUBLIC_GA4_ID || 'G-HGCCEFZX6B';
 const verificacaoGSC = import.meta.env.PUBLIC_GSC_VERIFICATION || undefined;
 
 const jsonLd = (dados: object) => JSON.stringify(dados).replace(/</g, '\\u003c');
+
+// A escolha do aviso de cookies fica em localStorage ('consentimento-analytics'); src/scripts/site.ts atualiza o consentimento.
+const tagGoogle = `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  var dcAceito = false;
+  try { dcAceito = localStorage.getItem('consentimento-analytics') === 'aceito'; } catch (e) {}
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: dcAceito ? 'granted' : 'denied'
+  });
+  gtag('js', new Date());
+  gtag('config', ${JSON.stringify(idGA)});
+`;
 ---
 
 <!doctype html>
@@ -63,6 +80,11 @@ const jsonLd = (dados: object) => JSON.stringify(dados).replace(/</g, '\\u003c')
     {verificacaoGSC && <meta name="google-site-verification" content={verificacaoGSC} />}
 
     <script is:inline>document.documentElement.classList.add('js');</script>
+
+    {/* Google tag (gtag.js) com Modo de Consentimento (LGPD): a tag carrega em todas as páginas, mas só grava
+        cookies depois que o visitante aceita no aviso. Antes disso o GA4 recebe só sinais anônimos. */}
+    {idGA && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${idGA}`}></script>}
+    {idGA && <script is:inline set:html={tagGoogle} />}
     {schemas.map((s) => <script type="application/ld+json" set:html={jsonLd(s)} />)}
   </head>
   <body>

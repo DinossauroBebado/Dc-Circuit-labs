@@ -61,18 +61,39 @@ document.querySelectorAll<HTMLAnchorElement>('[data-idioma]').forEach((link) => 
 // ---------- Entrada suave dos blocos ----------
 const revelaveis = document.querySelectorAll<HTMLElement>('.revelar');
 if ('IntersectionObserver' in window && !reduzirMovimento.matches) {
+  const revelar = (el: Element) => {
+    el.classList.add('visivel');
+    io.unobserve(el);
+  };
   const io = new IntersectionObserver(
     (entradas) => {
       for (const e of entradas) {
-        if (e.isIntersecting) {
-          e.target.classList.add('visivel');
-          io.unobserve(e.target);
-        }
+        if (e.isIntersecting) revelar(e.target);
       }
     },
     { rootMargin: '0px 0px -10% 0px' },
   );
   revelaveis.forEach((el) => io.observe(el));
+
+  // Garantia para rolagem rápida (ou página ocupada): o bloco pode cruzar a tela entre duas verificações
+  // do observador e nunca ser avisado. Aqui, tudo o que já chegou à tela ou ficou para trás aparece.
+  let agendadoRevelar = false;
+  const revelarPassados = () => {
+    agendadoRevelar = false;
+    const limite = window.innerHeight * 0.9;
+    document.querySelectorAll('.revelar:not(.visivel)').forEach((el) => {
+      if (el.getBoundingClientRect().top < limite) revelar(el);
+    });
+  };
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (agendadoRevelar) return;
+      agendadoRevelar = true;
+      requestAnimationFrame(revelarPassados);
+    },
+    { passive: true },
+  );
 } else {
   revelaveis.forEach((el) => el.classList.add('visivel'));
 }
@@ -129,7 +150,12 @@ document.querySelectorAll<HTMLVideoElement>('video[data-video-auto]').forEach((v
   }).observe(video);
 });
 
-// ---------- Google Analytics 4 só depois do consentimento (LGPD) ----------
+// ---------- Google Analytics 4: aviso de cookies (LGPD) ----------
+// A tag gtag.js já está no <head> (src/layouts/Base.astro) com Modo de Consentimento. Aqui o aviso só
+// grava a escolha e libera (ou não) os cookies de análise.
+type Gtag = (...args: unknown[]) => void;
+const gtag: Gtag = (...args) => (window as unknown as { gtag?: Gtag }).gtag?.(...args);
+
 const idGA = document.documentElement.dataset.ga;
 if (idGA) {
   const CHAVE = 'consentimento-analytics';
@@ -149,34 +175,15 @@ if (idGA) {
       /* navegação privada: vale só nesta visita */
     }
   };
-  let carregado = false;
-  const carregarGA = () => {
-    if (carregado) return;
-    carregado = true;
-    const w = window as unknown as { dataLayer: unknown[]; gtag: (...args: unknown[]) => void };
-    w.dataLayer = w.dataLayer || [];
-    w.gtag = function gtag() {
-      // eslint-disable-next-line prefer-rest-params
-      w.dataLayer.push(arguments);
-    };
-    w.gtag('js', new Date());
-    w.gtag('config', idGA);
-    const s = document.createElement('script');
-    s.async = true;
-    s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(idGA)}`;
-    document.head.append(s);
-  };
 
-  const escolha = ler();
-  if (escolha === 'aceito') carregarGA();
-  else if (!escolha && aviso) aviso.hidden = false;
+  if (!ler() && aviso) aviso.hidden = false;
 
   aviso?.querySelectorAll<HTMLButtonElement>('[data-consentir]').forEach((b) =>
     b.addEventListener('click', () => {
       const valor = b.dataset.consentir ?? 'recusado';
       gravar(valor);
       aviso.hidden = true;
-      if (valor === 'aceito') carregarGA();
+      gtag('consent', 'update', { analytics_storage: valor === 'aceito' ? 'granted' : 'denied' });
     }),
   );
   if (botaoPreferencias && aviso) {
@@ -200,10 +207,34 @@ if (btnFlutuante) {
   verificarScroll();
 }
 
-document.querySelectorAll<HTMLElement>('[data-whatsapp-btn]').forEach((el) => {
-  el.addEventListener('click', () => {
-    const local = el.dataset.whatsappBtn === 'flutuante' ? 'flutuante' : 'header';
-    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
-    gtag?.('event', 'contact', { method: 'whatsapp', local });
+// ---------- Rastreamento GA4: cliques de contato e seções vistas ----------
+// Eventos: contato_whatsapp / contato_email (parâmetro `local` = onde estava o link)
+//          visualizou_secao (parâmetro `secao` = id da seção ou card, quando 50% dele aparece na tela —
+//          ou, em blocos mais altos que a tela, quando ele ocupa metade da tela)
+
+// Onde o link estava: botão do cabeçalho/flutuante (data-local) ou o id da seção que o contém.
+const localDoLink = (link: HTMLElement) =>
+  link.dataset.local ?? link.closest<HTMLElement>('[data-secao]')?.id ?? (link.closest('footer') ? 'rodape' : 'outro');
+
+document.querySelectorAll<HTMLAnchorElement>('a[href^="https://wa.me"], a[href^="mailto:"]').forEach((link) => {
+  link.addEventListener('click', () => {
+    const tipo = link.href.startsWith('mailto:') ? 'email' : 'whatsapp';
+    gtag('event', `contato_${tipo}`, { local: localDoLink(link) });
   });
 });
+
+if ('IntersectionObserver' in window) {
+  const observador = new IntersectionObserver(
+    (entradas) => {
+      for (const e of entradas) {
+        const viu = e.intersectionRatio >= 0.5 || e.intersectionRect.height >= window.innerHeight * 0.5;
+        if (e.isIntersecting && viu) {
+          gtag('event', 'visualizou_secao', { secao: e.target.id });
+          observador.unobserve(e.target);
+        }
+      }
+    },
+    { threshold: Array.from({ length: 21 }, (_, i) => i / 20) },
+  );
+  document.querySelectorAll<HTMLElement>('[data-secao][id]').forEach((el) => observador.observe(el));
+}

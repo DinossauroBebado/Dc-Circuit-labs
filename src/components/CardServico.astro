@@ -18,6 +18,8 @@ const textos = d.servicos[s.slug];
 ---
 
 <a
+  id={`card-servico-${s.slug}`}
+  data-secao
   class="card-servico card-brilho revelar"
   href={urlPagina(lang, 'servico', s.slug)}
   style={`--atraso: ${(indice % 4) * 0.06}s`}

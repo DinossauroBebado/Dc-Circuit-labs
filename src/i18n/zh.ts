@@ -39,7 +39,7 @@ export const zh: Dicionario = {
     nossosServicos: '我们的服务',
     prazoNota: '参考周期。实际时间取决于项目复杂度和元器件交付情况。',
     pendente: '等待书面授权',
-    carregar3d: '加载 3D 模型',
+    carregar3d: '查看 3D 模型',
     dica3d: '拖动旋转 · 滚动或双指缩放',
     montado: '组装',
     explodido: '分解',

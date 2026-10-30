@@ -27,7 +27,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
 
 <Base lang={lang} caminho="" titulo={h.titulo} descricao={h.descricao} schemas={[organizacao(lang)]}>
   <!-- Hero -->
-  <section class="hero escura">
+  <section id="inicio" data-secao class="hero escura">
     <div class="hero__midia">
       <Midia id="hero-laboratorio" lang={lang} prioridade />
     </div>
@@ -44,7 +44,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
   </section>
 
   <!-- Prazo: o diferencial em semanas -->
-  <section class="secao prazo">
+  <section id="prazo-6-semanas" data-secao class="secao prazo">
     <div class="container centro">
       <p class="eyebrow revelar">{h.prazo.eyebrow}</p>
       <p class="prazo__numero revelar" aria-label={`${h.prazo.numero} ${h.prazo.unidade}`}>
@@ -57,7 +57,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
   </section>
 
   <!-- Como funciona: trilha de circuito que acende com o scroll -->
-  <section class="secao escura modelo">
+  <section id="como-funciona" data-secao class="secao escura modelo">
     <div class="container modelo__grade">
       <header class="modelo__cabecalho">
         <p class="eyebrow">{h.modelo.eyebrow}</p>
@@ -81,7 +81,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
   </section>
 
   <!-- Serviços -->
-  <section class="secao sutil">
+  <section id="servicos" data-secao class="secao sutil">
     <div class="container">
       <header class="cabecalho-secao revelar">
         <p class="eyebrow">{h.servicos.eyebrow}</p>
@@ -97,7 +97,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
   <!-- Visualizador 3D (modelo de cliente: só com o case autorizado) -->
   {
     modeloHome && temMidia(modeloHome.midia) && (
-      <section class="secao escura visualizador">
+      <section id="visualizador-3d" data-secao class="secao escura visualizador">
         <div class="container visualizador__grade">
           <div class="revelar">
             <p class="eyebrow">{h.visualizador.eyebrow}</p>
@@ -113,7 +113,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
   }
 
   <!-- Para quem -->
-  <section class="secao">
+  <section id="para-quem" data-secao class="secao">
     <div class="container">
       <header class="cabecalho-secao revelar">
         <p class="eyebrow">{h.paraQuem.eyebrow}</p>
@@ -122,7 +122,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
       <div class="perfis">
         {
           h.paraQuem.perfis.map((p, i) => (
-            <article class="perfil card-brilho revelar" style={`--atraso: ${i * 0.1}s`}>
+            <article id={`perfil-${i === 0 ? 'a' : 'b'}`} data-secao class="perfil card-brilho revelar" style={`--atraso: ${i * 0.1}s`}>
               <span class="perfil__letra" aria-hidden="true">
                 {i === 0 ? 'A' : 'B'}
               </span>
@@ -140,7 +140,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
   <!-- Cases (só os autorizados por escrito vão para produção) -->
   {
     cases.length > 0 && (
-      <section class="secao sutil">
+      <section id="cases" data-secao class="secao sutil">
         <div class="container">
           <header class="cabecalho-secao cabecalho-linha revelar">
             <div>
@@ -157,8 +157,10 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
               const textos = d.cases.itens[c.id as keyof typeof d.cases.itens];
               return (
                 <a
+                  id={`card-case-${c.id}`}
+                  data-secao
                   class="card-case card-brilho revelar"
-                  href={`${urlPagina(lang, 'cases')}#${c.id}`}
+                  href={`${urlPagina(lang, 'cases')}#case-${c.id}`}
                   style={`--atraso: ${i * 0.08}s`}
                 >
                   {temMidia(c.midia) && (
@@ -185,7 +187,7 @@ const modeloHome = cases.find((c) => c.id === 'dnk')?.modelo;
   <!-- Apoios -->
   {
     apoios.length > 0 && (
-      <section class="secao apoios-chamada">
+      <section id="apoios" data-secao class="secao apoios-chamada">
         <div class="container apoios-chamada__grade">
           {temMidia(apoios[0].midia) && (
             <div class="apoios-chamada__midia revelar">

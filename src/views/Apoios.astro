@@ -27,7 +27,7 @@ const apoios = visiveis(APOIOS);
         apoios.map((item) => {
           const textos = a.itens[item.id as keyof typeof a.itens];
           return (
-            <article class="apoio" id={item.id}>
+            <article class="apoio" id={`apoio-${item.id.replace(/[A-Z]/g, (l) => '-' + l.toLowerCase())}`} data-secao>
               {temMidia(item.midia) && (
                 <div class="apoio__midia revelar">
                   <Midia id={item.midia} lang={lang} />

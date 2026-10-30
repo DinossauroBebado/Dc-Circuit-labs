@@ -99,6 +99,7 @@ if (form) {
   const registrarLead = (canal: 'whatsapp' | 'email') => {
     const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
     gtag?.('event', 'generate_lead', { fase: valor('fase'), perfil: valor('perfil'), canal, origem: origem() });
+    gtag?.('event', `contato_${canal}`, { local: 'formulario', fase: valor('fase'), perfil: valor('perfil') });
   };
 
   form.addEventListener('submit', (e) => {

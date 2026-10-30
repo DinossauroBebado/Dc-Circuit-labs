@@ -1,4 +1,4 @@
-// Carrega o <model-viewer> sob demanda e liga o controle de vista explodida.
+// Carrega o <model-viewer> quando o visitante clica em "Ver em 3D" e liga o controle de vista explodida.
 
 interface ModelViewer extends HTMLElement {
   animationName: string;
@@ -8,10 +8,6 @@ interface ModelViewer extends HTMLElement {
 }
 
 const figuras = document.querySelectorAll<HTMLElement>('[data-v3d]');
-
-type Conexao = { saveData?: boolean; effectiveType?: string };
-const conexao = (navigator as Navigator & { connection?: Conexao }).connection;
-const conexaoLenta = !!conexao && (conexao.saveData === true || /(^|-)2g$/.test(conexao.effectiveType ?? ''));
 
 let biblioteca: Promise<unknown> | null = null;
 const carregarBiblioteca = () => (biblioteca ??= import('@google/model-viewer'));
@@ -49,30 +45,16 @@ figuras.forEach((figura) => {
     ligarExplosao(figura, viewer);
   });
 
-  if (conexaoLenta) {
-    const botao = figura.querySelector<HTMLButtonElement>('[data-v3d-carregar]');
-    if (botao) {
-      botao.hidden = false;
-      botao.addEventListener(
-        'click',
-        () => {
-          botao.hidden = true;
-          carregarBiblioteca();
-        },
-        { once: true },
-      );
-    }
-    return;
-  }
-
-  const io = new IntersectionObserver(
-    (entradas) => {
-      if (entradas.some((e) => e.isIntersecting)) {
-        io.disconnect();
-        carregarBiblioteca();
-      }
+  // O modelo só é baixado e desenhado quando o visitante pede: carregar sozinho ao rolar travava
+  // a página por vários segundos em celulares e computadores sem placa de vídeo.
+  const botao = figura.querySelector<HTMLButtonElement>('[data-v3d-carregar]');
+  botao?.addEventListener(
+    'click',
+    () => {
+      botao.hidden = true;
+      figura.classList.add('carregando');
+      carregarBiblioteca();
     },
-    { rootMargin: '400px 0px' },
+    { once: true },
   );
-  io.observe(figura);
 });

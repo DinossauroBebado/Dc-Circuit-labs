@@ -17,7 +17,7 @@ const f = d.faq;
 <Base lang={lang} caminho="faq/" titulo={f.titulo} descricao={f.descricao} schemas={[perguntasFrequentes(lang)]}>
   <CabecalhoPagina eyebrow={f.eyebrow} titulo={f.h1} lead={f.lead} />
 
-  <section class="secao faq">
+  <section id="perguntas-frequentes" data-secao class="secao faq">
     <div class="container--estreito">
       {
         f.perguntas.map((q, i) => (

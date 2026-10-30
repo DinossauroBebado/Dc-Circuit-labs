@@ -38,7 +38,7 @@ export const en: Dicionario = {
     nossosServicos: 'Our Services',
     prazoNota: 'Reference timeline. It varies with project complexity and component delivery.',
     pendente: 'Pending written authorization',
-    carregar3d: 'Load 3D model',
+    carregar3d: 'View in 3D',
     dica3d: 'Drag to rotate · Scroll or pinch to zoom',
     montado: 'Assembled',
     explodido: 'Exploded',

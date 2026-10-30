@@ -50,7 +50,7 @@ const schemas = [
     )
   }
 
-  <section class="secao">
+  <section id="entregas" data-secao class="secao">
     <div class="container">
       <header class="cabecalho-secao revelar">
         <p class="eyebrow">{d.servico.entregas}</p>
@@ -75,7 +75,7 @@ const schemas = [
 
   <Processo lang={lang} eyebrow={d.servico.processo} />
 
-  <section class="secao sutil">
+  <section id="outras-frentes" data-secao class="secao sutil">
     <div class="container">
       <header class="cabecalho-secao revelar">
         <p class="eyebrow">{d.servico.outros}</p>

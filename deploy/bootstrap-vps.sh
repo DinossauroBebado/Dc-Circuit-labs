@@ -83,16 +83,25 @@ cp "$AQUI"/nginx/snippets/*.conf /etc/nginx/snippets/
 cp "$AQUI"/nginx/sites-available/*.conf /etc/nginx/sites-available/
 rm -f /etc/nginx/sites-enabled/default
 
-if [[ ! -d /etc/letsencrypt/live/$SITE || ! -d /etc/letsencrypt/live/$PORTAL ]]; then
-  echo "==> HTTPS: emitindo certificados (fase provisória só na porta 80)"
-  rm -f /etc/nginx/sites-enabled/$SITE.conf /etc/nginx/sites-enabled/$PORTAL.conf
-  ln -sfn /etc/nginx/sites-available/dc-provisorio-http.conf /etc/nginx/sites-enabled/dc-provisorio-http.conf
-  nginx -t && systemctl reload nginx
-  certbot certonly --webroot -w /var/www/letsencrypt --non-interactive --agree-tos -m "$EMAIL" \
-    --cert-name $SITE -d $SITE -d www.$SITE
-  certbot certonly --webroot -w /var/www/letsencrypt --non-interactive --agree-tos -m "$EMAIL" \
-    --cert-name $PORTAL -d $PORTAL
-  rm -f /etc/nginx/sites-enabled/dc-provisorio-http.conf
+# Verifica se DNS aponta para este servidor antes de chamar o Let's Encrypt
+MEU_IP=$(curl -s -4 ifconfig.me || curl -s -4 icanhazip.com || true)
+DNS_SITE=$(dig +short $SITE | tail -n1)
+
+if [[ "$DNS_SITE" == "$MEU_IP" ]]; then
+  if [[ ! -d /etc/letsencrypt/live/$SITE || ! -d /etc/letsencrypt/live/$PORTAL ]]; then
+    echo "==> HTTPS: emitindo certificados (fase provisória só na porta 80)"
+    rm -f /etc/nginx/sites-enabled/*
+    ln -sfn /etc/nginx/sites-available/dc-provisorio-http.conf /etc/nginx/sites-enabled/dc-provisorio-http.conf
+    nginx -t && systemctl reload nginx
+    certbot certonly --webroot -w /var/www/letsencrypt --non-interactive --agree-tos -m "$EMAIL" \
+      --cert-name $SITE -d $SITE -d www.$SITE
+    certbot certonly --webroot -w /var/www/letsencrypt --non-interactive --agree-tos -m "$EMAIL" \
+      --cert-name $PORTAL -d $PORTAL
+    rm -f /etc/nginx/sites-enabled/dc-provisorio-http.conf
+  fi
+else
+  echo "==> AVISO: DNS de $SITE ($DNS_SITE) ainda não aponta para este IP ($MEU_IP)."
+  echo "    Configurando site provisório HTTP na porta 80 para acesso imediato via IP."
 fi
 
 # Renovação automática: o pacote certbot já instala o timer systemd; aqui só recarregamos o Nginx após renovar.
@@ -104,14 +113,21 @@ EOF
 chmod 755 /etc/letsencrypt/renewal-hooks/deploy/recarregar-nginx.sh
 
 echo "==> Nginx: configuração final"
-ln -sfn /etc/nginx/sites-available/$SITE.conf /etc/nginx/sites-enabled/$SITE.conf
-ln -sfn /etc/nginx/sites-available/$PORTAL.conf /etc/nginx/sites-enabled/$PORTAL.conf
+if [[ -d /etc/letsencrypt/live/$SITE && -d /etc/letsencrypt/live/$PORTAL ]]; then
+  ln -sfn /etc/nginx/sites-available/$SITE.conf /etc/nginx/sites-enabled/$SITE.conf
+  ln -sfn /etc/nginx/sites-available/$PORTAL.conf /etc/nginx/sites-enabled/$PORTAL.conf
+  rm -f /etc/nginx/sites-enabled/dc-ip-provisorio.conf
+  certbot renew --dry-run
+else
+  ln -sfn /etc/nginx/sites-available/dc-ip-provisorio.conf /etc/nginx/sites-enabled/dc-ip-provisorio.conf
+fi
 nginx -t && systemctl reload nginx
-certbot renew --dry-run
 
-echo "==> Firewall: só 22, 80 e 443"
+echo "==> Firewall: portas SSH, 80 e 443"
 ufw default deny incoming
 ufw default allow outgoing
+ufw allow 22/tcp
+ufw allow 22022/tcp
 ufw allow OpenSSH
 ufw allow 'Nginx Full'
 ufw --force enable

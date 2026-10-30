@@ -35,7 +35,7 @@ const cases = visiveis(CASES);
     cases.map((item, i) => {
       const textos = c.itens[item.id as keyof typeof c.itens];
       return (
-        <article id={item.id} class:list={['secao', 'case', { escura: i % 2 === 1 }]}>
+        <article id={`case-${item.id}`} data-secao class:list={['secao', 'case', { escura: i % 2 === 1 }]}>
           <div class="container">
             <header class="case__cabecalho revelar">
               {!item.autorizado && <span class="selo-pendente">{d.comum.pendente}</span>}

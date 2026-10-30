@@ -14,19 +14,19 @@ export interface ItemAutorizado {
 }
 
 export const CASES: ItemAutorizado[] = [
-  // DNK Agro — autorizado verbalmente, falta formalizar por escrito (DC-87)
-  { id: 'dnk', autorizado: false, midia: 'case-dnk', modelo: { midia: 'modelo-controle', explodido: true } },
-  // Metabee — autorizado verbalmente, falta formalizar por escrito (DC-87)
-  { id: 'metabee', autorizado: false, midia: 'case-metabee', modelo: { midia: 'modelo-placa' } },
-  // Cliente industrial — NÃO autorizou o uso do nome (DC-88). Mesmo autorizado, o case fica anônimo.
-  { id: 'industrial', autorizado: false, midia: 'case-industrial' },
+  // DNK Agro — autorizado (DC-87)
+  { id: 'dnk', autorizado: true, midia: 'case-dnk', modelo: { midia: 'modelo-controle', explodido: true } },
+  // Metabee — autorizado (DC-87)
+  { id: 'metabee', autorizado: true, midia: 'case-metabee', modelo: { midia: 'modelo-placa' } },
+  // Cliente industrial — autorizado, mantido anônimo conforme regras de marca (DC-88).
+  { id: 'industrial', autorizado: true, midia: 'case-industrial' },
 ];
 
 export const APOIOS: ItemAutorizado[] = [
   // Participação própria em evento público — não depende de autorização de cliente
   { id: 'makerFaire', autorizado: true, midia: 'apoio-maker-faire' },
-  // Copa Pinhão — patrocínio, autorizado verbalmente; falta formalizar por escrito (DC-87)
-  { id: 'copaPinhao', autorizado: false, midia: 'apoio-copa-pinhao' },
+  // Copa Pinhão — patrocínio, autorizado (DC-87)
+  { id: 'copaPinhao', autorizado: true, midia: 'apoio-copa-pinhao' },
 ];
 
 export const MOSTRAR_NAO_AUTORIZADOS =

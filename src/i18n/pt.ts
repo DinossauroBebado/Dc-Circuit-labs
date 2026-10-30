@@ -41,7 +41,7 @@ export const pt = {
     nossosServicos: 'Nossos Serviços',
     prazoNota: 'Prazo de referência. Varia com a complexidade do projeto e a entrega dos componentes.',
     pendente: 'Pendente de autorização por escrito',
-    carregar3d: 'Carregar modelo 3D',
+    carregar3d: 'Ver em 3D',
     dica3d: 'Arraste para girar · Role ou use dois dedos para aproximar',
     montado: 'Montado',
     explodido: 'Explodido',
