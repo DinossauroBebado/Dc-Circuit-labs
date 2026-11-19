@@ -24,6 +24,8 @@ export const en: Dicionario = {
     faq: 'FAQ',
     contato: 'Contact',
     entreEmContato: 'Contact Us',
+    portal: 'Client portal',
+    portalDescricao: 'Client portal: documentation, invoices and media for your projects (in Portuguese)',
     iniciar: 'Start a Project',
     menu: 'Open menu',
     fechar: 'Close menu',

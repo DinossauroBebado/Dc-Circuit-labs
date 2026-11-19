@@ -1,0 +1,88 @@
+---
+import { eq } from 'drizzle-orm';
+import Acesso from '../../layouts/Acesso.astro';
+import { db, schema } from '../../db';
+import { bloqueado, registrar } from '../../lib/acessos';
+import { lerFormulario, texto } from '../../lib/requisicao';
+import { atualizarSessaoAdmin } from '../../lib/sessao';
+import { codigoValido, novoSegredo, qrCodeSvg } from '../../lib/totp';
+
+const admin = Astro.locals.admin!;
+const sessaoId = Astro.locals.sessaoAdminId!;
+const { ip, userAgent } = Astro.locals;
+const sessao = db.select().from(schema.sessoes).where(eq(schema.sessoes.id, sessaoId)).get()!;
+if (sessao.segundoFatorOk) return Astro.redirect('/admin');
+
+// Primeira vez: gera o segredo, mostra o QR code e só grava no admin depois do primeiro código certo.
+const configurando = !admin.totpSegredo;
+let segredo = admin.totpSegredo ?? sessao.totpPendente;
+if (configurando && !segredo) {
+  segredo = novoSegredo();
+  atualizarSessaoAdmin(sessaoId, { totpPendente: segredo });
+}
+
+let erro = '';
+const form = await lerFormulario(Astro.request);
+if (form && segredo) {
+  if (bloqueado('admin_2fa_falhou', admin.email, ip)) {
+    erro = 'Muitos códigos errados. Aguarde 15 minutos.';
+  } else if (codigoValido(segredo, admin.email, texto(form, 'codigo'))) {
+    if (configurando) db.update(schema.admins).set({ totpSegredo: segredo }).where(eq(schema.admins.id, admin.id)).run();
+    atualizarSessaoAdmin(sessaoId, { segundoFatorOk: true, totpPendente: null });
+    registrar({ evento: 'admin_login', adminId: admin.id, ip, userAgent });
+    return Astro.redirect(admin.deveTrocarSenha ? '/admin/trocar-senha' : '/admin');
+  } else {
+    registrar({ evento: 'admin_2fa_falhou', adminId: admin.id, alvo: admin.email, ip, userAgent });
+    erro = 'Código incorreto. Confira o horário do celular e tente o código atual.';
+  }
+}
+
+const qr = configurando && segredo ? await qrCodeSvg(segredo, admin.email) : '';
+---
+
+<Acesso
+  titulo={configurando ? 'Configurar verificação em duas etapas' : 'Código de verificação'}
+  subtitulo={configurando
+    ? 'O painel guarda dados financeiros e contratos. Escaneie o QR code com um app autenticador (Google Authenticator, Microsoft Authenticator ou Authy) e digite o código de 6 dígitos.'
+    : 'Digite o código de 6 dígitos do seu app autenticador.'}
+  painel
+>
+  {
+    configurando && (
+      <div class="qr">
+        <Fragment set:html={qr} />
+        <p>
+          Sem câmera? Digite esta chave no app: <code>{segredo}</code>
+        </p>
+      </div>
+    )
+  }
+  <form class="formulario" method="post" novalidate>
+    {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+    <label class="campo">
+      Código
+      <input name="codigo" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]{6,7}" maxlength="7" required autofocus />
+    </label>
+    <button class="btn btn--primario" type="submit">Entrar</button>
+  </form>
+  <form method="post" action="/admin/sair" class="links-acesso"><button class="botao-texto" type="submit">Cancelar</button></form>
+</Acesso>
+
+<style>
+  .qr {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .qr :global(svg) {
+    width: 200px;
+    height: 200px;
+  }
+  .qr code {
+    word-break: break-all;
+    font-size: 0.8rem;
+  }
+</style>

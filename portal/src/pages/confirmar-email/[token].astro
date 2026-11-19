@@ -1,0 +1,21 @@
+---
+import Acesso from '../../layouts/Acesso.astro';
+import { registrar } from '../../lib/acessos';
+import { confirmarEmail } from '../../lib/contas';
+
+const confirmado = confirmarEmail(Astro.params.token ?? '');
+if (confirmado) {
+  registrar({ evento: 'confirmou_email', clienteId: confirmado.clienteId, ip: Astro.locals.ip, userAgent: Astro.locals.userAgent });
+}
+---
+
+<Acesso titulo={confirmado ? 'E-mail confirmado' : 'Link inválido'}>
+  {
+    confirmado ? (
+      <p class="aviso aviso--ok">Pronto. Esse e-mail será usado para recuperar sua senha, se precisar.</p>
+    ) : (
+      <p class="aviso aviso--erro">Este link expirou ou já foi usado. Entre no portal e peça um novo em "Minha conta".</p>
+    )
+  }
+  <p class="links-acesso"><a href="/">Ir para o portal</a></p>
+</Acesso>

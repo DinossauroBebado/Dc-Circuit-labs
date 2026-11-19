@@ -1,0 +1,56 @@
+---
+// Envio de contrato assinado (PDF). Na ficha do cliente vai sem a escolha de cliente.
+interface Props {
+  projetos: { id: number; nome: string; clienteId: number }[];
+  clientes?: { id: number; razaoSocial: string }[];
+}
+
+const { projetos, clientes } = Astro.props;
+---
+
+<form class="formulario form-contrato" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="acao" value="contrato" />
+  {
+    clientes && (
+      <label class="campo">
+        Cliente
+        <select name="cliente" required>
+          <option value="">Escolha…</option>
+          {clientes.map((c) => <option value={c.id}>{c.razaoSocial}</option>)}
+        </select>
+      </label>
+    )
+  }
+  <label class="campo">Título <input name="titulo" required minlength="2" maxlength="200" placeholder="Contrato de desenvolvimento — fase 1" /></label>
+  <div class="form-contrato__linha">
+    <label class="campo">Assinado em <input name="assinado_em" type="date" /></label>
+    <label class="campo">
+      Projeto (opcional)
+      <select name="projeto">
+        <option value="">Nenhum / geral</option>
+        {
+          projetos.map((p) => (
+            <option value={p.id} data-cliente={p.clienteId}>
+              {p.nome}
+            </option>
+          ))
+        }
+      </select>
+    </label>
+  </div>
+  <label class="campo">PDF assinado <input name="arquivo" type="file" accept="application/pdf,.pdf" required /><small>Até 50 MB.</small></label>
+  <button class="btn btn--primario" type="submit">Enviar contrato</button>
+</form>
+
+<style>
+  .form-contrato__linha {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    .form-contrato__linha {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

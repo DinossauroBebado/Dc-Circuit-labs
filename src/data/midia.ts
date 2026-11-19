@@ -89,7 +89,7 @@ export const MIDIA = {
   'modelo-controle': {
     tipo: 'modelo',
     descricao: 'Controle DNK Agro, com animação "explodir" (npm run modelo:controle)',
-    src: '/models/controle-dnk.glb',
+    src: '/models/controle-dnk.glb?v=2', // ?v=: o navegador guarda o .glb por 30 dias; mude ao regerar o modelo
     poster: '/models/controle-dnk-poster.webp',
     alt: { pt: 'Modelo 3D de um controle em visão explodida', en: 'Exploded 3D model of a controller', zh: '控制器 3D 爆炸视图' },
   },

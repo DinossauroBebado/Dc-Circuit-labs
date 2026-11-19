@@ -1,0 +1,70 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import { formatarCnpj } from '../../../lib/cnpj';
+import { formatarData, resumoClientes } from '../../../lib/consultas';
+
+const clientes = resumoClientes();
+---
+
+<Admin titulo="Clientes">
+  <header class="cabecalho-pagina-portal cabecalho-acoes">
+    <div>
+      <p class="eyebrow">CLIENTES</p>
+      <h1>Clientes</h1>
+    </div>
+    <a class="btn btn--primario" href="/admin/clientes/novo">Cadastrar cliente</a>
+  </header>
+
+  <section class="painel">
+    {
+      clientes.length === 0 ? (
+        <p class="vazio">Nenhum cliente cadastrado ainda.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>CNPJ</th>
+                <th>Cadastrado em</th>
+                <th>Último acesso</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clientes.map((c) => (
+                <tr>
+                  <td>
+                    <a class="link" href={`/admin/clientes/${c.id}`}>{c.razaoSocial}</a>
+                  </td>
+                  <td>{formatarCnpj(c.cnpj)}</td>
+                  <td>{formatarData(c.criadoEm, false)}</td>
+                  <td>{formatarData(c.ultimoLogin)}</td>
+                  <td>
+                    {!c.ativo ? (
+                      <span class="etiqueta etiqueta--erro">desativado</span>
+                    ) : c.deveTrocarSenha ? (
+                      <span class="etiqueta etiqueta--alerta">aguardando 1º acesso</span>
+                    ) : (
+                      <span class="etiqueta etiqueta--ok">ativo</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+</Admin>
+
+<style>
+  .cabecalho-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px;
+  }
+</style>

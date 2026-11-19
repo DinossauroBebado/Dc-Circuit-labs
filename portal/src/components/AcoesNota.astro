@@ -1,0 +1,33 @@
+---
+// Cancelar / reativar / remover uma nota enviada à mão (as do Bling não são alteradas no portal).
+interface Props {
+  nota: { id: number; origem: string; situacao: string | null };
+}
+const { nota } = Astro.props;
+---
+
+{
+  nota.origem === 'manual' && (
+    <div class="acoes-nota">
+      <form method="post">
+        <input type="hidden" name="acao" value="situacao-nota" />
+        <input type="hidden" name="nota" value={nota.id} />
+        <input type="hidden" name="situacao" value={nota.situacao === 'Cancelada' ? 'Autorizada' : 'Cancelada'} />
+        <button class="botao-texto" type="submit">{nota.situacao === 'Cancelada' ? 'Marcar autorizada' : 'Marcar cancelada'}</button>
+      </form>
+      <form method="post" onsubmit="return confirm('Remover esta nota do portal? O cliente deixa de vê-la.')">
+        <input type="hidden" name="acao" value="remover-nota" />
+        <input type="hidden" name="nota" value={nota.id} />
+        <button class="botao-texto" type="submit">Remover</button>
+      </form>
+    </div>
+  )
+}
+
+<style>
+  .acoes-nota {
+    display: flex;
+    gap: 12px;
+    white-space: nowrap;
+  }
+</style>

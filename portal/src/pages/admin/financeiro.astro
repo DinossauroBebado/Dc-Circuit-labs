@@ -1,0 +1,165 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { formatarData } from '../../lib/consultas';
+import { CLASSE_ESTADO, diasDeAtraso, estadoDaParcela, formatarReais, resumir, ROTULO_ESTADO, todasAsParcelas } from '../../lib/financeiro';
+import { BLING_ATIVO, blingConectado } from '../../lib/bling';
+
+const agora = new Date();
+const linhas = todasAsParcelas();
+const resumo = resumir(linhas.map((l) => l.parcela), agora);
+const limite30 = agora.getTime() + 30 * 24 * 3600 * 1000;
+
+const atrasadas = linhas.filter((l) => estadoDaParcela(l.parcela, agora) === 'atrasada');
+const proximas = linhas.filter((l) => {
+  const e = estadoDaParcela(l.parcela, agora);
+  return (e === 'vence_logo' || e === 'a_vencer' || e === 'parcial') && l.parcela.vencimento.getTime() <= limite30;
+});
+const aVencer30 = proximas.reduce((s, l) => s + l.parcela.valor - l.parcela.valorPago, 0);
+
+// Por cliente
+const porCliente = new Map<number, { razaoSocial: string; parcelas: (typeof linhas)[number]['parcela'][] }>();
+for (const l of linhas) {
+  const g = porCliente.get(l.cliente.id) ?? { razaoSocial: l.cliente.razaoSocial, parcelas: [] };
+  g.parcelas.push(l.parcela);
+  porCliente.set(l.cliente.id, g);
+}
+const resumoPorCliente = [...porCliente].map(([id, g]) => ({ id, razaoSocial: g.razaoSocial, ...resumir(g.parcelas, agora) })).sort((a, b) => b.vencido - a.vencido || b.aReceber - a.aReceber);
+---
+
+<Admin titulo="Financeiro">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">FINANCEIRO</p>
+    <h1>Contas a receber</h1>
+    <p>Parcelas de todos os clientes, vindas do Bling (contas a receber).</p>
+  </header>
+
+  {
+    BLING_ATIVO && !blingConectado() && (
+      <p class="aviso aviso--alerta" style="margin-bottom: 20px">
+        O Bling não está conectado: os dados abaixo podem estar desatualizados. <a class="link" href="/admin/bling">Conectar</a>
+      </p>
+    )
+  }
+
+  <section class="indicadores">
+    <div class="painel"><span>A receber</span><strong>{formatarReais(resumo.aReceber)}</strong></div>
+    <div class="painel destaque-erro"><span>Vencido</span><strong>{formatarReais(resumo.vencido)}</strong></div>
+    <div class="painel"><span>Vence nos próximos 30 dias</span><strong>{formatarReais(aVencer30)}</strong></div>
+    <div class="painel"><span>Recebido (total)</span><strong>{formatarReais(resumo.pago)}</strong></div>
+  </section>
+
+  <section class="painel">
+    <h2>Em atraso</h2>
+    {
+      atrasadas.length === 0 ? (
+        <p>Nenhuma parcela em atraso.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Vencimento</th>
+                <th>Atraso</th>
+                <th>Descrição</th>
+                <th class="num">Em aberto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {atrasadas.map(({ parcela, cliente }) => (
+                <tr>
+                  <td>
+                    <a class="link" href={`/admin/clientes/${cliente.id}`}>{cliente.razaoSocial}</a>
+                  </td>
+                  <td>{formatarData(parcela.vencimento, false)}</td>
+                  <td>
+                    <span class="etiqueta etiqueta--erro">{diasDeAtraso(parcela, agora)} dia(s)</span>
+                  </td>
+                  <td>{parcela.descricao ?? 'Parcela'}</td>
+                  <td class="num">{formatarReais(parcela.valor - parcela.valorPago)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+
+  <section class="painel">
+    <h2>Próximos 30 dias</h2>
+    {
+      proximas.length === 0 ? (
+        <p>Nada vencendo nos próximos 30 dias.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Vencimento</th>
+                <th>Descrição</th>
+                <th class="num">Em aberto</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              {proximas.map(({ parcela, cliente }) => {
+                const e = estadoDaParcela(parcela, agora);
+                return (
+                  <tr>
+                    <td>
+                      <a class="link" href={`/admin/clientes/${cliente.id}`}>{cliente.razaoSocial}</a>
+                    </td>
+                    <td>{formatarData(parcela.vencimento, false)}</td>
+                    <td>{parcela.descricao ?? 'Parcela'}</td>
+                    <td class="num">{formatarReais(parcela.valor - parcela.valorPago)}</td>
+                    <td>
+                      <span class={`etiqueta ${CLASSE_ESTADO[e]}`}>{ROTULO_ESTADO[e]}</span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+
+  <section class="painel">
+    <h2>Por cliente</h2>
+    {
+      resumoPorCliente.length === 0 ? (
+        <p class="vazio">Nenhuma parcela sincronizada do Bling ainda.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th class="num">Total</th>
+                <th class="num">Recebido</th>
+                <th class="num">A receber</th>
+                <th class="num">Vencido</th>
+              </tr>
+            </thead>
+            <tbody>
+              {resumoPorCliente.map((c) => (
+                <tr>
+                  <td>
+                    <a class="link" href={`/admin/clientes/${c.id}`}>{c.razaoSocial}</a>
+                  </td>
+                  <td class="num">{formatarReais(c.total)}</td>
+                  <td class="num">{formatarReais(c.pago)}</td>
+                  <td class="num">{formatarReais(c.aReceber)}</td>
+                  <td class="num">{c.vencido > 0 ? <span class="etiqueta etiqueta--erro">{formatarReais(c.vencido)}</span> : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+</Admin>

@@ -1,0 +1,60 @@
+---
+import Acesso from '../layouts/Acesso.astro';
+import { bloqueado, registrar } from '../lib/acessos';
+import { soDigitos } from '../lib/cnpj';
+import { pedirRedefinicao } from '../lib/contas';
+import { lerFormulario, texto } from '../lib/requisicao';
+
+const { ip, userAgent } = Astro.locals;
+let enviado = false;
+let erro = '';
+
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const cnpj = soDigitos(texto(form, 'cnpj'));
+  if (bloqueado('pediu_redefinicao', cnpj, ip)) {
+    erro = 'Muitos pedidos seguidos. Aguarde 15 minutos e tente de novo.';
+  } else {
+    let clienteId: number | undefined;
+    try {
+      clienteId = (await pedirRedefinicao(cnpj))?.clienteId;
+    } catch (e) {
+      console.error('Falha ao enviar e-mail de redefinição', e);
+    }
+    registrar({ evento: 'pediu_redefinicao', clienteId, alvo: cnpj, ip, userAgent });
+    // Resposta igual exista ou não o CNPJ: não revela quem é cliente.
+    enviado = true;
+  }
+}
+---
+
+<Acesso titulo="Esqueci minha senha" subtitulo="Informe o CNPJ. Se houver um e-mail confirmado no cadastro, enviaremos um link para criar uma nova senha.">
+  {
+    enviado ? (
+      <div class="formulario">
+        <p class="aviso aviso--ok" role="status">
+          Se o CNPJ tiver um e-mail confirmado, o link já foi enviado. Ele vale por 1 hora. Confira também a caixa de spam.
+        </p>
+        <p class="aviso aviso--info">
+          Não recebeu ou não tem e-mail cadastrado? <a class="link" href="https://dccircuitlabs.com/contato/">Fale com a DC Circuit Labs</a>{' '}
+          para receber uma nova senha temporária.
+        </p>
+      </div>
+    ) : (
+      <form class="formulario" method="post" novalidate>
+        {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+        <label class="campo">
+          CNPJ
+          <input name="cnpj" inputmode="numeric" autocomplete="username" placeholder="00.000.000/0000-00" required data-mascara-cnpj />
+        </label>
+        <button class="btn btn--primario" type="submit">Enviar link</button>
+      </form>
+    )
+  }
+  <p class="links-acesso"><a href="/entrar">Voltar para o login</a></p>
+</Acesso>
+
+<script>
+  import { mascararCnpj } from '../scripts/mascara';
+  mascararCnpj();
+</script>

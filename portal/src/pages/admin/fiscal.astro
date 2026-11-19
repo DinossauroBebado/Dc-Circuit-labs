@@ -1,0 +1,196 @@
+---
+import { eq } from 'drizzle-orm';
+import Admin from '../../layouts/Admin.astro';
+import AcoesNota from '../../components/AcoesNota.astro';
+import FormNota from '../../components/FormNota.astro';
+import { db, schema } from '../../db';
+import { registrar } from '../../lib/acessos';
+import { BLING_ATIVO, blingConectado, NF_VISIVEIS } from '../../lib/bling';
+import { formatarData } from '../../lib/consultas';
+import { formatarReais, nomesDeProjetos, notasDoMes, todasAsNotas } from '../../lib/financeiro';
+import { enviarNota, mudarSituacao, removerNota } from '../../lib/notas';
+import { lerFormulario, texto } from '../../lib/requisicao';
+
+const admin = Astro.locals.admin!;
+let erro = '';
+let ok = '';
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const acao = texto(form, 'acao');
+  const log = (clienteId: number, alvo: string) => registrar({ evento: 'admin_acao', adminId: admin.id, clienteId, alvo: `${alvo} (${admin.nome})`, ip: Astro.locals.ip });
+  if (acao === 'nota') {
+    const clienteId = Number(texto(form, 'cliente'));
+    const cliente = Number.isInteger(clienteId) ? db.select().from(schema.clientes).where(eq(schema.clientes.id, clienteId)).get() : undefined;
+    if (!cliente) erro = 'Escolha o cliente.';
+    else {
+      const r = await enviarNota(form, cliente);
+      if (r.erro) erro = r.erro;
+      else {
+        log(cliente.id, `Nota fiscal enviada: ${r.numero}`);
+        ok = `Nota ${r.numero} enviada para ${cliente.razaoSocial}.`;
+      }
+    }
+  } else if (acao === 'situacao-nota' || acao === 'remover-nota') {
+    const notaId = Number(texto(form, 'nota'));
+    const nota = Number.isInteger(notaId) ? db.select().from(schema.notasFiscais).where(eq(schema.notasFiscais.id, notaId)).get() : undefined;
+    if (nota && acao === 'situacao-nota') {
+      const situacao = texto(form, 'situacao');
+      if (mudarSituacao(nota.id, null, situacao)) {
+        log(nota.clienteId, `Nota ${nota.numero} marcada como ${situacao.toLowerCase()}`);
+        ok = `Nota ${nota.numero} marcada como ${situacao.toLowerCase()}.`;
+      }
+    } else if (nota && removerNota(nota.id, null)) {
+      log(nota.clienteId, `Nota fiscal removida: ${nota.numero}`);
+      ok = `Nota ${nota.numero} removida.`;
+    }
+  }
+}
+
+const filtro = Number(Astro.url.searchParams.get('cliente'));
+const todas = todasAsNotas();
+const notas = Number.isInteger(filtro) && filtro > 0 ? todas.filter((n) => n.cliente.id === filtro) : todas;
+const clientesComNota = [...new Map(todas.map((n) => [n.cliente.id, n.cliente.razaoSocial]))].sort((a, b) => a[1].localeCompare(b[1], 'pt-BR'));
+const clientes = db.select({ id: schema.clientes.id, razaoSocial: schema.clientes.razaoSocial }).from(schema.clientes).orderBy(schema.clientes.razaoSocial).all();
+const nomeCliente = new Map(clientes.map((c) => [c.id, c.razaoSocial]));
+const projetosRotulados = db
+  .select({ id: schema.projetos.id, nome: schema.projetos.nome, clienteId: schema.projetos.clienteId })
+  .from(schema.projetos)
+  .orderBy(schema.projetos.nome)
+  .all()
+  .map((p) => ({ ...p, nome: `${p.nome} — ${nomeCliente.get(p.clienteId) ?? ''}` }));
+const doMes = notasDoMes();
+const valorMes = doMes.reduce((s, n) => s + (n.nota.valor ?? 0), 0);
+const nomes = nomesDeProjetos();
+---
+
+<Admin titulo="Fiscal">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">FISCAL</p>
+    <h1>Notas fiscais</h1>
+    <p>Notas fiscais de todos os clientes. Cada cliente vê as dele em “Notas fiscais”, no portal.</p>
+  </header>
+
+  {
+    BLING_ATIVO && !blingConectado() && (
+      <p class="aviso aviso--alerta" style="margin-bottom: 20px">
+        O Bling não está conectado: a lista pode estar desatualizada. <a class="link" href="/admin/bling">Conectar</a>
+      </p>
+    )
+  }
+
+  {erro && <p class="aviso aviso--erro" role="alert" style="margin-bottom: 20px">{erro}</p>}
+  {ok && <p class="aviso aviso--ok" role="status" style="margin-bottom: 20px">{ok}</p>}
+
+  <section class="indicadores">
+    <div class="painel"><span>NF emitidas no mês</span><strong>{doMes.length}</strong></div>
+    <div class="painel"><span>Valor faturado no mês</span><strong>{formatarReais(valorMes)}</strong></div>
+    <div class="painel"><span>NF no portal (total)</span><strong>{todas.length}</strong></div>
+  </section>
+
+  <section class="painel">
+    <div class="cabecalho-tabela">
+      <h2>Notas</h2>
+      {
+        clientesComNota.length > 1 && (
+          <form method="get" class="filtro">
+            <label>
+              Cliente{' '}
+              <select name="cliente" onchange="this.form.submit()">
+                <option value="">Todos</option>
+                {clientesComNota.map(([id, nome]) => (
+                  <option value={id} selected={id === filtro}>
+                    {nome}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <noscript><button class="botao-texto" type="submit">Filtrar</button></noscript>
+          </form>
+        )
+      }
+    </div>
+    {
+      notas.length === 0 ? (
+        <p class="vazio">Nenhuma nota fiscal enviada ainda.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Cliente</th>
+                <th>Emissão</th>
+                <th>Projeto</th>
+                <th class="num">Valor</th>
+                <th>Situação</th>
+                <th>Arquivos</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {notas.map(({ nota, cliente }) => {
+                const visivel = NF_VISIVEIS.includes(nota.situacao ?? '');
+                return (
+                  <tr class={nota.situacao === 'Cancelada' ? 'apagada' : ''}>
+                    <td>
+                      {nota.numero}
+                      {nota.serie && <small> série {nota.serie}</small>}
+                    </td>
+                    <td>
+                      <a class="link" href={`/admin/clientes/${cliente.id}`}>{cliente.razaoSocial}</a>
+                    </td>
+                    <td>{formatarData(nota.emissao, false)}</td>
+                    <td>{nota.projetoId ? (nomes.get(nota.projetoId) ?? '—') : '—'}</td>
+                    <td class="num">{formatarReais(nota.valor)}</td>
+                    <td>
+                      <span class={`etiqueta ${nota.situacao === 'Cancelada' ? 'etiqueta--erro' : visivel ? 'etiqueta--ok' : 'etiqueta--alerta'}`}>
+                        {nota.situacao?.toLowerCase()}
+                      </span>
+                      {!visivel && <small> · oculta para o cliente</small>}
+                    </td>
+                    <td class="arquivos">
+                      {nota.pdfArquivoId && (
+                        <a class="link" href={`/admin/arquivos/${nota.pdfArquivoId}?ver`} target="_blank" rel="noopener">
+                          PDF
+                        </a>
+                      )}
+                      {nota.xmlArquivoId && (
+                        <a class="link" href={`/admin/arquivos/${nota.xmlArquivoId}`}>
+                          XML
+                        </a>
+                      )}
+                    </td>
+                    <td>
+                      <AcoesNota nota={nota} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+
+  <section class="painel">
+    <h2>Enviar nota fiscal</h2>
+    {clientes.length === 0 ? <p>Cadastre um cliente primeiro.</p> : <FormNota clientes={clientes} projetos={projetosRotulados} />}
+  </section>
+</Admin>
+
+<style>
+  .cabecalho-tabela {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .filtro select {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid rgb(18 18 18 / 0.2);
+    font: inherit;
+  }
+</style>

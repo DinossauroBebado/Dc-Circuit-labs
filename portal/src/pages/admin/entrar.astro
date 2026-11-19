@@ -1,0 +1,41 @@
+---
+import { eq } from 'drizzle-orm';
+import Acesso from '../../layouts/Acesso.astro';
+import { db, schema } from '../../db';
+import { bloqueado, registrar } from '../../lib/acessos';
+import { lerFormulario, texto } from '../../lib/requisicao';
+import { conferir, conferirFalso } from '../../lib/senha';
+import { criarSessao } from '../../lib/sessao';
+
+const { ip, userAgent } = Astro.locals;
+let erro = '';
+let emailDigitado = '';
+
+const form = await lerFormulario(Astro.request);
+if (form) {
+  emailDigitado = texto(form, 'email').toLowerCase();
+  const senha = String(form.get('senha') ?? '');
+  if (bloqueado('admin_login_falhou', emailDigitado, ip)) {
+    erro = 'Muitas tentativas seguidas. Aguarde 15 minutos.';
+  } else {
+    const admin = db.select().from(schema.admins).where(eq(schema.admins.email, emailDigitado)).get();
+    const ok = admin?.ativo ? await conferir(admin.senhaHash, senha) : await conferirFalso(senha);
+    if (ok && admin) {
+      // A sessão nasce sem o segundo fator: o painel só abre depois do código do app autenticador.
+      criarSessao(Astro.cookies, 'admin', { adminId: admin.id }, { ip, userAgent });
+      return Astro.redirect('/admin/2fa');
+    }
+    registrar({ evento: 'admin_login_falhou', adminId: admin?.id, alvo: emailDigitado, ip, userAgent });
+    erro = 'E-mail ou senha incorretos.';
+  }
+}
+---
+
+<Acesso titulo="Entrar no painel" painel>
+  <form class="formulario" method="post" novalidate>
+    {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+    <label class="campo">E-mail <input name="email" type="email" autocomplete="username" value={emailDigitado} required /></label>
+    <label class="campo">Senha <input name="senha" type="password" autocomplete="current-password" required /></label>
+    <button class="btn btn--primario" type="submit">Continuar</button>
+  </form>
+</Acesso>

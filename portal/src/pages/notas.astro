@@ -1,0 +1,69 @@
+---
+import Portal from '../layouts/Portal.astro';
+import { formatarData } from '../lib/consultas';
+import { formatarReais, nomesDeProjetos, notasDoCliente } from '../lib/financeiro';
+
+const cliente = Astro.locals.cliente!;
+const notas = notasDoCliente(cliente.id);
+const projetos = nomesDeProjetos(cliente.id);
+---
+
+<Portal titulo="Notas fiscais">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">FISCAL</p>
+    <h1>Notas fiscais</h1>
+    <p>NF-e emitidas pela DC Circuit Labs para a sua empresa, com o PDF (DANFE) e o XML.</p>
+  </header>
+
+  <section class="painel">
+    {
+      notas.length === 0 ? (
+        <p class="vazio">Nenhuma nota fiscal emitida até agora.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Emissão</th>
+                <th>Projeto</th>
+                <th class="num">Valor</th>
+                <th>Situação</th>
+                <th>Arquivos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {notas.map((n) => (
+                <tr class={n.situacao === 'Cancelada' ? 'apagada' : ''}>
+                  <td>
+                    {n.numero}
+                    {n.serie && <small> série {n.serie}</small>}
+                  </td>
+                  <td>{formatarData(n.emissao, false)}</td>
+                  <td>{n.projetoId ? (projetos.get(n.projetoId) ?? '—') : '—'}</td>
+                  <td class="num">{formatarReais(n.valor)}</td>
+                  <td>
+                    <span class={`etiqueta ${n.situacao === 'Cancelada' ? 'etiqueta--erro' : 'etiqueta--ok'}`}>{n.situacao?.toLowerCase()}</span>
+                  </td>
+                  <td class="arquivos">
+                    {n.pdfArquivoId && (
+                      <a class="link" href={`/arquivos/${n.pdfArquivoId}?ver`} target="_blank" rel="noopener">
+                        PDF
+                      </a>
+                    )}
+                    {n.xmlArquivoId && (
+                      <a class="link" href={`/arquivos/${n.xmlArquivoId}`}>
+                        XML
+                      </a>
+                    )}
+                    {!n.pdfArquivoId && !n.xmlArquivoId && '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+</Portal>

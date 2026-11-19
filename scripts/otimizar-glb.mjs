@@ -42,7 +42,7 @@ cena.addChild(modelo);
 const { min, max } = getBounds(cena);
 modelo.setTranslation(min.map((v, i) => -(v + max[i]) / 2));
 
-await doc.transform(dedup(), weld(), simplify({ simplifier: MeshoptSimplifier, ratio: 0, error: 0.0005 }), prune(), quantize());
+await doc.transform(dedup(), weld(), simplify({ simplifier: MeshoptSimplifier, ratio: 0, error: 0.0005 }), prune(), quantize({ pattern: /^(NORMAL|TEXCOORD_\d+|TANGENT)$/ })); // posições em float: ver preparar-modelo-controle.mjs
 await io.write(saida, doc);
 
 const b = getBounds(doc.getRoot().listScenes()[0]);

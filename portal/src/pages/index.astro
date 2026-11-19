@@ -1,0 +1,98 @@
+---
+import Portal from '../layouts/Portal.astro';
+import { emailPendente, formatarData, projetosDoCliente } from '../lib/consultas';
+import { avisosDoCliente } from '../lib/financeiro';
+
+const cliente = Astro.locals.cliente!;
+const projetos = projetosDoCliente(cliente.id);
+const pendente = cliente.emailVerificadoEm ? null : emailPendente(cliente.id);
+const bemvindo = Astro.url.searchParams.has('bemvindo');
+const emailFalhou = Astro.url.searchParams.get('email') === 'falhou';
+const avisos = avisosDoCliente(cliente.id);
+const CLASSE_AVISO = { atrasada: 'aviso--erro', vence_logo: 'aviso--alerta', nf_nova: 'aviso--info', contrato_novo: 'aviso--info' } as const;
+---
+
+<Portal titulo="Meus projetos">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">PORTAL DO CLIENTE</p>
+    <h1>Meus projetos</h1>
+  </header>
+
+  {bemvindo && !emailFalhou && <p class="aviso aviso--ok">Senha criada. Bem-vindo ao Portal do Cliente da DC Circuit Labs.</p>}
+  {
+    emailFalhou && (
+      <p class="aviso aviso--erro">
+        Não conseguimos enviar o e-mail de confirmação agora. Tente de novo em <a class="link" href="/conta">Minha conta</a>.
+      </p>
+    )
+  }
+  {
+    !cliente.emailVerificadoEm && !emailFalhou && (
+      <p class="aviso aviso--info" style="margin-top: 12px">
+        {pendente
+          ? `Confirme seu e-mail: enviamos um link para ${pendente}.`
+          : 'Cadastre e confirme um e-mail para poder recuperar sua senha.'}{' '}
+        <a class="link" href="/conta">Minha conta</a>
+      </p>
+    )
+  }
+
+  {
+    avisos.length > 0 && (
+      <ul class="avisos-inicio">
+        {avisos.map((a) => (
+          <li class={`aviso ${CLASSE_AVISO[a.tipo]}`}>
+            {a.texto} <a class="link" href={a.href}>Ver</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <section class="painel" style="margin-top: 24px">
+    {
+      projetos.length === 0 ? (
+        <p class="vazio">A documentação dos seus projetos aparece aqui assim que for publicada pela DC Circuit Labs.</p>
+      ) : (
+        <ul class="lista-projetos">
+          {projetos.map((p) => (
+            <li>
+              <a href={`/projetos/${p.slug}`}>
+                <strong>{p.nome}</strong>
+                {p.status && <span class="etiqueta">{p.status}</span>}
+                <small>Atualizado em {formatarData(p.atualizadoEm, false)}</small>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</Portal>
+
+<style>
+  .lista-projetos {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .lista-projetos a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    padding: 16px;
+    border: 1px solid rgb(18 18 18 / 0.1);
+    border-radius: var(--radius-md);
+    color: var(--ink-strong);
+    text-decoration: none;
+  }
+  .lista-projetos a:hover {
+    border-color: var(--brand-blue);
+  }
+  .lista-projetos small {
+    margin-left: auto;
+    color: var(--ink);
+  }
+</style>

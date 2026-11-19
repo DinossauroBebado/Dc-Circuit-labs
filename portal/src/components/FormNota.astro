@@ -1,0 +1,78 @@
+---
+// Envio manual de nota fiscal. Na ficha do cliente vai sem a escolha de cliente.
+interface Props {
+  projetos: { id: number; nome: string; clienteId: number }[];
+  clientes?: { id: number; razaoSocial: string }[];
+}
+
+const { projetos, clientes } = Astro.props;
+---
+
+<form class="formulario form-nota" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="acao" value="nota" />
+  {
+    clientes && (
+      <label class="campo">
+        Cliente
+        <select name="cliente" required>
+          <option value="">Escolha…</option>
+          {clientes.map((c) => <option value={c.id}>{c.razaoSocial}</option>)}
+        </select>
+      </label>
+    )
+  }
+  <div class="form-nota__linha">
+    <label class="campo">PDF da nota (DANFE) <input name="pdf" type="file" accept="application/pdf,.pdf" required /></label>
+    <label class="campo">
+      XML (opcional)
+      <input name="xml" type="file" accept=".xml,application/xml,text/xml" />
+      <small>Com o XML da NF-e, número, série, data e valor são lidos dele, e o CNPJ do destinatário é conferido.</small>
+    </label>
+  </div>
+  <p class="form-nota__dica">Sem XML, preencha:</p>
+  <div class="form-nota__linha form-nota__linha--4">
+    <label class="campo">Número <input name="numero" inputmode="numeric" maxlength="20" /></label>
+    <label class="campo">Série <input name="serie" maxlength="5" /></label>
+    <label class="campo">Emissão <input name="emissao" type="date" /></label>
+    <label class="campo">Valor <input name="valor" inputmode="decimal" placeholder="R$ 0,00" /></label>
+  </div>
+  <div class="form-nota__linha">
+    <label class="campo">
+      Projeto (opcional)
+      <select name="projeto">
+        <option value="">Nenhum / geral</option>
+        {projetos.map((p) => <option value={p.id}>{p.nome}</option>)}
+      </select>
+    </label>
+    <label class="campo">
+      Situação
+      <select name="situacao">
+        <option value="Autorizada">Autorizada</option>
+        <option value="Cancelada">Cancelada</option>
+      </select>
+    </label>
+  </div>
+  <button class="btn btn--primario" type="submit">Enviar nota fiscal</button>
+</form>
+
+<style>
+  .form-nota__linha {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-nota__linha--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .form-nota__dica {
+    margin: 4px 0 -8px;
+    font-size: 0.85rem;
+    color: var(--ink);
+  }
+  @media (max-width: 700px) {
+    .form-nota__linha,
+    .form-nota__linha--4 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

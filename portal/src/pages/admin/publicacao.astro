@@ -1,0 +1,92 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import Historico from '../../components/Historico.astro';
+import { registrar } from '../../lib/acessos';
+import { confluenceConfigurado, ESPACO } from '../../lib/confluence';
+import { lerFormulario, texto } from '../../lib/requisicao';
+import { historico } from '../../lib/sincronizacoes';
+import { dispararPublicacao, emAndamento } from '../../lib/tarefas';
+
+const admin = Astro.locals.admin!;
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const paginaClienteId = texto(form, 'pagina_cliente') || undefined;
+  if (dispararPublicacao({ paginaClienteId, forcar: texto(form, 'forcar') === '1', adminId: admin.id })) {
+    registrar({ evento: 'admin_acao', adminId: admin.id, alvo: `Publicou do Confluence (${admin.nome})`, ip: Astro.locals.ip });
+  }
+  return Astro.redirect('/admin/publicacao');
+}
+
+const rodando = emAndamento('confluence');
+const itens = historico('confluence');
+const configurado = confluenceConfigurado();
+---
+
+<Admin titulo="Publicação">
+  {rodando && <meta http-equiv="refresh" content="4" />}
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">DOCUMENTAÇÃO</p>
+    <h1>Publicar do Confluence</h1>
+    <p>
+      Lê o espaço <strong>{ESPACO}</strong> no Confluence e atualiza a documentação dos clientes no portal. Também roda sozinho todo dia às 3h.
+    </p>
+  </header>
+
+  {
+    !configurado && (
+      <p class="aviso aviso--erro" style="margin-bottom: 20px">
+        Falta configurar o acesso ao Confluence: preencha CONFLUENCE_EMAIL e CONFLUENCE_TOKEN em /srv/apps/portal/.env e reinicie o portal.
+      </p>
+    )
+  }
+
+  <section class="painel">
+    <h2>Publicar</h2>
+    {
+      rodando ? (
+        <p class="aviso aviso--info">Publicação em andamento… esta página se atualiza sozinha.</p>
+      ) : (
+        <div class="acoes">
+          <form method="post">
+            <button class="btn btn--primario" type="submit" disabled={!configurado}>Publicar tudo</button>
+          </form>
+          <form method="post">
+            <input type="hidden" name="forcar" value="1" />
+            <button class="btn btn--secundario" type="submit" disabled={!configurado} title="Reprocessa até as páginas que não mudaram">
+              Republicar tudo do zero
+            </button>
+          </form>
+        </div>
+      )
+    }
+  </section>
+
+  <section class="painel">
+    <h2>Como o Confluence vira portal</h2>
+    <ul class="regras">
+      <li>Cada página na raiz do espaço {ESPACO} é um <strong>cliente</strong>: escreva o CNPJ dele na página (o cliente precisa estar cadastrado aqui no painel).</li>
+      <li>Cada página filha do cliente é um <strong>projeto</strong>. Opcional: uma tabela com as linhas “Status” e “Valor”.</li>
+      <li>Cada página filha do projeto é uma <strong>versão da documentação</strong> (ex.: “Versão 1.0”). Os anexos dela aparecem para o cliente: .glb vira 3D, .mp4 vira vídeo, PDF abre no navegador, iBOM aparece interativa, o resto vira download.</li>
+      <li>O rótulo <code>rascunho</code> esconde a página (e o que estiver abaixo dela) até você tirá-lo. <code>modelo</code> ou <code>ignorar</code> numa página raiz: ela não é cliente.</li>
+      <li>Página apagada (ou virou rascunho) no Confluence sai do portal na próxima publicação.</li>
+    </ul>
+  </section>
+
+  <section class="painel">
+    <h2>Últimas publicações</h2>
+    <Historico itens={itens} />
+  </section>
+</Admin>
+
+<style>
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .regras {
+    display: grid;
+    gap: 10px;
+    padding-left: 18px;
+  }
+</style>

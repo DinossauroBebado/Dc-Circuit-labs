@@ -3,7 +3,7 @@ import Logo from './Logo.astro';
 import Icone from './Icone.astro';
 import IconeWhatsapp from './IconeWhatsapp.astro';
 import SeletorIdioma from './SeletorIdioma.astro';
-import { CONTATO, t, urlPagina, type Idioma } from '../i18n';
+import { CONTATO, PORTAL_URL, t, urlPagina, type Idioma } from '../i18n';
 
 interface Props {
   lang: Idioma;
@@ -44,6 +44,10 @@ const linkWhatsapp = `https://wa.me/${CONTATO.whatsapp}?text=${encodeURIComponen
 
     <div class="topo__acoes">
       <SeletorIdioma lang={lang} caminho={caminho} />
+      <a href={PORTAL_URL} class="btn btn--secundario topo__portal" data-portal="cabecalho" title={d.nav.portalDescricao} aria-label={d.nav.portal}>
+        <Icone nome="circle-user-round" tamanho={18} class="topo__cta-icone" />
+        <span class="topo__portal-texto">{d.nav.portal}</span>
+      </a>
       <a
         href={linkWhatsapp}
         target="_blank"
@@ -95,6 +99,10 @@ const linkWhatsapp = `https://wa.me/${CONTATO.whatsapp}?text=${encodeURIComponen
         <IconeWhatsapp tamanho={20} class="topo__cta-icone" />
         <span>{d.nav.entreEmContato}</span>
       </a>
+      <a href={PORTAL_URL} class="btn btn--secundario topo__cta-movel" data-portal="menu-celular">
+        <Icone nome="circle-user-round" tamanho={20} class="topo__cta-icone" />
+        <span>{d.nav.portal}</span>
+      </a>
       <SeletorIdioma lang={lang} caminho={caminho} />
     </nav>
   </div>
@@ -106,14 +114,25 @@ const linkWhatsapp = `https://wa.me/${CONTATO.whatsapp}?text=${encodeURIComponen
     inset: 0 0 auto;
     z-index: 1000;
     height: var(--altura-header);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+  /* O vidro fosco fica numa camada à parte: backdrop-filter no próprio .topo faria o menu do celular
+     (position: fixed, dentro dele) ficar preso à altura do cabeçalho, coberto pelo resto da página. */
+  .topo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     background: rgb(255 255 255 / 0.78);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s, background-color 0.3s;
+    transition: background-color 0.3s;
   }
   .topo.rolou {
     border-bottom-color: rgb(18 18 18 / 0.08);
+  }
+  .topo.rolou::before {
     background: rgb(255 255 255 / 0.9);
   }
   .topo__barra {
@@ -191,6 +210,28 @@ const linkWhatsapp = `https://wa.me/${CONTATO.whatsapp}?text=${encodeURIComponen
   .topo__cta-icone {
     flex-shrink: 0;
   }
+  .topo__portal {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  /* Telas médias: só o ícone, para caber ao lado do menu e do "Entre em contato" */
+  @media (max-width: 1240px) {
+    .topo__portal {
+      padding: 7px 10px;
+    }
+    .topo__portal-texto {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
   .topo__menu {
     display: none;
     width: 44px;
@@ -240,7 +281,8 @@ const linkWhatsapp = `https://wa.me/${CONTATO.whatsapp}?text=${encodeURIComponen
   @media (max-width: 1024px) {
     .topo__nav,
     .topo__acoes > :global(.idiomas),
-    .topo__cta {
+    .topo__cta,
+    .topo__portal {
       display: none;
     }
     .topo__menu {

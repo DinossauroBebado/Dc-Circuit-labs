@@ -1,0 +1,110 @@
+---
+// Modelo 3D (GLB) com <model-viewer>. A biblioteca só é baixada quando o visitante clica em "Ver em 3D".
+// Se o modelo tiver animação (ex.: a vista explodida do SolidWorks), aparece o controle deslizante.
+interface Props {
+  src: string;
+  nome: string;
+}
+
+const { src, nome } = Astro.props;
+---
+
+<figure class="v3d" data-v3d>
+  <div class="v3d__palco">
+    <model-viewer
+      data-src={src}
+      alt={`Modelo 3D: ${nome}`}
+      camera-controls
+      touch-action="pan-y"
+      interaction-prompt="none"
+      shadow-intensity="0"
+      exposure="1.1"
+      tone-mapping="neutral"></model-viewer>
+    <button type="button" class="btn btn--primario v3d__carregar" data-v3d-carregar>Ver em 3D</button>
+  </div>
+  <div class="v3d__animacao" data-v3d-animacao hidden>
+    <span>Montado</span>
+    <input type="range" min="0" max="1" step="0.01" value="0" aria-label="Vista explodida" />
+    <span>Explodido</span>
+  </div>
+  <figcaption>{nome} · arraste para girar, role para aproximar</figcaption>
+</figure>
+
+<script>
+  interface ModelViewer extends HTMLElement {
+    src: string;
+    availableAnimations: string[];
+    animationName: string;
+    currentTime: number;
+    duration: number;
+    pause(): void;
+  }
+  let biblioteca: Promise<unknown> | null = null;
+  document.querySelectorAll<HTMLElement>('[data-v3d]').forEach((figura) => {
+    const viewer = figura.querySelector<ModelViewer>('model-viewer')!;
+    const botao = figura.querySelector<HTMLButtonElement>('[data-v3d-carregar]')!;
+    const caixa = figura.querySelector<HTMLElement>('[data-v3d-animacao]')!;
+    const controle = caixa.querySelector('input')!;
+    botao.addEventListener(
+      'click',
+      async () => {
+        botao.textContent = 'Carregando…';
+        botao.disabled = true;
+        await (biblioteca ??= import('@google/model-viewer'));
+        viewer.src = viewer.dataset.src!;
+      },
+      { once: true },
+    );
+    viewer.addEventListener('load', () => {
+      botao.hidden = true;
+      const animacao = viewer.availableAnimations?.[0];
+      if (!animacao) return;
+      viewer.animationName = animacao;
+      viewer.pause();
+      caixa.hidden = false;
+      controle.addEventListener('input', () => {
+        viewer.currentTime = Number(controle.value) * (viewer.duration || 1);
+      });
+    });
+  });
+</script>
+
+<style>
+  .v3d {
+    display: grid;
+    gap: 10px;
+  }
+  .v3d__palco {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 35%, rgb(0 123 255 / 0.25), transparent 65%), linear-gradient(180deg, #16202c, var(--ink-strong));
+  }
+  model-viewer {
+    width: 100%;
+    height: 100%;
+    --poster-color: transparent;
+  }
+  .v3d__carregar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+  }
+  .v3d__animacao {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .v3d__animacao input {
+    flex: 1;
+    accent-color: var(--brand-blue);
+  }
+  figcaption {
+    font-size: 0.85rem;
+    color: var(--ink);
+  }
+</style>

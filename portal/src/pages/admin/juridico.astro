@@ -1,0 +1,114 @@
+---
+import { eq } from 'drizzle-orm';
+import Admin from '../../layouts/Admin.astro';
+import FormContrato from '../../components/FormContrato.astro';
+import { db, schema } from '../../db';
+import { registrar } from '../../lib/acessos';
+import { formatarData } from '../../lib/consultas';
+import { enviarContrato, removerContrato } from '../../lib/contratos';
+import { formatarTamanho, nomesDeProjetos, todosOsContratos } from '../../lib/financeiro';
+import { lerFormulario, texto } from '../../lib/requisicao';
+
+const admin = Astro.locals.admin!;
+let erro = '';
+let ok = '';
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const acao = texto(form, 'acao');
+  if (acao === 'contrato') {
+    const clienteId = Number(texto(form, 'cliente'));
+    const cliente = Number.isInteger(clienteId) ? db.select().from(schema.clientes).where(eq(schema.clientes.id, clienteId)).get() : undefined;
+    if (!cliente) erro = 'Escolha o cliente.';
+    else {
+      const r = await enviarContrato(form, cliente.id);
+      if (r.erro) erro = r.erro;
+      else {
+        registrar({ evento: 'admin_acao', adminId: admin.id, clienteId: cliente.id, alvo: `Contrato enviado: ${r.titulo} (${admin.nome})`, ip: Astro.locals.ip });
+        ok = `Contrato “${r.titulo}” enviado para ${cliente.razaoSocial}.`;
+      }
+    }
+  } else if (acao === 'remover') {
+    const id = Number(texto(form, 'contrato'));
+    const contrato = Number.isInteger(id) ? db.select().from(schema.contratos).where(eq(schema.contratos.id, id)).get() : undefined;
+    const titulo = contrato ? removerContrato(contrato.id) : null;
+    if (titulo && contrato) {
+      registrar({ evento: 'admin_acao', adminId: admin.id, clienteId: contrato.clienteId, alvo: `Contrato removido: ${titulo} (${admin.nome})`, ip: Astro.locals.ip });
+      ok = `Contrato “${titulo}” removido.`;
+    }
+  }
+}
+
+const contratos = todosOsContratos();
+const clientes = db.select({ id: schema.clientes.id, razaoSocial: schema.clientes.razaoSocial }).from(schema.clientes).orderBy(schema.clientes.razaoSocial).all();
+const projetos = db.select({ id: schema.projetos.id, nome: schema.projetos.nome, clienteId: schema.projetos.clienteId }).from(schema.projetos).orderBy(schema.projetos.nome).all();
+const nomes = nomesDeProjetos();
+const nomeCliente = new Map(clientes.map((c) => [c.id, c.razaoSocial]));
+const projetosRotulados = projetos.map((p) => ({ ...p, nome: `${p.nome} — ${nomeCliente.get(p.clienteId) ?? ''}` }));
+---
+
+<Admin titulo="Jurídico">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">JURÍDICO</p>
+    <h1>Contratos</h1>
+    <p>Contratos assinados de todos os clientes. Cada cliente vê os dele em “Contratos”, no portal.</p>
+  </header>
+
+  {erro && <p class="aviso aviso--erro" role="alert" style="margin-bottom: 20px">{erro}</p>}
+  {ok && <p class="aviso aviso--ok" role="status" style="margin-bottom: 20px">{ok}</p>}
+
+  <section class="painel">
+    <h2>Todos os contratos</h2>
+    {
+      contratos.length === 0 ? (
+        <p class="vazio">Nenhum contrato enviado ainda.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Título</th>
+                <th>Projeto</th>
+                <th>Assinado em</th>
+                <th>Enviado em</th>
+                <th>Arquivo</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {contratos.map(({ contrato, arquivo, cliente }) => (
+                <tr>
+                  <td>
+                    <a class="link" href={`/admin/clientes/${cliente.id}`}>{cliente.razaoSocial}</a>
+                  </td>
+                  <td>{contrato.titulo}</td>
+                  <td>{contrato.projetoId ? (nomes.get(contrato.projetoId) ?? '—') : '—'}</td>
+                  <td>{formatarData(contrato.assinadoEm, false)}</td>
+                  <td>{formatarData(contrato.criadoEm, false)}</td>
+                  <td>
+                    <a class="link" href={`/admin/arquivos/${arquivo.id}?ver`} target="_blank" rel="noopener">
+                      PDF
+                    </a>{' '}
+                    <small>{formatarTamanho(arquivo.tamanho)}</small>
+                  </td>
+                  <td>
+                    <form method="post" onsubmit="return confirm('Remover este contrato? O cliente deixa de vê-lo.')">
+                      <input type="hidden" name="acao" value="remover" />
+                      <input type="hidden" name="contrato" value={contrato.id} />
+                      <button class="botao-texto" type="submit">Remover</button>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+
+  <section class="painel">
+    <h2>Enviar contrato</h2>
+    {clientes.length === 0 ? <p>Cadastre um cliente primeiro.</p> : <FormContrato clientes={clientes} projetos={projetosRotulados} />}
+  </section>
+</Admin>

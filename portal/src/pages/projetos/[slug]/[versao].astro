@@ -1,0 +1,51 @@
+---
+import Portal from '../../../layouts/Portal.astro';
+import Documento from '../../../components/Documento.astro';
+import { registrar } from '../../../lib/acessos';
+import { projetoDoCliente, urlDaVersao, versaoDoProjeto, versoesDoProjeto } from '../../../lib/projetos';
+
+const cliente = Astro.locals.cliente!;
+const projeto = projetoDoCliente(cliente.id, Astro.params.slug ?? '');
+const documento = projeto ? versaoDoProjeto(projeto.id, decodeURIComponent(Astro.params.versao ?? '')) : undefined;
+if (!projeto || !documento?.publicadoEm) return new Response(null, { status: 404 });
+
+registrar({ evento: 'viu_documento', clienteId: cliente.id, alvo: `${projeto.nome} — ${documento.titulo}`, ip: Astro.locals.ip, userAgent: Astro.locals.userAgent });
+const outras = versoesDoProjeto(projeto.id).filter((v) => v.id !== documento.id);
+---
+
+<Portal titulo={`${projeto.nome} — ${documento.titulo}`}>
+  <p class="trilha">
+    <a class="link" href="/">Projetos</a> / {
+      outras.length ? (
+        <a class="link" href={`/projetos/${projeto.slug}`}>{projeto.nome}</a>
+      ) : (
+        projeto.nome
+      )
+    } / {documento.titulo}
+  </p>
+  {
+    outras.length > 0 && (
+      <p class="outras">
+        Outras versões:{' '}
+        {outras.map((v, i) => (
+          <>
+            {i > 0 && ' · '}
+            <a class="link" href={urlDaVersao(projeto.slug, v.versao)}>{v.titulo}</a>
+          </>
+        ))}
+      </p>
+    )
+  }
+  <Documento documento={documento} projeto={projeto} />
+</Portal>
+
+<style>
+  .trilha,
+  .outras {
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+  }
+  .outras {
+    margin-bottom: 24px;
+  }
+</style>

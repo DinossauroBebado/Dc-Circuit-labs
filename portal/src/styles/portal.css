@@ -1,0 +1,370 @@
+/* Estilos do portal. A base (tokens, botões, tipografia) vem do site: ../../../src/styles/global.css */
+
+body {
+  background: var(--surface-subtle);
+}
+
+/* ---------- Telas de acesso (entrar, esqueci a senha…) ---------- */
+.tela-acesso {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+}
+.cartao-acesso {
+  width: min(100%, 440px);
+  padding: clamp(28px, 5vw, 44px);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+.cartao-acesso .marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  font-weight: 700;
+  color: var(--ink-strong);
+  text-decoration: none;
+}
+.cartao-acesso .marca img {
+  width: 36px;
+  height: 36px;
+}
+.cartao-acesso h1 {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+.cartao-acesso .apoio {
+  margin-bottom: 24px;
+}
+
+/* ---------- Formulários ---------- */
+.formulario {
+  display: grid;
+  gap: 18px;
+}
+.campo {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgb(18 18 18 / 0.18);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 1rem;
+  font-weight: 400;
+}
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgb(0 123 255 / 0.15);
+}
+.campo small {
+  font-weight: 400;
+  color: var(--ink);
+}
+.formulario .btn {
+  width: 100%;
+}
+.links-acesso {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+.links-acesso a,
+.link {
+  color: var(--brand-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+.links-acesso a:hover,
+.link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Avisos ---------- */
+.aviso {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.aviso--erro {
+  background: #fdecec;
+  color: #8a1c1c;
+}
+.aviso--ok {
+  background: #e8f6ee;
+  color: #155c32;
+}
+.aviso--info {
+  background: #e8f1fd;
+  color: #0b3c6e;
+}
+.aviso--alerta {
+  background: #fff4d6;
+  color: #6b4a00;
+}
+
+/* ---------- Área logada ---------- */
+.topo-portal {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--surface);
+  border-bottom: 1px solid rgb(18 18 18 / 0.08);
+}
+.topo-portal__barra {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 64px;
+}
+.topo-portal .marca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--ink-strong);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.topo-portal .marca img {
+  width: 32px;
+  height: 32px;
+}
+.topo-portal .marca span span {
+  color: var(--brand-blue);
+}
+.topo-portal nav {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  overflow-x: auto;
+}
+.topo-portal nav a {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--ink-strong);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.topo-portal nav a:hover {
+  color: var(--brand-blue);
+}
+.topo-portal nav a[aria-current] {
+  color: var(--brand-blue);
+  background: rgb(0 123 255 / 0.08);
+}
+.topo-portal__conta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+.botao-texto {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--brand-blue);
+  cursor: pointer;
+}
+.conteudo-portal {
+  padding-block: 40px 80px;
+}
+.conteudo-portal h1 {
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+  margin-bottom: 8px;
+}
+.cabecalho-pagina-portal {
+  margin-bottom: 32px;
+}
+.painel {
+  padding: clamp(20px, 3vw, 32px);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+.painel + .painel {
+  margin-top: 24px;
+}
+.painel h2 {
+  font-size: 1.15rem;
+  margin-bottom: 16px;
+}
+.vazio {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--ink);
+}
+
+/* ---------- Tabelas ---------- */
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.tabela th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1px solid rgb(18 18 18 / 0.12);
+}
+.tabela td {
+  padding: 12px;
+  border-bottom: 1px solid rgb(18 18 18 / 0.06);
+  vertical-align: top;
+}
+.tabela-rolagem {
+  overflow-x: auto;
+}
+.etiqueta {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--surface-subtle);
+  color: var(--ink-strong);
+}
+.etiqueta--ok {
+  background: #e8f6ee;
+  color: #155c32;
+}
+.etiqueta--alerta {
+  background: #fff4d6;
+  color: #6b4a00;
+}
+.etiqueta--erro {
+  background: #fdecec;
+  color: #8a1c1c;
+}
+
+.tabela .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tabela tr.apagada td {
+  color: var(--ink);
+  opacity: 0.6;
+}
+.tabela td.arquivos {
+  display: flex;
+  gap: 12px;
+}
+.tabela small,
+.painel h2 small {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+/* ---------- Indicadores (números grandes) ---------- */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.indicadores .painel {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+.indicadores span {
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+.indicadores strong {
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+  color: var(--ink-strong);
+  font-variant-numeric: tabular-nums;
+}
+.indicadores .destaque-erro strong {
+  color: #8a1c1c;
+}
+.indicadores a.painel {
+  text-decoration: none;
+}
+.indicadores a.painel:hover {
+  outline: 1px solid var(--brand-blue);
+}
+
+/* ---------- Listas de arquivos (contratos) ---------- */
+.lista-arquivos {
+  list-style: none;
+  padding: 0;
+  display: grid;
+}
+.lista-arquivos li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-block: 16px;
+  border-bottom: 1px solid rgb(18 18 18 / 0.08);
+}
+.lista-arquivos li:last-child {
+  border-bottom: 0;
+}
+.lista-arquivos li > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+.lista-arquivos small {
+  color: var(--ink);
+}
+.acoes-arquivo {
+  display: flex;
+  gap: 8px;
+}
+.nota-rodape {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
+/* ---------- Avisos da página inicial ---------- */
+.avisos-inicio {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.avisos-inicio a {
+  color: inherit;
+}
+
+@media (max-width: 760px) {
+  .topo-portal__barra {
+    flex-wrap: wrap;
+    height: auto;
+    padding-block: 12px;
+    gap: 8px 16px;
+  }
+  .topo-portal nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+}

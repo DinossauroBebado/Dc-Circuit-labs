@@ -1,0 +1,104 @@
+---
+import Portal from '../layouts/Portal.astro';
+import { formatarData } from '../lib/consultas';
+import { CLASSE_ESTADO, diasDeAtraso, estadoDaParcela, formatarReais, nomesDeProjetos, parcelasDoCliente, resumir, ROTULO_ESTADO } from '../lib/financeiro';
+
+const cliente = Astro.locals.cliente!;
+const agora = new Date();
+const parcelas = parcelasDoCliente(cliente.id);
+const resumo = resumir(parcelas, agora);
+const projetos = nomesDeProjetos(cliente.id);
+
+// Agrupado por projeto quando a DC associou as parcelas a projetos; senão, uma lista só.
+const grupos = new Map<string, typeof parcelas>();
+for (const p of parcelas) {
+  const chave = p.projetoId ? (projetos.get(p.projetoId) ?? 'Outros') : 'Geral';
+  grupos.set(chave, [...(grupos.get(chave) ?? []), p]);
+}
+const variosGrupos = grupos.size > 1;
+---
+
+<Portal titulo="Financeiro">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">FINANCEIRO</p>
+    <h1>Pagamentos</h1>
+    <p>Parcelas, vencimentos e o que já foi pago. Atualizado a cada hora.</p>
+  </header>
+
+  {
+    parcelas.length === 0 ? (
+      <section class="painel">
+        <p class="vazio">Nenhuma cobrança registrada até agora.</p>
+      </section>
+    ) : (
+      <>
+        <section class="indicadores">
+          <div class="painel">
+            <span>Valor total</span>
+            <strong>{formatarReais(resumo.total)}</strong>
+          </div>
+          <div class="painel">
+            <span>Já pago</span>
+            <strong>{formatarReais(resumo.pago)}</strong>
+          </div>
+          <div class="painel">
+            <span>A pagar</span>
+            <strong>{formatarReais(resumo.aReceber)}</strong>
+          </div>
+          {resumo.vencido > 0 && (
+            <div class="painel destaque-erro">
+              <span>Em atraso</span>
+              <strong>{formatarReais(resumo.vencido)}</strong>
+            </div>
+          )}
+        </section>
+
+        {[...grupos].map(([nome, lista]) => {
+          const r = resumir(lista, agora);
+          return (
+            <section class="painel">
+              {variosGrupos && (
+                <h2>
+                  {nome} <small>· pago {formatarReais(r.pago)} de {formatarReais(r.total)}</small>
+                </h2>
+              )}
+              <div class="tabela-rolagem">
+                <table class="tabela">
+                  <thead>
+                    <tr>
+                      <th>Vencimento</th>
+                      <th>Descrição</th>
+                      <th class="num">Valor</th>
+                      <th class="num">Pago</th>
+                      <th>Situação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lista.map((p) => {
+                      const estado = estadoDaParcela(p, agora);
+                      return (
+                        <tr class={estado === 'cancelada' ? 'apagada' : ''}>
+                          <td>{formatarData(p.vencimento, false)}</td>
+                          <td>{p.descricao ?? 'Parcela'}</td>
+                          <td class="num">{formatarReais(p.valor)}</td>
+                          <td class="num">{p.valorPago ? formatarReais(p.valorPago) : '—'}</td>
+                          <td>
+                            <span class={`etiqueta ${CLASSE_ESTADO[estado]}`}>{ROTULO_ESTADO[estado]}</span>
+                            {estado === 'atrasada' && <small> há {diasDeAtraso(p, agora)} dia(s)</small>}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          );
+        })}
+        <p class="nota-rodape">
+          Pagou e ainda aparece em aberto? A baixa pode levar até um dia útil. Dúvidas: <a class="link" href="https://dccircuitlabs.com/contato">fale com a DC</a>.
+        </p>
+      </>
+    )
+  }
+</Portal>

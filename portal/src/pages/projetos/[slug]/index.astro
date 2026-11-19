@@ -1,0 +1,67 @@
+---
+import Portal from '../../../layouts/Portal.astro';
+import { formatarData } from '../../../lib/consultas';
+import { projetoDoCliente, urlDaVersao, versoesDoProjeto } from '../../../lib/projetos';
+
+const cliente = Astro.locals.cliente!;
+const projeto = projetoDoCliente(cliente.id, Astro.params.slug ?? '');
+if (!projeto) return new Response(null, { status: 404 });
+const versoes = versoesDoProjeto(projeto.id);
+if (versoes.length === 1) return Astro.redirect(urlDaVersao(projeto.slug, versoes[0].versao));
+---
+
+<Portal titulo={projeto.nome}>
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow"><a class="link" href="/">PROJETOS</a> / {projeto.nome.toUpperCase()}</p>
+    <h1>{projeto.nome}</h1>
+    {projeto.status && <span class="etiqueta">{projeto.status}</span>}
+  </header>
+
+  <section class="painel">
+    <h2>Versões da documentação</h2>
+    {
+      versoes.length === 0 ? (
+        <p class="vazio">A documentação deste projeto ainda não foi publicada.</p>
+      ) : (
+        <ul class="versoes">
+          {versoes.map((v, i) => (
+            <li>
+              <a href={urlDaVersao(projeto.slug, v.versao)}>
+                <strong>{v.titulo}</strong>
+                {i === 0 && <span class="etiqueta etiqueta--ok">mais recente</span>}
+                <small>publicada em {formatarData(v.publicadoEm, false)}</small>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</Portal>
+
+<style>
+  .versoes {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .versoes a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    padding: 14px 16px;
+    border: 1px solid rgb(18 18 18 / 0.1);
+    border-radius: var(--radius-md);
+    color: var(--ink-strong);
+    text-decoration: none;
+  }
+  .versoes a:hover {
+    border-color: var(--brand-blue);
+  }
+  .versoes small {
+    margin-left: auto;
+    color: var(--ink);
+  }
+</style>

@@ -12,6 +12,9 @@ export function t(lang: Idioma) {
   return DICIONARIOS[lang];
 }
 
+// Portal do Cliente (app separado, em português): documentação, notas fiscais, contratos e mídias dos projetos.
+export const PORTAL_URL = 'https://portal.dccircuitlabs.com';
+
 export const CONTATO = {
   email: 'contato@dccircuitlabs.com',
   whatsapp: '5511975731817',

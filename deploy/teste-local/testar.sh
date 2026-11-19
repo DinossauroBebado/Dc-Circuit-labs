@@ -72,10 +72,15 @@ conferir "ClaudeBot vê PT"                     "200 "  "$(pedir dccircuitlabs.c
 echo "Domínios e HTTPS"
 conferir "HTTP → HTTPS"                        "301 https://dccircuitlabs.com/*"      "$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --resolve "dccircuitlabs.com:$PORTA_HTTP:127.0.0.1" "http://dccircuitlabs.com:$PORTA_HTTP/")"
 conferir "www → domínio principal"             "301 https://dccircuitlabs.com/*"      "$(pedir www.dccircuitlabs.com /)"
-conferir "Portal responde"                     "200 "                                 "$(pedir portal.dccircuitlabs.com /)"
-PORTAL=$(curl -sk --resolve "portal.dccircuitlabs.com:$PORTA:127.0.0.1" "https://portal.dccircuitlabs.com:$PORTA/")
-conferir "Portal mostra 'Em breve'"            "*Em breve*"                           "$PORTAL"
+# Sem o app do portal no container, o Nginx deve mostrar a página de manutenção (e não um erro cru).
+conferir "Portal sem app → manutenção (502)"   "502 "                                 "$(pedir portal.dccircuitlabs.com /entrar)"
+PORTAL=$(curl -sk --resolve "portal.dccircuitlabs.com:$PORTA:127.0.0.1" "https://portal.dccircuitlabs.com:$PORTA/entrar")
+conferir "Portal mostra a página de manutenção" "*Voltamos em instantes*"             "$PORTAL"
+conferir "Pasta de arquivos protegidos fechada" "404 "                                "$(pedir portal.dccircuitlabs.com /_arquivos/qualquer.pdf)"
 conferir "Portal fora do Google (noindex)"     "*noindex*"                            "$(curl -skI --resolve "portal.dccircuitlabs.com:$PORTA:127.0.0.1" "https://portal.dccircuitlabs.com:$PORTA/" | grep -i x-robots-tag)"
+conferir "Doc antiga → portal (301)"           "301 https://portal.dccircuitlabs.com/" "$(pedir dccircuitlabs.com /metabee/wifi-connect/1.0/ -A "$NAVEGADOR")"
+conferir "Arquivo antigo → portal (301)"       "301 https://portal.dccircuitlabs.com/" "$(pedir dccircuitlabs.com /dnk/modelo.glb -A "$NAVEGADOR")"
+conferir "Página parecida não é afetada"       "404 "                                 "$(pedir dccircuitlabs.com /metabeeX -A "$NAVEGADOR")"
 
 echo "SEO, IA e segurança"
 for arq in /robots.txt /llms.txt /sitemap.xml /favicon.ico /models/placa-metabee.glb; do

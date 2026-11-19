@@ -1,0 +1,45 @@
+---
+// Área logada do cliente.
+import Base from './Base.astro';
+import { count, eq } from 'drizzle-orm';
+import { db, schema } from '../db';
+import { formatarCnpj } from '../lib/cnpj';
+
+interface Props {
+  titulo: string;
+}
+
+const { titulo } = Astro.props;
+const cliente = Astro.locals.cliente!;
+const caminho = Astro.url.pathname;
+const temFinanceiro = (db.select({ n: count() }).from(schema.parcelas).where(eq(schema.parcelas.clienteId, cliente.id)).get()?.n ?? 0) > 0;
+const links = [
+  { href: '/', rotulo: 'Projetos', ativo: caminho === '/' || caminho.startsWith('/projetos') },
+  { href: '/midias', rotulo: 'Mídias', ativo: caminho.startsWith('/midias') },
+  ...(temFinanceiro ? [{ href: '/financeiro', rotulo: 'Financeiro', ativo: caminho.startsWith('/financeiro') }] : []),
+  { href: '/notas', rotulo: 'Notas fiscais', ativo: caminho.startsWith('/notas') },
+  { href: '/contratos', rotulo: 'Contratos', ativo: caminho.startsWith('/contratos') },
+  { href: '/conta', rotulo: 'Minha conta', ativo: caminho.startsWith('/conta') },
+];
+---
+
+<Base titulo={titulo}>
+  <header class="topo-portal">
+    <div class="container topo-portal__barra">
+      <a class="marca" href="/">
+        <img src="/icone.png" alt="" width="32" height="32" />
+        <span>DC CIRCUIT <span>LABS</span></span>
+      </a>
+      <nav aria-label="Portal">
+        {links.map((l) => <a href={l.href} aria-current={l.ativo ? 'page' : undefined}>{l.rotulo}</a>)}
+      </nav>
+      <div class="topo-portal__conta">
+        <span title={formatarCnpj(cliente.cnpj)}>{cliente.razaoSocial}</span>
+        <form method="post" action="/sair"><button class="botao-texto" type="submit">Sair</button></form>
+      </div>
+    </div>
+  </header>
+  <main class="container conteudo-portal">
+    <slot />
+  </main>
+</Base>

@@ -1,0 +1,47 @@
+---
+// Painel interno da DC.
+import { count } from 'drizzle-orm';
+import Base from './Base.astro';
+import { db, schema } from '../db';
+import { BLING_ATIVO } from '../lib/bling';
+
+interface Props {
+  titulo: string;
+}
+
+const { titulo } = Astro.props;
+const admin = Astro.locals.admin!;
+const caminho = Astro.url.pathname;
+// Sem a integração com o Bling não há parcelas: o Financeiro só aparece se houver alguma.
+const temFinanceiro = BLING_ATIVO || (db.select({ n: count() }).from(schema.parcelas).get()?.n ?? 0) > 0;
+const links = [
+  { href: '/admin', rotulo: 'Central', ativo: caminho === '/admin' || caminho === '/admin/' },
+  { href: '/admin/clientes', rotulo: 'Clientes', ativo: caminho.startsWith('/admin/clientes') },
+  ...(temFinanceiro ? [{ href: '/admin/financeiro', rotulo: 'Financeiro', ativo: caminho.startsWith('/admin/financeiro') }] : []),
+  { href: '/admin/fiscal', rotulo: 'Fiscal', ativo: caminho.startsWith('/admin/fiscal') },
+  { href: '/admin/juridico', rotulo: 'Jurídico', ativo: caminho.startsWith('/admin/juridico') },
+  { href: '/admin/publicacao', rotulo: 'Publicação', ativo: caminho.startsWith('/admin/publicacao') || caminho.startsWith('/admin/documentos') },
+  ...(BLING_ATIVO ? [{ href: '/admin/bling', rotulo: 'Bling', ativo: caminho.startsWith('/admin/bling') }] : []),
+];
+---
+
+<Base titulo={`${titulo} · Painel`}>
+  <header class="topo-portal">
+    <div class="container topo-portal__barra">
+      <a class="marca" href="/admin">
+        <img src="/icone.png" alt="" width="32" height="32" />
+        <span>DC CIRCUIT <span>LABS</span> · Painel</span>
+      </a>
+      <nav aria-label="Painel">
+        {links.map((l) => <a href={l.href} aria-current={l.ativo ? 'page' : undefined}>{l.rotulo}</a>)}
+      </nav>
+      <div class="topo-portal__conta">
+        <span>{admin.nome}</span>
+        <form method="post" action="/admin/sair"><button class="botao-texto" type="submit">Sair</button></form>
+      </div>
+    </div>
+  </header>
+  <main class="container conteudo-portal">
+    <slot />
+  </main>
+</Base>

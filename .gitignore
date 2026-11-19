@@ -14,3 +14,6 @@ deploy/teste-local/geoip/
 # Mídia bruta do Drive e arquivos CAD pesados (>100MB)
 assets/marketing-*/
 assets/GBL/
+
+# Portal: banco e arquivos locais de desenvolvimento
+portal/dados/

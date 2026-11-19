@@ -223,6 +223,11 @@ document.querySelectorAll<HTMLAnchorElement>('a[href^="https://wa.me"], a[href^=
   });
 });
 
+// Evento acesso_portal (parâmetro `local`: cabecalho, menu-celular ou rodape): cliques no botão "Área do cliente".
+document.querySelectorAll<HTMLAnchorElement>('a[data-portal]').forEach((link) => {
+  link.addEventListener('click', () => gtag('event', 'acesso_portal', { local: link.dataset.portal }));
+});
+
 if ('IntersectionObserver' in window) {
   const observador = new IntersectionObserver(
     (entradas) => {

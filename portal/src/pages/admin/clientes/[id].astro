@@ -1,0 +1,730 @@
+---
+import { and, desc, eq } from 'drizzle-orm';
+import Admin from '../../../layouts/Admin.astro';
+import SenhaTemporaria from '../../../components/SenhaTemporaria.astro';
+import FormContrato from '../../../components/FormContrato.astro';
+import FormNota from '../../../components/FormNota.astro';
+import AcoesNota from '../../../components/AcoesNota.astro';
+import { BLING_ATIVO } from '../../../lib/bling';
+import { enviarNota, mudarSituacao, removerNota } from '../../../lib/notas';
+import { ACEITOS, estatisticasDasMidias, LIMITE_MIDIA, MAX_ARQUIVOS_POR_ENVIO, midiasDoCliente, removerMidia } from '../../../lib/midias';
+import { db, schema } from '../../../db';
+import { registrar } from '../../../lib/acessos';
+import { formatarCnpj } from '../../../lib/cnpj';
+import { redefinirSenhaPeloAdmin } from '../../../lib/contas';
+import { acessosDoCliente, emailPendente, formatarData, NOME_EVENTO, projetosDoCliente } from '../../../lib/consultas';
+import { enviarContrato, projetoDoFormulario, removerContrato } from '../../../lib/contratos';
+import { confluenceConfigurado } from '../../../lib/confluence';
+import {
+  CLASSE_ESTADO,
+  contratosDoCliente,
+  estadoDaParcela,
+  formatarReais,
+  formatarTamanho,
+  parcelasDoCliente,
+  resumir,
+  ROTULO_ESTADO,
+} from '../../../lib/financeiro';
+import { lerFormulario, texto } from '../../../lib/requisicao';
+import { dispararPublicacao, emAndamento } from '../../../lib/tarefas';
+import { encerrarSessoesDoCliente } from '../../../lib/sessao';
+
+const admin = Astro.locals.admin!;
+const id = Number(Astro.params.id);
+const buscar = () => (Number.isInteger(id) ? db.select().from(schema.clientes).where(eq(schema.clientes.id, id)).get() : undefined);
+let cliente = buscar();
+if (!cliente) return new Response(null, { status: 404 });
+
+let senhaNova = '';
+let ok = '';
+let erro = '';
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const acao = texto(form, 'acao');
+  const log = (alvo: string) => registrar({ evento: 'admin_acao', adminId: admin.id, clienteId: id, alvo: `${alvo} (${admin.nome})`, ip: Astro.locals.ip });
+  if (acao === 'nova-senha') {
+    senhaNova = await redefinirSenhaPeloAdmin(id);
+    log('Nova senha temporária gerada');
+  } else if (acao === 'desativar') {
+    db.update(schema.clientes).set({ ativo: false }).where(eq(schema.clientes.id, id)).run();
+    encerrarSessoesDoCliente(id);
+    log('Acesso desativado');
+    ok = 'Acesso desativado. O cliente foi desconectado.';
+  } else if (acao === 'ativar') {
+    db.update(schema.clientes).set({ ativo: true }).where(eq(schema.clientes.id, id)).run();
+    log('Acesso reativado');
+    ok = 'Acesso reativado.';
+  } else if (acao === 'publicar' && cliente.confluencePageId) {
+    if (dispararPublicacao({ paginaClienteId: cliente.confluencePageId, adminId: admin.id })) {
+      log('Publicou a documentação do Confluence');
+      ok = 'Publicação iniciada. Acompanhe em Publicação; a documentação atualiza em instantes.';
+    } else erro = 'Já existe uma publicação em andamento. Tente de novo em alguns instantes.';
+  } else if (acao === 'projeto-parcela' || acao === 'projeto-nota') {
+    // Associa a parcela/NF a um projeto do próprio cliente (ou "nenhum").
+    const tabela = acao === 'projeto-parcela' ? schema.parcelas : schema.notasFiscais;
+    const alvo = Number(texto(form, 'id'));
+    if (Number.isInteger(alvo)) {
+      db.update(tabela)
+        .set({ projetoId: projetoDoFormulario(form, id) })
+        .where(and(eq(tabela.id, alvo), eq(tabela.clienteId, id)))
+        .run();
+      ok = 'Projeto associado.';
+    }
+  } else if (acao === 'nota') {
+    const r = await enviarNota(form, cliente);
+    if (r.erro) erro = r.erro;
+    else {
+      log(`Nota fiscal enviada: ${r.numero}`);
+      ok = `Nota ${r.numero} enviada. O cliente já vê em Notas fiscais.`;
+    }
+  } else if (acao === 'situacao-nota') {
+    const situacao = texto(form, 'situacao');
+    const numero = mudarSituacao(Number(texto(form, 'nota')), id, situacao);
+    if (numero) {
+      log(`Nota ${numero} marcada como ${situacao.toLowerCase()}`);
+      ok = `Nota ${numero} marcada como ${situacao.toLowerCase()}.`;
+    }
+  } else if (acao === 'remover-nota') {
+    const r = removerNota(Number(texto(form, 'nota')), id);
+    if (r) {
+      log(`Nota fiscal removida: ${r.numero}`);
+      ok = `Nota ${r.numero} removida.`;
+    }
+  } else if (acao === 'resolver-reporte' || acao === 'reabrir-reporte') {
+    const rid = Number(texto(form, 'reporte'));
+    if (Number.isInteger(rid)) {
+      db.update(schema.reportes)
+        .set({ resolvidoEm: acao === 'resolver-reporte' ? new Date() : null })
+        .where(and(eq(schema.reportes.id, rid), eq(schema.reportes.clienteId, id)))
+        .run();
+      ok = acao === 'resolver-reporte' ? 'Reporte marcado como resolvido.' : 'Reporte reaberto.';
+    }
+  } else if (acao === 'remover-midia') {
+    const nome = removerMidia(Number(texto(form, 'midia')), id);
+    if (nome) {
+      log(`Mídia removida: ${nome}`);
+      ok = `Mídia “${nome}” removida.`;
+    }
+  } else if (acao === 'contrato') {
+    const r = await enviarContrato(form, id);
+    if (r.erro) erro = r.erro;
+    else {
+      log(`Contrato enviado: ${r.titulo}`);
+      ok = `Contrato “${r.titulo}” enviado. O cliente já vê em Contratos.`;
+    }
+  } else if (acao === 'remover-contrato') {
+    const titulo = removerContrato(Number(texto(form, 'contrato')), id);
+    if (titulo) {
+      log(`Contrato removido: ${titulo}`);
+      ok = `Contrato “${titulo}” removido.`;
+    }
+  } else if (acao === 'razao-social') {
+    const razao = texto(form, 'razao_social');
+    if (razao.length >= 2) {
+      db.update(schema.clientes).set({ razaoSocial: razao }).where(eq(schema.clientes.id, id)).run();
+      log('Razão social alterada');
+      ok = 'Dados salvos.';
+    }
+  }
+  cliente = buscar()!;
+}
+
+const acessos = acessosDoCliente(id);
+const projetos = projetosDoCliente(id);
+const pendente = emailPendente(id);
+const documentos = (projetoId: number) =>
+  db.select().from(schema.documentos).where(eq(schema.documentos.projetoId, projetoId)).orderBy(desc(schema.documentos.publicadoEm)).all();
+const agora = new Date();
+const parcelas = parcelasDoCliente(id);
+const resumo = resumir(parcelas, agora);
+const notas = db.select().from(schema.notasFiscais).where(eq(schema.notasFiscais.clienteId, id)).orderBy(desc(schema.notasFiscais.emissao)).all();
+const contratos = contratosDoCliente(id);
+const publicando = emAndamento('confluence');
+const midias = midiasDoCliente(id);
+const estatisticas = estatisticasDasMidias(id);
+const midiasOk = Astro.url.searchParams.get('midias_ok');
+const midiasErro = Astro.url.searchParams.get('midias_erro');
+const nomeProjeto = new Map(projetos.map((p) => [p.id, p.nome]));
+const reportes = db.select().from(schema.reportes).where(eq(schema.reportes.clienteId, id)).orderBy(desc(schema.reportes.id)).all();
+const reportesAbertos = reportes.filter((r) => !r.resolvidoEm).length;
+---
+
+<Admin titulo={cliente.razaoSocial}>
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow"><a class="link" href="/admin/clientes">CLIENTES</a> / FICHA</p>
+    <h1>{cliente.razaoSocial}</h1>
+    <p>
+      CNPJ {formatarCnpj(cliente.cnpj)} ·{' '}
+      {!cliente.ativo ? (
+        <span class="etiqueta etiqueta--erro">desativado</span>
+      ) : cliente.deveTrocarSenha ? (
+        <span class="etiqueta etiqueta--alerta">aguardando 1º acesso</span>
+      ) : (
+        <span class="etiqueta etiqueta--ok">ativo</span>
+      )}
+    </p>
+  </header>
+
+  {ok && <p class="aviso aviso--ok" role="status" style="margin-bottom: 20px">{ok}</p>}
+  {erro && <p class="aviso aviso--erro" role="alert" style="margin-bottom: 20px">{erro}</p>}
+  {senhaNova && <SenhaTemporaria senha={senhaNova} cnpj={cliente.cnpj} razaoSocial={cliente.razaoSocial} />}
+
+  <div class="grade-ficha">
+    <section class="painel">
+      <h2>Dados e acesso</h2>
+      <dl class="dados">
+        <dt>E-mail de recuperação</dt>
+        <dd>
+          {cliente.email ?? '—'}
+          {cliente.emailVerificadoEm && <span class="etiqueta etiqueta--ok">confirmado</span>}
+          {pendente && <small>aguardando confirmação: {pendente}</small>}
+        </dd>
+        <dt>Cadastrado em</dt>
+        <dd>{formatarData(cliente.criadoEm)}</dd>
+      </dl>
+      <form class="formulario" method="post">
+        <input type="hidden" name="acao" value="razao-social" />
+        <label class="campo">Razão social <input name="razao_social" value={cliente.razaoSocial} required /></label>
+        <button class="btn btn--secundario" type="submit">Salvar</button>
+      </form>
+      <div class="acoes">
+        <form method="post">
+          <input type="hidden" name="acao" value="nova-senha" />
+          <button class="btn btn--secundario" type="submit">Gerar nova senha temporária</button>
+        </form>
+        <form method="post">
+          <input type="hidden" name="acao" value={cliente.ativo ? 'desativar' : 'ativar'} />
+          <button class="btn btn--secundario" type="submit">{cliente.ativo ? 'Desativar acesso' : 'Reativar acesso'}</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Projetos e documentação</h2>
+      {
+        projetos.length === 0 ? (
+          <p>
+            Nenhum projeto publicado. Crie a página do cliente (com o CNPJ) no espaço do Confluence e use “Publicar”.
+          </p>
+        ) : (
+          <ul class="lista-projetos-admin">
+            {projetos.map((p) => (
+              <li>
+                <p>
+                  <strong>{p.nome}</strong> {p.status && <span class="etiqueta">{p.status}</span>}
+                  {p.valorTotal != null && <small> · {formatarReais(p.valorTotal)}</small>}
+                </p>
+                <ul>
+                  {documentos(p.id).map((d) => (
+                    <li>
+                      <a class="link" href={`/admin/documentos/${d.id}`}>
+                        {d.titulo}
+                      </a>{' '}
+                      <small>publicada em {formatarData(d.publicadoEm, false)}</small>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      {
+        cliente.confluencePageId && confluenceConfigurado() && (
+          <form method="post" class="acoes">
+            <input type="hidden" name="acao" value="publicar" />
+            <button class="btn btn--secundario" type="submit" disabled={publicando}>
+              {publicando ? 'Publicação em andamento…' : 'Publicar este cliente do Confluence'}
+            </button>
+          </form>
+        )
+      }
+    </section>
+  </div>
+
+  {
+    (BLING_ATIVO || parcelas.length > 0) && (
+  <section class="painel">
+    <h2>
+      Financeiro
+      {parcelas.length > 0 && (
+        <small>
+          · recebido {formatarReais(resumo.pago)} de {formatarReais(resumo.total)}
+          {resumo.vencido > 0 && ` · vencido ${formatarReais(resumo.vencido)}`}
+        </small>
+      )}
+    </h2>
+    {
+      parcelas.length === 0 ? (
+        <p>Nenhuma parcela no Bling para este CNPJ{cliente.blingContatoId ? '' : ' (contato ainda não encontrado no Bling)'}.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Vencimento</th>
+                <th>Descrição</th>
+                <th class="num">Valor</th>
+                <th class="num">Pago</th>
+                <th>Situação</th>
+                <th>Projeto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {parcelas.map((p) => {
+                const e = estadoDaParcela(p, agora);
+                return (
+                  <tr class={e === 'cancelada' ? 'apagada' : ''}>
+                    <td>{formatarData(p.vencimento, false)}</td>
+                    <td>{p.descricao ?? 'Parcela'}</td>
+                    <td class="num">{formatarReais(p.valor)}</td>
+                    <td class="num">{p.valorPago ? formatarReais(p.valorPago) : '—'}</td>
+                    <td>
+                      <span class={`etiqueta ${CLASSE_ESTADO[e]}`}>{ROTULO_ESTADO[e]}</span>
+                    </td>
+                    <td>
+                      <form method="post" class="associar">
+                        <input type="hidden" name="acao" value="projeto-parcela" />
+                        <input type="hidden" name="id" value={p.id} />
+                        <select name="projeto" aria-label="Projeto" onchange="this.form.submit()">
+                          <option value="">—</option>
+                          {projetos.map((pr) => (
+                            <option value={pr.id} selected={pr.id === p.projetoId}>
+                              {pr.nome}
+                            </option>
+                          ))}
+                        </select>
+                        <noscript><button class="botao-texto" type="submit">ok</button></noscript>
+                      </form>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+    )
+  }
+
+  <section class="painel">
+    <h2>Notas fiscais</h2>
+    {
+      notas.length === 0 ? (
+        <p>Nenhuma nota fiscal enviada ainda.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Emissão</th>
+                <th class="num">Valor</th>
+                <th>Situação</th>
+                <th>Arquivos</th>
+                <th>Projeto</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {notas.map((n) => (
+                <tr class={n.situacao === 'Cancelada' ? 'apagada' : ''}>
+                  <td>{n.numero}</td>
+                  <td>{formatarData(n.emissao, false)}</td>
+                  <td class="num">{formatarReais(n.valor)}</td>
+                  <td>
+                    <span class="etiqueta">{n.situacao?.toLowerCase()}</span>
+                  </td>
+                  <td class="arquivos">
+                    {n.pdfArquivoId && (
+                      <a class="link" href={`/admin/arquivos/${n.pdfArquivoId}?ver`} target="_blank" rel="noopener">
+                        PDF
+                      </a>
+                    )}
+                    {n.xmlArquivoId && (
+                      <a class="link" href={`/admin/arquivos/${n.xmlArquivoId}`}>
+                        XML
+                      </a>
+                    )}
+                  </td>
+                  <td>
+                    <form method="post" class="associar">
+                      <input type="hidden" name="acao" value="projeto-nota" />
+                      <input type="hidden" name="id" value={n.id} />
+                      <select name="projeto" aria-label="Projeto" onchange="this.form.submit()">
+                        <option value="">—</option>
+                        {projetos.map((pr) => (
+                          <option value={pr.id} selected={pr.id === n.projetoId}>
+                            {pr.nome}
+                          </option>
+                        ))}
+                      </select>
+                      <noscript><button class="botao-texto" type="submit">ok</button></noscript>
+                    </form>
+                  </td>
+                  <td>
+                    <AcoesNota nota={n} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+    <details class="enviar-contrato" open={notas.length === 0}>
+      <summary>Enviar nota fiscal</summary>
+      <FormNota projetos={projetos.map((p) => ({ id: p.id, nome: p.nome, clienteId: id }))} />
+    </details>
+  </section>
+
+  {
+    reportes.length > 0 && (
+      <section class="painel" id="reportes">
+        <h2>
+          Erros reportados na documentação
+          <small> · {reportesAbertos ? `${reportesAbertos} em aberto` : 'todos resolvidos'}</small>
+        </h2>
+        <ul class="reportes">
+          {reportes.map((r) => (
+            <li class={r.resolvidoEm ? 'resolvido' : ''}>
+              <p class="reportes__cabecalho">
+                <strong>{r.documentoTitulo}</strong>
+                {r.secaoTitulo && <span> · {r.secaoTitulo}</span>}
+                <small> · {formatarData(r.criadoEm)}</small>
+                {r.resolvidoEm ? <span class="etiqueta etiqueta--ok">resolvido</span> : <span class="etiqueta etiqueta--alerta">em aberto</span>}
+              </p>
+              {r.trecho && <blockquote>{r.trecho}</blockquote>}
+              {r.arquivoNome && <p class="reportes__imagem">Imagem marcada: {r.arquivoNome}</p>}
+              <p class="reportes__comentario">{r.comentario}</p>
+              <div class="reportes__acoes">
+                {r.documentoId && (
+                  <a class="link" href={`/admin/documentos/${r.documentoId}${r.secaoId ? `#${r.secaoId}` : ''}`}>
+                    Abrir a seção
+                  </a>
+                )}
+                <form method="post">
+                  <input type="hidden" name="acao" value={r.resolvidoEm ? 'reabrir-reporte' : 'resolver-reporte'} />
+                  <input type="hidden" name="reporte" value={r.id} />
+                  <button class="botao-texto" type="submit">{r.resolvidoEm ? 'Reabrir' : 'Marcar resolvido'}</button>
+                </form>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section class="painel" id="midias">
+    <h2>
+      Mídias
+      {midias.length > 0 && <small>· {midias.length} arquivo(s), {formatarTamanho(midias.reduce((t, m) => t + m.tamanho, 0))}</small>}
+    </h2>
+    {midiasOk && Number(midiasOk) > 0 && <p class="aviso aviso--ok" role="status">{midiasOk} mídia(s) enviada(s). O cliente já vê em Mídias.</p>}
+    {midiasErro && <p class="aviso aviso--erro" role="alert" style="white-space: pre-line">{midiasErro}</p>}
+    {
+      midias.length > 0 && (
+        <ul class="midias-admin">
+          {midias.map((m) => {
+            const e = estatisticas.get(m.id);
+            return (
+              <li>
+                <a class="midias-admin__mini" href={`/admin/arquivos/${m.arquivoId}?ver`} target="_blank" rel="noopener">
+                  {m.tipo === 'foto' ? (
+                    <img src={`/admin/arquivos/${m.miniaturaId ?? m.arquivoId}?ver`} alt="" loading="lazy" />
+                  ) : (
+                    <span>▶ vídeo</span>
+                  )}
+                </a>
+                <div>
+                  <p class="midias-admin__nome" title={m.nome}>{m.titulo ?? m.nome}</p>
+                  <small>
+                    {formatarTamanho(m.tamanho)}
+                    {m.projetoId && nomeProjeto.get(m.projetoId) ? ` · ${nomeProjeto.get(m.projetoId)}` : ''}
+                  </small>
+                  <p class="midias-admin__uso">
+                    {e?.vistas ? (
+                      <span class="etiqueta etiqueta--ok" title={`última: ${formatarData(e.ultimaVista)}`}>
+                        vista {e.vistas}×
+                      </span>
+                    ) : (
+                      <span class="etiqueta">não vista</span>
+                    )}{' '}
+                    {e?.downloads ? (
+                      <span class="etiqueta etiqueta--ok" title={`último: ${formatarData(e.ultimoDownload)}`}>
+                        baixada {e.downloads}×
+                      </span>
+                    ) : (
+                      <span class="etiqueta">não baixada</span>
+                    )}
+                  </p>
+                  <form method="post" onsubmit="return confirm('Remover esta mídia? O cliente deixa de vê-la.')">
+                    <input type="hidden" name="acao" value="remover-midia" />
+                    <input type="hidden" name="midia" value={m.id} />
+                    <button class="botao-texto" type="submit">Remover</button>
+                  </form>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+    <details class="enviar-contrato" open={midias.length === 0}>
+      <summary>Enviar fotos e vídeos</summary>
+      <form class="formulario" method="post" action={`/admin/clientes/${id}/midias`} enctype="multipart/form-data">
+        <label class="campo">
+          Arquivos
+          <input name="arquivos" type="file" multiple required accept={ACEITOS} />
+          <small>
+            Fotos JPG, PNG, WebP ou AVIF; vídeos MP4, MOV ou WebM. Até {MAX_ARQUIVOS_POR_ENVIO} por vez, {Math.round(LIMITE_MIDIA / 1048576)} MB
+            cada. Para vídeo, prefira MP4 (H.264): MOV do iPhone pode não tocar no navegador.
+          </small>
+        </label>
+        <label class="campo">
+          Projeto (opcional)
+          <select name="projeto">
+            <option value="">Nenhum / geral</option>
+            {projetos.map((p) => <option value={p.id}>{p.nome}</option>)}
+          </select>
+        </label>
+        <button class="btn btn--primario" type="submit">Enviar mídias</button>
+      </form>
+    </details>
+  </section>
+
+  <section class="painel">
+    <h2>Contratos</h2>
+    {
+      contratos.length > 0 && (
+        <ul class="lista-arquivos">
+          {contratos.map(({ contrato, arquivo }) => (
+            <li>
+              <div>
+                <strong>{contrato.titulo}</strong>
+                <small>
+                  {contrato.assinadoEm ? `Assinado em ${formatarData(contrato.assinadoEm, false)}` : 'Sem data de assinatura'} ·{' '}
+                  {formatarTamanho(arquivo.tamanho)}
+                </small>
+              </div>
+              <div class="acoes-arquivo">
+                <a class="btn btn--secundario" href={`/admin/arquivos/${arquivo.id}?ver`} target="_blank" rel="noopener">
+                  Abrir
+                </a>
+                <form method="post" onsubmit="return confirm('Remover este contrato? O cliente deixa de vê-lo.')">
+                  <input type="hidden" name="acao" value="remover-contrato" />
+                  <input type="hidden" name="contrato" value={contrato.id} />
+                  <button class="btn btn--secundario" type="submit">Remover</button>
+                </form>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <details class="enviar-contrato" open={contratos.length === 0}>
+      <summary>Enviar contrato assinado</summary>
+      <FormContrato projetos={projetos.map((p) => ({ id: p.id, nome: p.nome, clienteId: id }))} />
+    </details>
+  </section>
+
+  <section class="painel">
+    <h2>Acessos e atividades</h2>
+    {
+      acessos.length === 0 ? (
+        <p>Nenhum acesso registrado ainda.</p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>O quê</th>
+                <th>Detalhe</th>
+                <th>IP</th>
+              </tr>
+            </thead>
+            <tbody>
+              {acessos.map((a) => (
+                <tr>
+                  <td>{formatarData(a.quando)}</td>
+                  <td>{NOME_EVENTO[a.evento] ?? a.evento}</td>
+                  <td>{a.evento === 'login_falhou' || a.evento === 'pediu_redefinicao' ? '' : (a.alvo ?? '')}</td>
+                  <td>{a.ip ?? ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+</Admin>
+
+<style>
+  .grade-ficha {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .grade-ficha .painel {
+    margin: 0;
+  }
+  .dados {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 16px;
+    margin-bottom: 20px;
+    font-size: 0.92rem;
+  }
+  .dados dt {
+    font-weight: 600;
+    color: var(--ink-strong);
+  }
+  .dados dd {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .lista-projetos-admin {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .lista-projetos-admin ul {
+    margin-top: 6px;
+    padding-left: 18px;
+    display: grid;
+    gap: 4px;
+    font-size: 0.92rem;
+  }
+  .lista-projetos-admin small {
+    color: var(--ink);
+  }
+  .associar select {
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid rgb(18 18 18 / 0.2);
+    font: inherit;
+    font-size: 0.85rem;
+    max-width: 180px;
+  }
+  .reportes {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .reportes li {
+    padding: 14px 16px;
+    border: 1px solid rgb(18 18 18 / 0.1);
+    border-left: 3px solid #e0a800;
+    border-radius: var(--radius-md);
+  }
+  .reportes li.resolvido {
+    border-left-color: #2e9e5b;
+    opacity: 0.7;
+  }
+  .reportes__cabecalho {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .reportes__cabecalho small {
+    color: var(--ink);
+  }
+  .reportes blockquote {
+    margin: 10px 0;
+    padding: 8px 12px;
+    border-left: 3px solid var(--brand-blue);
+    background: var(--surface-subtle);
+    white-space: pre-wrap;
+    font-size: 0.9rem;
+  }
+  .reportes__imagem {
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+  .reportes__comentario {
+    margin-top: 8px;
+    white-space: pre-wrap;
+  }
+  .reportes__acoes {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .midias-admin {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .midias-admin li {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid rgb(18 18 18 / 0.08);
+    border-radius: var(--radius-md);
+  }
+  .midias-admin__mini {
+    display: grid;
+    place-items: center;
+    width: 96px;
+    height: 72px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #11161c;
+    color: #fff;
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+  .midias-admin__mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .midias-admin__nome {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
+  }
+  .midias-admin small {
+    color: var(--ink);
+  }
+  .midias-admin__uso {
+    margin: 6px 0;
+  }
+  .enviar-contrato {
+    margin-top: 16px;
+  }
+  .enviar-contrato summary {
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 860px) {
+    .grade-ficha {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

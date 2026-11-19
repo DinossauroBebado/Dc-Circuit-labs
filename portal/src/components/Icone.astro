@@ -1,0 +1,27 @@
+---
+// Ícones Lucide (https://lucide.dev, licença ISC), renderizados no build — nenhum JS no navegador.
+import * as lucide from 'lucide-static';
+
+interface Props {
+  nome: string;
+  tamanho?: number;
+  traco?: number;
+  class?: string;
+}
+
+const { nome, tamanho = 24, traco = 1.75, class: classe = '' } = Astro.props;
+const chave = nome
+  .split('-')
+  .map((parte) => parte[0].toUpperCase() + parte.slice(1))
+  .join('');
+const svg = (lucide as Record<string, string>)[chave];
+if (!svg) throw new Error(`Ícone Lucide não encontrado: ${nome}`);
+
+const html = svg
+  .replace(/class="[^"]*"/, `class="icone ${classe}" aria-hidden="true" focusable="false"`)
+  .replace('width="24"', `width="${tamanho}"`)
+  .replace('height="24"', `height="${tamanho}"`)
+  .replace('stroke-width="2"', `stroke-width="${traco}"`);
+---
+
+<Fragment set:html={html} />

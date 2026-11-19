@@ -1,0 +1,51 @@
+---
+import { formatarData } from '../lib/consultas';
+import type { schema } from '../db';
+
+interface Props {
+  itens: (typeof schema.sincronizacoes.$inferSelect)[];
+}
+
+const { itens } = Astro.props;
+---
+
+{
+  itens.length === 0 ? (
+    <p>Nenhuma execução ainda.</p>
+  ) : (
+    <ol class="historico">
+      {itens.map((s) => (
+        <li>
+          <p>
+            <span class={`etiqueta ${s.status === 'ok' ? 'etiqueta--ok' : s.status === 'erro' ? 'etiqueta--erro' : 'etiqueta--alerta'}`}>
+              {s.status === 'rodando' ? 'em andamento' : s.status}
+            </span>{' '}
+            {formatarData(s.inicio)}
+            {s.adminId ? '' : ' · automática'}
+          </p>
+          {s.log && <pre>{s.log}</pre>}
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+<style>
+  .historico {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .historico li {
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgb(18 18 18 / 0.08);
+  }
+  .historico pre {
+    margin-top: 8px;
+    white-space: pre-wrap;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--ink);
+  }
+</style>

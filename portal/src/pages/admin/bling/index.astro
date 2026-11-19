@@ -1,0 +1,92 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import Historico from '../../../components/Historico.astro';
+import { registrar } from '../../../lib/acessos';
+import { blingConectado, blingConfigurado, desconectarBling, urlDeAutorizacao } from '../../../lib/bling';
+import { lerFormulario, texto } from '../../../lib/requisicao';
+import { historico } from '../../../lib/sincronizacoes';
+import { dispararBling, emAndamento } from '../../../lib/tarefas';
+import { gerarToken } from '../../../lib/tokens';
+
+const admin = Astro.locals.admin!;
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const acao = texto(form, 'acao');
+  if (acao === 'conectar') {
+    // `state` do OAuth guardado em cookie: o retorno só é aceito se vier desta mesma sessão.
+    const estado = gerarToken();
+    Astro.cookies.set('dc_bling_estado', estado, { path: '/admin/bling', httpOnly: true, secure: import.meta.env.PROD, sameSite: 'lax', maxAge: 600 });
+    return Astro.redirect(urlDeAutorizacao(estado));
+  }
+  if (acao === 'sincronizar') dispararBling(admin.id);
+  if (acao === 'desconectar') {
+    desconectarBling();
+    registrar({ evento: 'admin_acao', adminId: admin.id, alvo: `Desconectou o Bling (${admin.nome})`, ip: Astro.locals.ip });
+  }
+  return Astro.redirect('/admin/bling');
+}
+
+const configurado = blingConfigurado();
+const conectado = blingConectado();
+const rodando = emAndamento('bling');
+const erroRetorno = Astro.url.searchParams.get('erro');
+---
+
+<Admin titulo="Bling">
+  {rodando && <meta http-equiv="refresh" content="4" />}
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">FISCAL E FINANCEIRO</p>
+    <h1>Integração com o Bling</h1>
+    <p>Notas fiscais (PDF e XML) e contas a receber de cada cliente, encontrados pelo CNPJ. Sincroniza sozinho a cada hora.</p>
+  </header>
+
+  {erroRetorno && <p class="aviso aviso--erro" style="margin-bottom: 20px">Não foi possível conectar ao Bling: {erroRetorno}</p>}
+  {
+    !configurado && (
+      <p class="aviso aviso--erro" style="margin-bottom: 20px">
+        Falta o app de integração do Bling: preencha BLING_CLIENT_ID e BLING_CLIENT_SECRET em /srv/apps/portal/.env e reinicie o portal. No
+        cadastro do app no Bling, use como link de redirecionamento: https://portal.dccircuitlabs.com/admin/bling/retorno
+      </p>
+    )
+  }
+
+  <section class="painel">
+    <h2>Situação: {conectado ? <span class="etiqueta etiqueta--ok">conectado</span> : <span class="etiqueta etiqueta--alerta">não conectado</span>}</h2>
+    <div class="acoes">
+      {
+        !conectado ? (
+          <form method="post">
+            <input type="hidden" name="acao" value="conectar" />
+            <button class="btn btn--primario" type="submit" disabled={!configurado}>Conectar Bling</button>
+          </form>
+        ) : rodando ? (
+          <p class="aviso aviso--info">Sincronização em andamento… esta página se atualiza sozinha.</p>
+        ) : (
+          <>
+            <form method="post">
+              <input type="hidden" name="acao" value="sincronizar" />
+              <button class="btn btn--primario" type="submit">Sincronizar agora</button>
+            </form>
+            <form method="post">
+              <input type="hidden" name="acao" value="desconectar" />
+              <button class="btn btn--secundario" type="submit">Desconectar</button>
+            </form>
+          </>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="painel">
+    <h2>Últimas sincronizações</h2>
+    <Historico itens={historico('bling')} />
+  </section>
+</Admin>
+
+<style>
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+</style>

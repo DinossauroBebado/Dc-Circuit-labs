@@ -1,0 +1,52 @@
+---
+import { eq } from 'drizzle-orm';
+import Acesso from '../../layouts/Acesso.astro';
+import { db, schema } from '../../db';
+import { registrar } from '../../lib/acessos';
+import { redefinirComToken, tokenDeRedefinicao } from '../../lib/contas';
+import { lerFormulario } from '../../lib/requisicao';
+import { problemaNaSenha } from '../../lib/senha';
+
+const token = Astro.params.token ?? '';
+const valido = tokenDeRedefinicao(token);
+const cliente = valido ? db.select().from(schema.clientes).where(eq(schema.clientes.id, valido.clienteId)).get() : undefined;
+let erro = '';
+
+const form = await lerFormulario(Astro.request);
+if (form && cliente) {
+  const senha = String(form.get('senha') ?? '');
+  const confirmacao = String(form.get('confirmacao') ?? '');
+  erro = problemaNaSenha(senha, cliente.cnpj) ?? (senha !== confirmacao ? 'As duas senhas não são iguais.' : '');
+  if (!erro) {
+    const ok = await redefinirComToken(token, senha);
+    if (ok) {
+      registrar({ evento: 'redefiniu_senha', clienteId: ok.clienteId, ip: Astro.locals.ip, userAgent: Astro.locals.userAgent });
+      return Astro.redirect('/entrar?redefinida=1');
+    }
+  }
+}
+---
+
+<Acesso titulo="Criar nova senha">
+  {
+    cliente ? (
+      <form class="formulario" method="post" novalidate>
+        {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+        <p>{cliente.razaoSocial}</p>
+        <label class="campo">
+          Nova senha
+          <input name="senha" type="password" autocomplete="new-password" minlength="10" required />
+          <small>Pelo menos 10 caracteres, com letras.</small>
+        </label>
+        <label class="campo">
+          Repita a nova senha
+          <input name="confirmacao" type="password" autocomplete="new-password" minlength="10" required />
+        </label>
+        <button class="btn btn--primario" type="submit">Salvar nova senha</button>
+      </form>
+    ) : (
+      <p class="aviso aviso--erro">Este link expirou ou já foi usado. Peça um novo em "Esqueci minha senha".</p>
+    )
+  }
+  <p class="links-acesso"><a href={cliente ? '/entrar' : '/esqueci-senha'}>{cliente ? 'Voltar para o login' : 'Pedir novo link'}</a></p>
+</Acesso>

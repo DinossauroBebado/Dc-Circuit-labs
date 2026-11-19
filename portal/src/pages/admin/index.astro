@@ -1,0 +1,141 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { formatarCnpj } from '../../lib/cnpj';
+import { count, eq, isNull } from 'drizzle-orm';
+import { db, schema } from '../../db';
+import { formatarData, resumoClientes } from '../../lib/consultas';
+import { diasDeAtraso, estadoDaParcela, formatarReais, notasDoMes, resumir, todasAsParcelas } from '../../lib/financeiro';
+
+const clientes = resumoClientes();
+const ativos = clientes.filter((c) => c.ativo);
+const nuncaEntraram = ativos.filter((c) => !c.ultimoLogin);
+const semEmail = ativos.filter((c) => c.ultimoLogin && !c.emailVerificadoEm);
+const entraram30 = ativos.filter((c) => c.logins30 > 0).length;
+
+const agora = new Date();
+const parcelas = todasAsParcelas();
+const financeiro = resumir(parcelas.map((p) => p.parcela), agora);
+const atrasadas = parcelas.filter((p) => estadoDaParcela(p.parcela, agora) === 'atrasada');
+const nfMes = notasDoMes(agora);
+const reportesAbertos = db
+  .select({ clienteId: schema.reportes.clienteId, razaoSocial: schema.clientes.razaoSocial, n: count() })
+  .from(schema.reportes)
+  .innerJoin(schema.clientes, eq(schema.clientes.id, schema.reportes.clienteId))
+  .where(isNull(schema.reportes.resolvidoEm))
+  .groupBy(schema.reportes.clienteId)
+  .all();
+const aReceberPorCliente = new Map<number, number>();
+for (const { parcela } of parcelas) {
+  if (estadoDaParcela(parcela, agora) === 'cancelada') continue;
+  aReceberPorCliente.set(parcela.clienteId, (aReceberPorCliente.get(parcela.clienteId) ?? 0) + Math.max(0, parcela.valor - parcela.valorPago));
+}
+---
+
+<Admin titulo="Central">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">CENTRAL</p>
+    <h1>Visão geral</h1>
+  </header>
+
+  <section class="indicadores">
+    <div class="painel"><span>Clientes ativos</span><strong>{ativos.length}</strong></div>
+    <div class="painel"><span>Entraram nos últimos 30 dias</span><strong>{entraram30}</strong></div>
+    <div class="painel"><span>Nunca entraram</span><strong>{nuncaEntraram.length}</strong></div>
+    <div class="painel"><span>Sem e-mail confirmado</span><strong>{semEmail.length}</strong></div>
+  </section>
+  <section class="indicadores">
+    {parcelas.length > 0 && (
+      <>
+    <a class="painel" href="/admin/financeiro"><span>A receber</span><strong>{formatarReais(financeiro.aReceber)}</strong></a>
+    <a class={`painel ${financeiro.vencido > 0 ? 'destaque-erro' : ''}`} href="/admin/financeiro">
+      <span>Vencido</span><strong>{formatarReais(financeiro.vencido)}</strong>
+    </a>
+      </>
+    )}
+    <a class="painel" href="/admin/fiscal"><span>NF emitidas no mês</span><strong>{nfMes.length}</strong></a>
+  </section>
+
+  {
+    (nuncaEntraram.length > 0 || semEmail.length > 0 || atrasadas.length > 0 || reportesAbertos.length > 0) && (
+      <section class="painel">
+        <h2>Atenção</h2>
+        <ul class="alertas">
+          {nuncaEntraram.map((c) => (
+            <li>
+              <a class="link" href={`/admin/clientes/${c.id}`}>{c.razaoSocial}</a> ainda não fez o primeiro acesso.
+            </li>
+          ))}
+          {reportesAbertos.map((r) => (
+            <li>
+              <a class="link" href={`/admin/clientes/${r.clienteId}#reportes`}>{r.razaoSocial}</a> reportou {r.n === 1 ? '1 erro' : `${r.n} erros`} na
+              documentação (em aberto).
+            </li>
+          ))}
+          {atrasadas.map(({ parcela, cliente }) => (
+            <li>
+              <a class="link" href={`/admin/clientes/${cliente.id}`}>{cliente.razaoSocial}</a>: parcela de{' '}
+              {formatarReais(parcela.valor - parcela.valorPago)} atrasada há {diasDeAtraso(parcela, agora)} dia(s).
+            </li>
+          ))}
+          {semEmail.map((c) => (
+            <li>
+              <a class="link" href={`/admin/clientes/${c.id}`}>{c.razaoSocial}</a> não confirmou o e-mail (não consegue recuperar a senha
+              sozinho).
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section class="painel">
+    <h2>Clientes</h2>
+    {
+      clientes.length === 0 ? (
+        <p class="vazio">
+          Nenhum cliente cadastrado. <a class="link" href="/admin/clientes/novo">Cadastrar o primeiro</a>
+        </p>
+      ) : (
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>CNPJ</th>
+                <th>Último acesso</th>
+                <th>Logins (30 dias)</th>
+                <th>Projetos</th>
+                {parcelas.length > 0 && <th class="num">A receber</th>}
+                <th>E-mail</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clientes.map((c) => (
+                <tr>
+                  <td>
+                    <a class="link" href={`/admin/clientes/${c.id}`}>{c.razaoSocial}</a>
+                    {!c.ativo && <span class="etiqueta etiqueta--erro"> desativado</span>}
+                  </td>
+                  <td>{formatarCnpj(c.cnpj)}</td>
+                  <td>{c.ultimoLogin ? formatarData(c.ultimoLogin) : <span class="etiqueta etiqueta--alerta">nunca</span>}</td>
+                  <td>{c.logins30}</td>
+                  <td>{c.projetos}</td>
+                  {parcelas.length > 0 && <td class="num">{aReceberPorCliente.get(c.id) ? formatarReais(aReceberPorCliente.get(c.id)) : '—'}</td>}
+                  <td>{c.emailVerificadoEm ? <span class="etiqueta etiqueta--ok">confirmado</span> : <span class="etiqueta etiqueta--alerta">pendente</span>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </section>
+</Admin>
+
+<style>
+  .alertas {
+    display: grid;
+    gap: 8px;
+    padding-left: 18px;
+  }
+</style>

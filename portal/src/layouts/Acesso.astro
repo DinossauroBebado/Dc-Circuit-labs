@@ -1,0 +1,27 @@
+---
+// Telas sem login: entrar, esqueci a senha, redefinir, confirmar e-mail, login do painel.
+import Base from './Base.astro';
+
+interface Props {
+  titulo: string;
+  subtitulo?: string;
+  painel?: boolean;
+}
+
+const { titulo, subtitulo, painel = false } = Astro.props;
+---
+
+<Base titulo={titulo}>
+  <main class="tela-acesso">
+    <div class="cartao-acesso">
+      <a class="marca" href={painel ? '/admin' : '/'}>
+        <img src="/icone.png" alt="" width="36" height="36" />
+        <span>DC CIRCUIT <span style="color: var(--brand-blue)">LABS</span></span>
+      </a>
+      <p class="eyebrow">{painel ? 'PAINEL INTERNO' : 'PORTAL DO CLIENTE'}</p>
+      <h1>{titulo}</h1>
+      {subtitulo && <p class="apoio">{subtitulo}</p>}
+      <slot />
+    </div>
+  </main>
+</Base>

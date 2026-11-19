@@ -1,7 +1,7 @@
 // Prepara o GLB do controle DNK exportado do SolidWorks para o site:
 //   1. gira o modelo para a posição de uso (o SolidWorks exporta com o comprimento na vertical);
 //   2. cria a animação "explodir" (vista explodida), que o controle deslizante da página comanda;
-//   3. reduz o arquivo: junta peças repetidas, simplifica as malhas e quantiza os vértices
+//   3. reduz o arquivo: junta peças repetidas, simplifica as malhas e quantiza normais/UV
 //      (KHR_mesh_quantization — lido pelo three.js sem baixar decodificador de outro site).
 //
 // Uso: npm run modelo:controle -- <arquivo-do-solidworks.glb> [saida.glb]
@@ -9,7 +9,7 @@
 // arquivo maior). Se alguma peça pequena sumir no site, reduza esse valor.
 // Quando o CAD mudar, exporte de novo e rode este comando — não edite o GLB gerado à mão.
 
-import { NodeIO } from '@gltf-transform/core';
+import { getBounds, NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { dedup, join, prune, quantize, simplifyPrimitive, weld } from '@gltf-transform/functions';
 import { MeshoptSimplifier } from 'meshoptimizer';
@@ -94,8 +94,22 @@ await doc.transform(
   // (sem juntar peças diferentes, que precisam se mover separadas na vista explodida).
   join({ keepMeshes: true, keepNamed: false }),
   prune(),
-  quantize(),
 );
+
+// Quantização só de normais/UV. As posições ficam em float: quantizá-las exige devolver a escala pelos nós, e nas
+// placas (centenas de componentes reaproveitados em subnós) isso falhava — elas apareciam ~70x maiores no site,
+// cobrindo o controle com blocos brancos. A conferência abaixo impede que isso volte a acontecer.
+const caixasAntes = caixasDasPecas();
+await doc.transform(quantize({ pattern: /^(NORMAL|TEXCOORD_\d+|TANGENT)$/ }));
+const caixasDepois = caixasDasPecas();
+for (const [nome, antes] of caixasAntes) {
+  const depois = caixasDepois.get(nome);
+  const diferenca = Math.max(...antes.map((v, i) => Math.abs(v - (depois?.[i] ?? Infinity))));
+  if (diferenca > 0.0005) {
+    console.error(`Erro: a peça ${nome} mudou ${(diferenca * 1000).toFixed(1)} mm de tamanho/posição na quantização. Arquivo não gerado.`);
+    process.exit(1);
+  }
+}
 
 // Vista explodida: quanto cada peça se afasta, nos eixos do SolidWorks (metros; x = frente, z = cima).
 function deslocamento(nome) {
@@ -133,6 +147,16 @@ console.log(
     `${verticesAntes.toLocaleString('pt-BR')} → ${contarVertices().toLocaleString('pt-BR')} vértices, ` +
     `${animacao.listChannels().length} peças na vista explodida`,
 );
+
+/** Caixa (min e max, no espaço da cena) de cada peça da montagem, para conferir que nada mudou de tamanho. */
+function caixasDasPecas() {
+  const caixas = new Map();
+  for (const peca of montagem.listChildren()) {
+    const { min, max } = getBounds(peca);
+    caixas.set(peca.getName(), [...min, ...max]);
+  }
+  return caixas;
+}
 
 function contarVertices() {
   return doc

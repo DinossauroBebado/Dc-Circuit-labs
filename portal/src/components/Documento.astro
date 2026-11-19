@@ -1,0 +1,608 @@
+---
+// Uma versão da documentação: texto do Confluence + anexos organizados por tipo.
+// Usado pelo cliente (/projetos/…) e pela pré-visualização do painel (prefixo /admin/arquivos).
+import { eq } from 'drizzle-orm';
+import Visualizador3D from './Visualizador3D.astro';
+import { db, schema } from '../db';
+import { tipoDeExibicao } from '../lib/arquivos';
+import { formatarData } from '../lib/consultas';
+
+interface Props {
+  documento: typeof schema.documentos.$inferSelect;
+  projeto: typeof schema.projetos.$inferSelect;
+  prefixoArquivos?: string;
+}
+
+const { documento, projeto, prefixoArquivos = '/arquivos' } = Astro.props;
+const anexos = db.select().from(schema.arquivos).where(eq(schema.arquivos.documentoId, documento.id)).all();
+const html = prefixoArquivos === '/arquivos' ? documento.html : documento.html.replaceAll('"/arquivos/', `"${prefixoArquivos}/`);
+// O botão "Reportar erro" só existe na tela do cliente (não na pré-visualização do painel).
+const reportavel = prefixoArquivos === '/arquivos';
+const url = (id: number, ver = false) => `${prefixoArquivos}/${id}${ver ? '?ver=1' : ''}`;
+
+const usadosNoTexto = new Set([...documento.html.matchAll(/\/arquivos\/(\d+)/g)].map((m) => Number(m[1])));
+const porTipo = (t: ReturnType<typeof tipoDeExibicao>) => anexos.filter((a) => tipoDeExibicao(a.nome) === t);
+const modelos = porTipo('modelo3d');
+const videos = porTipo('video');
+const pdfs = porTipo('pdf');
+const iboms = porTipo('ibom');
+const downloads = anexos.filter((a) => !(tipoDeExibicao(a.nome) === 'imagem' && usadosNoTexto.has(a.id)));
+
+const tamanho = (b: number) => (b > 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`);
+const sumario = [
+  ...(documento.sumario ?? []),
+  ...(modelos.length ? [{ id: 'modelo-3d', titulo: 'Modelo 3D', nivel: 2 }] : []),
+  ...(videos.length ? [{ id: 'videos', titulo: 'Vídeos', nivel: 2 }] : []),
+  ...(pdfs.length ? [{ id: 'documentos-pdf', titulo: 'Documentos (PDF)', nivel: 2 }] : []),
+  ...(iboms.length ? [{ id: 'bom-interativa', titulo: 'BOM interativa', nivel: 2 }] : []),
+  ...(downloads.length ? [{ id: 'arquivos', titulo: 'Arquivos para download', nivel: 2 }] : []),
+];
+---
+
+<div class="documento" data-documento={documento.id} data-reportavel={reportavel ? '' : undefined}>
+  {
+    sumario.length > 1 && (
+      <nav class="documento__sumario" aria-label="Nesta página">
+        <p class="eyebrow">NESTA PÁGINA</p>
+        <ol>
+          {sumario.map((s) => (
+            <li class={s.nivel === 3 ? 'sub' : ''}>
+              <a href={`#${s.id}`}>{s.titulo}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )
+  }
+
+  <article class="documento__corpo">
+    <header class="documento__cabecalho">
+      <p class="eyebrow">{projeto.nome.toUpperCase()}</p>
+      <h1>{documento.titulo}</h1>
+      <p class="documento__meta">Atualizado em {formatarData(documento.publicadoEm)}</p>
+      {
+        reportavel && (
+          <button class="reportar__botao" type="button" data-reportar>
+            <span aria-hidden="true">⚑</span> Reportar erro
+          </button>
+        )
+      }
+    </header>
+
+    {
+      reportavel && (
+        <div class="reportar__faixa" data-reportar-faixa hidden role="status">
+          <p>
+            <strong>Reportar erro:</strong> selecione o trecho do texto com problema ou clique na imagem.
+          </p>
+          <div>
+            <button class="botao-texto" type="button" data-reportar-selecao>
+              Usar o texto selecionado
+            </button>
+            <button class="botao-texto" type="button" data-reportar-sem-marcar>
+              Descrever sem marcar
+            </button>
+            <button class="botao-texto" type="button" data-reportar-cancelar>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    <div class="doc" set:html={html} />
+
+    {
+      modelos.length > 0 && (
+        <section id="modelo-3d" class="bloco">
+          <h2>Modelo 3D</h2>
+          {modelos.map((m) => (
+            <Visualizador3D src={url(m.id, true)} nome={m.nome} />
+          ))}
+        </section>
+      )
+    }
+
+    {
+      videos.length > 0 && (
+        <section id="videos" class="bloco">
+          <h2>Vídeos</h2>
+          <div class="grade-videos">
+            {videos.map((v) => (
+              <figure>
+                <video controls preload="metadata" playsinline src={url(v.id, true)} />
+                <figcaption>{v.nome}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      pdfs.length > 0 && (
+        <section id="documentos-pdf" class="bloco">
+          <h2>Documentos (PDF)</h2>
+          {pdfs.map((p) => (
+            <details class="pdf">
+              <summary>{p.nome}</summary>
+              <iframe src={url(p.id, true)} title={p.nome} loading="lazy" />
+              <a class="link" href={url(p.id)}>Baixar PDF</a>
+            </details>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      iboms.length > 0 && (
+        <section id="bom-interativa" class="bloco">
+          <h2>BOM interativa</h2>
+          {iboms.map((b) => (
+            <>
+              <iframe class="ibom" src={url(b.id, true)} title={b.nome} sandbox="allow-scripts allow-popups" loading="lazy" />
+              <a class="link" href={url(b.id, true)} target="_blank" rel="noopener">Abrir em tela cheia</a>
+            </>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      downloads.length > 0 && (
+        <section id="arquivos" class="bloco">
+          <h2>Arquivos para download</h2>
+          <ul class="downloads">
+            {downloads.map((a) => (
+              <li>
+                <a href={url(a.id)}>{a.nome}</a>
+                <span>{tamanho(a.tamanho)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+
+  {
+    reportavel && (
+      <dialog class="reportar__dialogo" data-reportar-dialogo aria-labelledby="reportar-titulo">
+        <form method="dialog" class="formulario" data-reportar-form>
+          <h2 id="reportar-titulo">Reportar erro</h2>
+          <p class="reportar__secao" data-reportar-secao />
+          <blockquote class="reportar__trecho" data-reportar-trecho hidden />
+          <img class="reportar__imagem" data-reportar-imagem alt="" hidden />
+          <label class="campo">
+            O que está errado?
+            <textarea name="comentario" rows="5" maxlength="2000" required placeholder="Ex.: o pino 12 está ligado ao GPIO 5, não ao 4." />
+          </label>
+          <p class="aviso" data-reportar-retorno hidden />
+          <div class="reportar__acoes">
+            <button class="btn btn--secundario" type="button" data-reportar-fechar>
+              Cancelar
+            </button>
+            <button class="btn btn--primario" type="submit">
+              Enviar para a DC
+            </button>
+          </div>
+        </form>
+      </dialog>
+    )
+  }
+</div>
+
+<script>
+  // "Reportar erro": o cliente marca um trecho (seleção de texto) ou uma imagem, comenta, e o portal envia para a DC.
+  const raiz = document.querySelector<HTMLElement>('.documento[data-reportavel]');
+  if (raiz) {
+    const corpo = raiz.querySelector<HTMLElement>('.documento__corpo')!;
+    const botao = raiz.querySelector<HTMLButtonElement>('[data-reportar]')!;
+    const faixa = raiz.querySelector<HTMLElement>('[data-reportar-faixa]')!;
+    const dialogo = raiz.querySelector<HTMLDialogElement>('[data-reportar-dialogo]')!;
+    const form = dialogo.querySelector<HTMLFormElement>('[data-reportar-form]')!;
+    const campoSecao = dialogo.querySelector<HTMLElement>('[data-reportar-secao]')!;
+    const campoTrecho = dialogo.querySelector<HTMLElement>('[data-reportar-trecho]')!;
+    const campoImagem = dialogo.querySelector<HTMLImageElement>('[data-reportar-imagem]')!;
+    const retorno = dialogo.querySelector<HTMLElement>('[data-reportar-retorno]')!;
+    const enviar = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    let marcado: { secao: string; secaoTitulo: string; trecho: string; imagem: string } = { secao: '', secaoTitulo: '', trecho: '', imagem: '' };
+
+    // Seção = o último título (h2/h3 com id) antes do ponto marcado, ou o bloco de anexos que o contém.
+    const secaoDe = (no: Node | null) => {
+      const el = no instanceof Element ? no : no?.parentElement;
+      const bloco = el?.closest<HTMLElement>('section.bloco[id]');
+      if (bloco) return { id: bloco.id, titulo: bloco.querySelector('h2')?.textContent?.trim() ?? '' };
+      let achado: HTMLElement | null = null;
+      for (const t of corpo.querySelectorAll<HTMLElement>('.doc h2[id], .doc h3[id]')) {
+        if (el && t.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) achado = t;
+      }
+      return achado ? { id: achado.id, titulo: achado.textContent?.trim() ?? '' } : { id: '', titulo: '' };
+    };
+
+    const ligarModo = (ligar: boolean) => {
+      faixa.hidden = !ligar;
+      corpo.classList.toggle('reportando', ligar);
+      botao.setAttribute('aria-pressed', String(ligar));
+    };
+
+    const abrir = (dados: { no: Node | null; trecho?: string; imagem?: HTMLImageElement }) => {
+      const secao = secaoDe(dados.no);
+      marcado = { secao: secao.id, secaoTitulo: secao.titulo, trecho: dados.trecho ?? '', imagem: dados.imagem ? new URL(dados.imagem.src).pathname : '' };
+      campoSecao.textContent = secao.titulo ? `Seção: ${secao.titulo}` : 'Seção não identificada';
+      campoTrecho.hidden = !marcado.trecho;
+      campoTrecho.textContent = marcado.trecho.length > 600 ? marcado.trecho.slice(0, 600) + '…' : marcado.trecho;
+      campoImagem.hidden = !dados.imagem;
+      if (dados.imagem) campoImagem.src = dados.imagem.src;
+      retorno.hidden = true;
+      enviar.disabled = false;
+      form.reset();
+      ligarModo(false);
+      dialogo.showModal();
+      form.querySelector('textarea')!.focus();
+    };
+
+    const selecaoNoCorpo = () => {
+      const sel = getSelection();
+      const texto = sel?.toString().trim() ?? '';
+      if (!sel || !texto || !corpo.contains(sel.anchorNode)) return null;
+      return { no: sel.anchorNode, trecho: texto.slice(0, 1000) };
+    };
+
+    botao.addEventListener('click', () => {
+      const sel = selecaoNoCorpo();
+      if (sel) abrir(sel);
+      else ligarModo(Boolean(faixa.hidden));
+    });
+    faixa.querySelector('[data-reportar-cancelar]')!.addEventListener('click', () => ligarModo(false));
+    faixa.querySelector('[data-reportar-sem-marcar]')!.addEventListener('click', () => abrir({ no: null }));
+    faixa.querySelector('[data-reportar-selecao]')!.addEventListener('click', () => {
+      const sel = selecaoNoCorpo();
+      if (sel) abrir(sel);
+    });
+    // Mouse: soltar o botão depois de selecionar já abre. (No celular, "Usar o texto selecionado".)
+    corpo.addEventListener('mouseup', () => {
+      if (faixa.hidden) return;
+      setTimeout(() => {
+        const sel = selecaoNoCorpo();
+        if (sel) abrir(sel);
+      }, 0);
+    });
+    corpo.addEventListener(
+      'click',
+      (e) => {
+        if (faixa.hidden) return;
+        const img = (e.target as Element).closest?.('img');
+        if (img && corpo.contains(img)) {
+          e.preventDefault();
+          e.stopPropagation();
+          abrir({ no: img, imagem: img as HTMLImageElement });
+        }
+      },
+      true,
+    );
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && !faixa.hidden && ligarModo(false));
+    dialogo.querySelector('[data-reportar-fechar]')!.addEventListener('click', () => dialogo.close());
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const dados = new FormData(form);
+      dados.set('documento', raiz.dataset.documento!);
+      dados.set('secao', marcado.secao);
+      dados.set('trecho', marcado.trecho);
+      dados.set('imagem', marcado.imagem);
+      enviar.disabled = true;
+      retorno.hidden = true;
+      try {
+        const r = await fetch('/reportar', { method: 'POST', body: dados });
+        const corpoResposta = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(corpoResposta.erro ?? 'Não foi possível enviar agora.');
+        retorno.className = 'aviso aviso--ok';
+        retorno.textContent = 'Obrigado! A equipe da DC Circuit Labs recebeu seu comentário e vai corrigir a documentação.';
+        retorno.hidden = false;
+        getSelection()?.removeAllRanges();
+        setTimeout(() => dialogo.close(), 2500);
+      } catch (erro) {
+        retorno.className = 'aviso aviso--erro';
+        retorno.textContent = erro instanceof Error ? erro.message : 'Não foi possível enviar agora.';
+        retorno.hidden = false;
+        enviar.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .documento__cabecalho {
+    position: relative;
+  }
+  .reportar__botao {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid rgb(18 18 18 / 0.15);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink-strong);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .reportar__botao:hover,
+  .reportar__botao[aria-pressed='true'] {
+    border-color: #c0392b;
+    color: #c0392b;
+  }
+  .reportar__faixa {
+    position: sticky;
+    top: 8px;
+    z-index: 6;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 20px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: #fff4d6;
+    color: #6b4a00;
+    box-shadow: var(--shadow-card);
+  }
+  .reportar__faixa div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .reportando :global(.doc) {
+    cursor: text;
+  }
+  .reportando :global(.doc img) {
+    cursor: crosshair;
+    outline: 2px dashed #e0a800;
+    outline-offset: 3px;
+  }
+  .reportar__dialogo {
+    width: min(560px, 94vw);
+    padding: 28px;
+    border: 0;
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 60px rgb(0 0 0 / 0.25);
+  }
+  .reportar__dialogo::backdrop {
+    background: rgb(0 0 0 / 0.45);
+  }
+  .reportar__dialogo h2 {
+    font-size: 1.25rem;
+  }
+  .reportar__secao {
+    color: var(--ink);
+    font-size: 0.9rem;
+  }
+  .reportar__trecho {
+    margin: 0;
+    padding: 10px 14px;
+    max-height: 160px;
+    overflow: auto;
+    border-left: 3px solid var(--brand-blue);
+    background: var(--surface-subtle);
+    white-space: pre-wrap;
+    font-size: 0.9rem;
+  }
+  .reportar__imagem {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 6px;
+    object-fit: contain;
+    background: var(--surface-subtle);
+  }
+  .reportar__acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .documento__cabecalho:has(.reportar__botao) h1 {
+    padding-right: 170px;
+  }
+  @media (max-width: 600px) {
+    .reportar__botao {
+      position: static;
+      margin-top: 12px;
+    }
+    .documento__cabecalho:has(.reportar__botao) h1 {
+      padding-right: 0;
+    }
+  }
+  .documento {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+  }
+  .documento__sumario {
+    position: sticky;
+    top: 88px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+    font-size: 0.88rem;
+  }
+  .documento__sumario ol {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .documento__sumario li.sub {
+    padding-left: 14px;
+  }
+  .documento__sumario a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .documento__sumario a:hover {
+    color: var(--brand-blue);
+  }
+  .documento__corpo {
+    min-width: 0;
+    padding: clamp(20px, 4vw, 48px);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+  .documento__cabecalho {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgb(18 18 18 / 0.1);
+  }
+  .documento__meta {
+    font-size: 0.9rem;
+  }
+  .bloco {
+    margin-top: 48px;
+    display: grid;
+    gap: 16px;
+  }
+  .bloco h2,
+  .doc :global(h2) {
+    font-size: 1.5rem;
+    scroll-margin-top: 90px;
+  }
+  .doc :global(h2) {
+    margin: 40px 0 14px;
+  }
+  .doc :global(h3) {
+    font-size: 1.2rem;
+    margin: 28px 0 10px;
+    scroll-margin-top: 90px;
+  }
+  .doc :global(h4),
+  .doc :global(h5),
+  .doc :global(h6) {
+    font-size: 1rem;
+    margin: 20px 0 8px;
+  }
+  .doc :global(p),
+  .doc :global(ul),
+  .doc :global(ol),
+  .doc :global(blockquote),
+  .doc :global(.aviso) {
+    margin-bottom: 14px;
+  }
+  .doc :global(ul),
+  .doc :global(ol) {
+    padding-left: 22px;
+  }
+  .doc :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+  }
+  .doc :global(table) {
+    width: 100%;
+    margin-bottom: 18px;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    display: block;
+    overflow-x: auto;
+  }
+  .doc :global(th),
+  .doc :global(td) {
+    padding: 8px 10px;
+    border: 1px solid rgb(18 18 18 / 0.12);
+    text-align: left;
+    vertical-align: top;
+  }
+  .doc :global(th) {
+    background: var(--surface-subtle);
+  }
+  .doc :global(pre) {
+    margin-bottom: 16px;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    background: var(--ink-strong);
+    color: #e8edf2;
+    overflow-x: auto;
+    font-size: 0.85rem;
+  }
+  .doc :global(code) {
+    font-family: ui-monospace, 'Fira Code', Consolas, monospace;
+  }
+  .doc :global(:not(pre) > code) {
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: var(--surface-subtle);
+  }
+  .doc :global(a) {
+    color: var(--brand-blue);
+  }
+  .grade-videos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .grade-videos video {
+    width: 100%;
+    border-radius: var(--radius-md);
+    background: #000;
+  }
+  .grade-videos figcaption {
+    margin-top: 6px;
+    font-size: 0.85rem;
+  }
+  .pdf summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 10px 0;
+  }
+  .pdf iframe {
+    width: 100%;
+    height: 75vh;
+    border: 1px solid rgb(18 18 18 / 0.12);
+    border-radius: var(--radius-sm);
+  }
+  .ibom {
+    width: 100%;
+    height: 80vh;
+    border: 1px solid rgb(18 18 18 / 0.12);
+    border-radius: var(--radius-sm);
+  }
+  .downloads {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .downloads li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 14px;
+    border: 1px solid rgb(18 18 18 / 0.1);
+    border-radius: var(--radius-sm);
+  }
+  .downloads a {
+    color: var(--brand-blue);
+    font-weight: 600;
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .downloads span {
+    flex: none;
+    font-size: 0.85rem;
+    color: var(--ink);
+  }
+  @media (max-width: 960px) {
+    .documento {
+      grid-template-columns: 1fr;
+    }
+    .documento__sumario {
+      position: static;
+      max-height: none;
+    }
+  }
+</style>

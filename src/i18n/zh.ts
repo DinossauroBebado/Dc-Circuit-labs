@@ -25,6 +25,8 @@ export const zh: Dicionario = {
     faq: '常见问题',
     contato: '联系我们',
     entreEmContato: '联系我们',
+    portal: '客户专区',
+    portalDescricao: '客户专区：项目文档、发票和媒体文件（葡萄牙语）',
     iniciar: '启动项目',
     menu: '打开菜单',
     fechar: '关闭菜单',

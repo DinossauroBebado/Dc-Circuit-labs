@@ -1,0 +1,36 @@
+---
+import { eq } from 'drizzle-orm';
+import Acesso from '../../layouts/Acesso.astro';
+import { db, schema } from '../../db';
+import { lerFormulario } from '../../lib/requisicao';
+import { conferir, gerarHash, problemaNaSenha } from '../../lib/senha';
+
+const admin = Astro.locals.admin!;
+let erro = '';
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const senha = String(form.get('senha') ?? '');
+  const confirmacao = String(form.get('confirmacao') ?? '');
+  erro =
+    (senha.length < 12 ? 'No painel a senha precisa ter pelo menos 12 caracteres.' : null) ??
+    problemaNaSenha(senha) ??
+    (senha !== confirmacao ? 'As duas senhas não são iguais.' : '');
+  if (!erro && (await conferir(admin.senhaHash, senha))) erro = 'Escolha uma senha diferente da atual.';
+  if (!erro) {
+    db.update(schema.admins)
+      .set({ senhaHash: await gerarHash(senha), deveTrocarSenha: false })
+      .where(eq(schema.admins.id, admin.id))
+      .run();
+    return Astro.redirect('/admin');
+  }
+}
+---
+
+<Acesso titulo="Crie sua senha" subtitulo="Troque a senha temporária por uma senha só sua (pelo menos 12 caracteres)." painel>
+  <form class="formulario" method="post" novalidate>
+    {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+    <label class="campo">Nova senha <input name="senha" type="password" autocomplete="new-password" minlength="12" required /></label>
+    <label class="campo">Repita <input name="confirmacao" type="password" autocomplete="new-password" minlength="12" required /></label>
+    <button class="btn btn--primario" type="submit">Salvar</button>
+  </form>
+</Acesso>

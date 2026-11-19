@@ -1,0 +1,48 @@
+---
+import Portal from '../layouts/Portal.astro';
+import { formatarData } from '../lib/consultas';
+import { contratosDoCliente, formatarTamanho, nomesDeProjetos } from '../lib/financeiro';
+
+const cliente = Astro.locals.cliente!;
+const contratos = contratosDoCliente(cliente.id);
+const projetos = nomesDeProjetos(cliente.id);
+---
+
+<Portal titulo="Contratos">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">JURÍDICO</p>
+    <h1>Contratos</h1>
+    <p>Contratos e aditivos assinados com a DC Circuit Labs.</p>
+  </header>
+
+  <section class="painel">
+    {
+      contratos.length === 0 ? (
+        <p class="vazio">Nenhum contrato disponível aqui ainda.</p>
+      ) : (
+        <ul class="lista-arquivos">
+          {contratos.map(({ contrato, arquivo }) => (
+            <li>
+              <div>
+                <strong>{contrato.titulo}</strong>
+                <small>
+                  {contrato.assinadoEm ? `Assinado em ${formatarData(contrato.assinadoEm, false)}` : 'Data de assinatura não informada'}
+                  {contrato.projetoId && projetos.get(contrato.projetoId) ? ` · ${projetos.get(contrato.projetoId)}` : ''}
+                  {` · ${formatarTamanho(arquivo.tamanho)}`}
+                </small>
+              </div>
+              <div class="acoes-arquivo">
+                <a class="btn btn--secundario" href={`/arquivos/${arquivo.id}?ver`} target="_blank" rel="noopener">
+                  Abrir
+                </a>
+                <a class="btn btn--secundario" href={`/arquivos/${arquivo.id}`}>
+                  Baixar
+                </a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</Portal>

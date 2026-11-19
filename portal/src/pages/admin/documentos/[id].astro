@@ -1,0 +1,19 @@
+---
+// Pré-visualização: o painel vê a documentação exatamente como o cliente vê.
+import { eq } from 'drizzle-orm';
+import Admin from '../../../layouts/Admin.astro';
+import Documento from '../../../components/Documento.astro';
+import { db, schema } from '../../../db';
+
+const id = Number(Astro.params.id);
+const documento = Number.isInteger(id) ? db.select().from(schema.documentos).where(eq(schema.documentos.id, id)).get() : undefined;
+const projeto = documento ? db.select().from(schema.projetos).where(eq(schema.projetos.id, documento.projetoId)).get() : undefined;
+if (!documento || !projeto) return new Response(null, { status: 404 });
+---
+
+<Admin titulo={`${projeto.nome} — ${documento.titulo}`}>
+  <p class="aviso aviso--info" style="margin-bottom: 20px">
+    Pré-visualização: é assim que o cliente vê esta versão. <a class="link" href={`/admin/clientes/${projeto.clienteId}`}>Voltar para a ficha</a>
+  </p>
+  <Documento documento={documento} projeto={projeto} prefixoArquivos="/admin/arquivos" />
+</Admin>

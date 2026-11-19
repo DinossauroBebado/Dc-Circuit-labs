@@ -1,0 +1,108 @@
+---
+import Portal from '../layouts/Portal.astro';
+import { registrar } from '../lib/acessos';
+import { formatarCnpj } from '../lib/cnpj';
+import { definirSenha, emailValido, pedirConfirmacaoEmail } from '../lib/contas';
+import { emailPendente, formatarData } from '../lib/consultas';
+import { lerFormulario, texto } from '../lib/requisicao';
+import { conferir, problemaNaSenha } from '../lib/senha';
+import { encerrarSessoesDoCliente } from '../lib/sessao';
+
+const cliente = Astro.locals.cliente!;
+const meta = { clienteId: cliente.id, ip: Astro.locals.ip, userAgent: Astro.locals.userAgent };
+let erro = '';
+let ok = '';
+
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const acao = texto(form, 'acao');
+  if (acao === 'email') {
+    const email = texto(form, 'email').toLowerCase();
+    if (!emailValido(email)) erro = 'Informe um e-mail válido.';
+    else {
+      try {
+        await pedirConfirmacaoEmail(cliente.id, email);
+        ok = `Enviamos um link de confirmação para ${email}. O e-mail só passa a valer depois de confirmado.`;
+      } catch (e) {
+        console.error('Falha ao enviar e-mail de confirmação', e);
+        erro = 'Não conseguimos enviar o e-mail agora. Tente de novo em alguns minutos.';
+      }
+    }
+  } else if (acao === 'senha') {
+    const atual = String(form.get('atual') ?? '');
+    const nova = String(form.get('nova') ?? '');
+    const confirmacao = String(form.get('confirmacao') ?? '');
+    if (!(await conferir(cliente.senhaHash, atual))) erro = 'A senha atual não confere.';
+    else erro = problemaNaSenha(nova, cliente.cnpj) ?? (nova !== confirmacao ? 'As duas senhas não são iguais.' : '');
+    if (!erro) {
+      await definirSenha(cliente.id, nova);
+      encerrarSessoesDoCliente(cliente.id, Astro.cookies);
+      registrar({ evento: 'trocou_senha', ...meta });
+      ok = 'Senha alterada. Os outros aparelhos conectados foram desconectados.';
+    }
+  } else if (acao === 'sair-de-todos') {
+    encerrarSessoesDoCliente(cliente.id, Astro.cookies);
+    ok = 'Pronto: só este aparelho continua conectado.';
+  }
+}
+
+const pendente = emailPendente(cliente.id);
+---
+
+<Portal titulo="Minha conta">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">MINHA CONTA</p>
+    <h1>{cliente.razaoSocial}</h1>
+    <p>CNPJ {formatarCnpj(cliente.cnpj)}</p>
+  </header>
+
+  {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+  {ok && <p class="aviso aviso--ok" role="status">{ok}</p>}
+
+  <section class="painel" style="margin-top: 24px">
+    <h2>E-mail para recuperar a senha</h2>
+    <p style="margin-bottom: 16px">
+      {
+        cliente.email ? (
+          <>
+            <strong>{cliente.email}</strong> <span class="etiqueta etiqueta--ok">confirmado em {formatarData(cliente.emailVerificadoEm, false)}</span>
+          </>
+        ) : (
+          <span class="etiqueta etiqueta--alerta">nenhum e-mail confirmado</span>
+        )
+      }
+      {pendente && <span style="display: block; margin-top: 8px">Aguardando confirmação: {pendente}</span>}
+    </p>
+    <form class="formulario" method="post" style="max-width: 440px">
+      <input type="hidden" name="acao" value="email" />
+      <label class="campo">
+        {cliente.email ? 'Trocar para' : 'E-mail'}
+        <input name="email" type="email" autocomplete="email" required />
+      </label>
+      <button class="btn btn--secundario" type="submit">Enviar link de confirmação</button>
+    </form>
+  </section>
+
+  <section class="painel">
+    <h2>Trocar senha</h2>
+    <form class="formulario" method="post" style="max-width: 440px">
+      <input type="hidden" name="acao" value="senha" />
+      <label class="campo">Senha atual <input name="atual" type="password" autocomplete="current-password" required /></label>
+      <label class="campo">
+        Nova senha <input name="nova" type="password" autocomplete="new-password" minlength="10" required />
+        <small>Pelo menos 10 caracteres, com letras.</small>
+      </label>
+      <label class="campo">Repita a nova senha <input name="confirmacao" type="password" autocomplete="new-password" minlength="10" required /></label>
+      <button class="btn btn--secundario" type="submit">Salvar nova senha</button>
+    </form>
+  </section>
+
+  <section class="painel">
+    <h2>Aparelhos conectados</h2>
+    <p style="margin-bottom: 16px">Perdeu um celular ou usou um computador compartilhado? Desconecte todos os outros aparelhos.</p>
+    <form method="post">
+      <input type="hidden" name="acao" value="sair-de-todos" />
+      <button class="btn btn--secundario" type="submit">Sair de todos os outros aparelhos</button>
+    </form>
+  </section>
+</Portal>

@@ -1,0 +1,416 @@
+---
+import { and, eq, gte } from 'drizzle-orm';
+import Portal from '../layouts/Portal.astro';
+import { db, schema } from '../db';
+import { registrar } from '../lib/acessos';
+import { formatarTamanho, nomesDeProjetos } from '../lib/financeiro';
+import { midiasDoCliente } from '../lib/midias';
+
+const cliente = Astro.locals.cliente!;
+const midias = midiasDoCliente(cliente.id);
+const projetos = nomesDeProjetos(cliente.id);
+
+// Registro "abriu a galeria" (uma vez a cada 30 min)
+const jaRegistrou = db
+  .select({ id: schema.acessos.id })
+  .from(schema.acessos)
+  .where(and(eq(schema.acessos.clienteId, cliente.id), eq(schema.acessos.evento, 'viu_midias'), gte(schema.acessos.quando, new Date(Date.now() - 30 * 60 * 1000))))
+  .get();
+if (!jaRegistrou) registrar({ evento: 'viu_midias', clienteId: cliente.id, ip: Astro.locals.ip, userAgent: Astro.locals.userAgent });
+
+const grupos = new Map<string, typeof midias>();
+for (const m of midias) {
+  const chave = m.projetoId ? (projetos.get(m.projetoId) ?? 'Outros') : 'Geral';
+  grupos.set(chave, [...(grupos.get(chave) ?? []), m]);
+}
+// Projetos em ordem alfabética; "Geral" (sem projeto) por último.
+const ordenados = [...grupos].sort(([a], [b]) => (a === 'Geral' ? 1 : b === 'Geral' ? -1 : a.localeCompare(b, 'pt-BR')));
+grupos.clear();
+for (const [k, v] of ordenados) grupos.set(k, v);
+const total = midias.reduce((s, m) => s + m.tamanho, 0);
+const fotos = midias.filter((m) => m.tipo === 'foto').length;
+const videos = midias.length - fotos;
+// Mesma ordem da tela (por grupo), para as setas do visor seguirem o que o cliente vê.
+const itens = [...grupos.values()].flat().map((m) => ({
+  id: m.id,
+  tipo: m.tipo,
+  titulo: m.titulo ?? m.nome,
+  nome: m.nome,
+  tamanho: formatarTamanho(m.tamanho),
+  src: m.tipo === 'foto' ? `/arquivos/${m.telaId ?? m.arquivoId}?ver` : `/arquivos/${m.arquivoId}?ver`,
+}));
+---
+
+<Portal titulo="Mídias">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">MÍDIAS</p>
+    <h1>Fotos e vídeos</h1>
+    <p>Registros dos seus produtos prontos. Clique para ver em tamanho grande; marque para baixar só as que quiser.</p>
+  </header>
+
+  {
+    midias.length === 0 ? (
+      <section class="painel">
+        <p class="vazio">As fotos e os vídeos dos seus produtos aparecem aqui assim que a DC Circuit Labs publicar.</p>
+      </section>
+    ) : (
+      <div class="galeria" data-galeria>
+        <div class="galeria__barra">
+          <p>
+            {fotos > 0 && `${fotos} foto${fotos > 1 ? 's' : ''}`}
+            {fotos > 0 && videos > 0 && ' · '}
+            {videos > 0 && `${videos} vídeo${videos > 1 ? 's' : ''}`} · {formatarTamanho(total)}
+          </p>
+          <div class="galeria__acoes">
+            <button class="botao-texto" type="button" data-marcar-todas>
+              Marcar todas
+            </button>
+            <a class="btn btn--secundario" href="/midias/baixar" data-baixar-selecionadas aria-disabled="true">Baixar selecionadas (<span data-contagem>0</span>)</a>
+            <a class="btn btn--primario" href="/midias/baixar?todas=1">
+              Baixar todas
+            </a>
+          </div>
+        </div>
+
+        {[...grupos].map(([nome, lista]) => (
+          <section class="galeria__grupo">
+            {grupos.size > 1 && <h2>{nome}</h2>}
+            <ul class="galeria__grade">
+              {lista.map((m) => (
+                <li class="item" data-id={m.id}>
+                  <button class="item__abrir" type="button" data-abrir={m.id} aria-label={`Abrir ${m.titulo ?? m.nome}`}>
+                    {m.tipo === 'foto' ? (
+                      <img src={`/arquivos/${m.miniaturaId ?? m.arquivoId}?ver`} alt={m.titulo ?? m.nome} loading="lazy" width="320" height="240" />
+                    ) : (
+                      <>
+                        <video src={`/arquivos/${m.arquivoId}?ver#t=0.5`} preload="metadata" muted playsinline />
+                        <span class="item__play" aria-hidden="true">▶</span>
+                      </>
+                    )}
+                  </button>
+                  <label class="item__rodape">
+                    <input type="checkbox" value={m.id} data-selecao />
+                    <span class="item__nome" title={m.nome}>
+                      {m.titulo ?? m.nome}
+                    </span>
+                    <small>{formatarTamanho(m.tamanho)}</small>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+
+        <dialog class="visor" data-visor aria-label="Visualizar mídia">
+          <div class="visor__topo">
+            <p data-visor-titulo></p>
+            <div class="visor__acoes">
+              <a class="btn btn--secundario" data-visor-baixar href="#">
+                Baixar original
+              </a>
+              <button class="visor__fechar" type="button" data-fechar aria-label="Fechar">
+                ✕
+              </button>
+            </div>
+          </div>
+          <div class="visor__conteudo" data-visor-conteudo></div>
+          <button class="visor__nav visor__nav--ant" type="button" data-anterior aria-label="Anterior">‹</button>
+          <button class="visor__nav visor__nav--prox" type="button" data-proxima aria-label="Próxima">›</button>
+          <p class="visor__contador" data-visor-contador></p>
+        </dialog>
+        <script type="application/json" data-itens set:html={JSON.stringify(itens).replace(/</g, '\\u003c')} />
+      </div>
+    )
+  }
+</Portal>
+
+<script>
+  const galeria = document.querySelector<HTMLElement>('[data-galeria]');
+  if (galeria) {
+    type Item = { id: number; tipo: 'foto' | 'video'; titulo: string; nome: string; tamanho: string; src: string };
+    const itens: Item[] = JSON.parse(galeria.querySelector('[data-itens]')!.textContent!);
+    const caixas = [...galeria.querySelectorAll<HTMLInputElement>('[data-selecao]')];
+    const botaoSelecionadas = galeria.querySelector<HTMLAnchorElement>('[data-baixar-selecionadas]')!;
+    const contagem = galeria.querySelector('[data-contagem]')!;
+    const marcarTodas = galeria.querySelector<HTMLButtonElement>('[data-marcar-todas]')!;
+
+    const atualizar = () => {
+      const ids = caixas.filter((c) => c.checked).map((c) => c.value);
+      contagem.textContent = String(ids.length);
+      botaoSelecionadas.href = `/midias/baixar?ids=${ids.join(',')}`;
+      botaoSelecionadas.setAttribute('aria-disabled', String(ids.length === 0));
+      marcarTodas.textContent = ids.length === caixas.length ? 'Desmarcar todas' : 'Marcar todas';
+      for (const c of caixas) c.closest('.item')!.classList.toggle('item--marcado', c.checked);
+    };
+    caixas.forEach((c) => c.addEventListener('change', atualizar));
+    marcarTodas.addEventListener('click', () => {
+      const todas = caixas.every((c) => c.checked);
+      caixas.forEach((c) => (c.checked = !todas));
+      atualizar();
+    });
+    botaoSelecionadas.addEventListener('click', (e) => {
+      if (botaoSelecionadas.getAttribute('aria-disabled') === 'true') e.preventDefault();
+    });
+
+    // ---------- Visualização ampliada ----------
+    const visor = galeria.querySelector<HTMLDialogElement>('[data-visor]')!;
+    const conteudo = visor.querySelector<HTMLElement>('[data-visor-conteudo]')!;
+    const titulo = visor.querySelector<HTMLElement>('[data-visor-titulo]')!;
+    const contador = visor.querySelector<HTMLElement>('[data-visor-contador]')!;
+    const baixar = visor.querySelector<HTMLAnchorElement>('[data-visor-baixar]')!;
+    let atual = 0;
+
+    const avisarVisualizacao = (id: number) => {
+      const dados = new FormData();
+      dados.set('id', String(id));
+      fetch('/midias/visualizou', { method: 'POST', body: dados }).catch(() => {});
+    };
+
+    const mostrar = (indice: number) => {
+      atual = (indice + itens.length) % itens.length;
+      const item = itens[atual];
+      conteudo.replaceChildren();
+      if (item.tipo === 'foto') {
+        const img = document.createElement('img');
+        img.src = item.src;
+        img.alt = item.titulo;
+        conteudo.append(img);
+      } else {
+        const video = document.createElement('video');
+        video.src = item.src;
+        video.controls = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        conteudo.append(video);
+      }
+      titulo.textContent = item.titulo;
+      contador.textContent = `${atual + 1} de ${itens.length} · ${item.tamanho}`;
+      baixar.href = `/midias/baixar?ids=${item.id}`;
+      avisarVisualizacao(item.id);
+    };
+
+    galeria.querySelectorAll<HTMLButtonElement>('[data-abrir]').forEach((b) =>
+      b.addEventListener('click', () => {
+        mostrar(itens.findIndex((i) => i.id === Number(b.dataset.abrir)));
+        visor.showModal();
+      }),
+    );
+    visor.querySelector('[data-anterior]')!.addEventListener('click', () => mostrar(atual - 1));
+    visor.querySelector('[data-proxima]')!.addEventListener('click', () => mostrar(atual + 1));
+    visor.querySelector('[data-fechar]')!.addEventListener('click', () => visor.close());
+    visor.addEventListener('close', () => conteudo.replaceChildren()); // para o vídeo
+    visor.addEventListener('click', (e) => e.target === visor && visor.close());
+    visor.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') mostrar(atual - 1);
+      if (e.key === 'ArrowRight') mostrar(atual + 1);
+    });
+    if (itens.length < 2) visor.querySelectorAll<HTMLElement>('[data-anterior],[data-proxima]').forEach((b) => (b.hidden = true));
+    atualizar();
+  }
+</script>
+
+<style>
+  .galeria__barra {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+  .galeria__barra p {
+    color: var(--ink);
+    font-size: 0.9rem;
+  }
+  .galeria__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .galeria__acoes [aria-disabled='true'] {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+  .galeria__grupo + .galeria__grupo {
+    margin-top: 32px;
+  }
+  .galeria__grupo h2 {
+    font-size: 1.15rem;
+    margin-bottom: 14px;
+  }
+  .galeria__grade {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .item {
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    outline: 2px solid transparent;
+    transition: outline-color 0.15s;
+  }
+  .item--marcado {
+    outline-color: var(--brand-blue);
+  }
+  .item__abrir {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    border: 0;
+    background: #11161c;
+    cursor: zoom-in;
+  }
+  .item__abrir img,
+  .item__abrir video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .item__play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgb(0 0 0 / 0.55);
+    color: #fff;
+    font-size: 1.2rem;
+  }
+  .item__rodape {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 0.88rem;
+  }
+  .item__rodape input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--brand-blue);
+  }
+  .item__nome {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ink-strong);
+  }
+  .item__rodape small {
+    color: var(--ink);
+  }
+
+  .visor {
+    margin: auto;
+    width: min(1200px, 96vw);
+    max-width: none;
+    height: min(900px, 94vh);
+    max-height: none;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: #0d1117;
+    color: #fff;
+  }
+  .visor[open] {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+  .visor::backdrop {
+    background: rgb(0 0 0 / 0.75);
+  }
+  .visor__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+  }
+  .visor__topo p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .visor__acoes {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .visor__fechar,
+  .visor__nav {
+    border: 0;
+    background: rgb(255 255 255 / 0.1);
+    color: #fff;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  .visor__fechar {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+  .visor__conteudo {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .visor__conteudo img,
+  .visor__conteudo video {
+    position: absolute;
+    top: 0;
+    left: 64px;
+    width: calc(100% - 128px);
+    height: 100%;
+    object-fit: contain;
+  }
+  .visor__nav {
+    position: absolute;
+    top: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 1.8rem;
+    transform: translateY(-50%);
+  }
+  .visor__nav--ant {
+    left: 10px;
+  }
+  .visor__nav--prox {
+    right: 10px;
+  }
+  .visor__contador {
+    padding: 10px 16px 14px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgb(255 255 255 / 0.7);
+  }
+  @media (max-width: 600px) {
+    .visor__conteudo img,
+    .visor__conteudo video {
+      left: 8px;
+      width: calc(100% - 16px);
+    }
+    .visor__nav {
+      top: auto;
+      bottom: 6px;
+      transform: none;
+    }
+  }
+</style>

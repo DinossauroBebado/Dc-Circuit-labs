@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import SeletorIdioma from './SeletorIdioma.astro';
-import { CONTATO, t, urlPagina, type Idioma } from '../i18n';
+import { CONTATO, PORTAL_URL, t, urlPagina, type Idioma } from '../i18n';
 
 interface Props {
   lang: Idioma;
@@ -30,6 +30,7 @@ const ano = new Date().getFullYear();
         <li><a href={urlPagina(lang, 'sobre')}>{d.nav.sobre}</a></li>
         <li><a href={urlPagina(lang, 'faq')}>{d.nav.faq}</a></li>
         <li><a href={urlPagina(lang, 'contato')}>{d.nav.contato}</a></li>
+        <li><a href={PORTAL_URL} data-portal="rodape" title={d.nav.portalDescricao}>{d.nav.portal}</a></li>
       </ul>
     </nav>
 

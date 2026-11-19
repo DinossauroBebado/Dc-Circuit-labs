@@ -27,6 +27,8 @@ export const pt = {
     faq: 'FAQ',
     contato: 'Contato',
     entreEmContato: 'Entre em contato',
+    portal: 'Área do cliente',
+    portalDescricao: 'Portal do Cliente: documentação, notas fiscais e mídias dos seus projetos',
     iniciar: 'Iniciar Projeto',
     menu: 'Abrir menu',
     fechar: 'Fechar menu',

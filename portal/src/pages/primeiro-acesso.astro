@@ -1,0 +1,59 @@
+---
+import Acesso from '../layouts/Acesso.astro';
+import { registrar } from '../lib/acessos';
+import { definirSenha, emailValido, pedirConfirmacaoEmail } from '../lib/contas';
+import { lerFormulario, texto } from '../lib/requisicao';
+import { conferir, problemaNaSenha } from '../lib/senha';
+import { encerrarSessoesDoCliente } from '../lib/sessao';
+
+const cliente = Astro.locals.cliente!;
+if (!cliente.deveTrocarSenha) return Astro.redirect('/');
+
+let erro = '';
+let emailDigitado = '';
+const form = await lerFormulario(Astro.request);
+if (form) {
+  const senha = String(form.get('senha') ?? '');
+  const confirmacao = String(form.get('confirmacao') ?? '');
+  emailDigitado = texto(form, 'email').toLowerCase();
+  erro = problemaNaSenha(senha, cliente.cnpj) ?? (senha !== confirmacao ? 'As duas senhas não são iguais.' : '');
+  if (!erro && (await conferir(cliente.senhaHash, senha))) erro = 'Escolha uma senha diferente da temporária.';
+  if (!erro && !emailValido(emailDigitado)) erro = 'Informe um e-mail válido.';
+
+  if (!erro) {
+    await definirSenha(cliente.id, senha);
+    encerrarSessoesDoCliente(cliente.id, Astro.cookies);
+    registrar({ evento: 'primeiro_acesso', clienteId: cliente.id, ip: Astro.locals.ip, userAgent: Astro.locals.userAgent });
+    let enviado = true;
+    try {
+      await pedirConfirmacaoEmail(cliente.id, emailDigitado);
+    } catch (e) {
+      console.error('Falha ao enviar e-mail de confirmação', e);
+      enviado = false;
+    }
+    return Astro.redirect(enviado ? '/?bemvindo=1' : '/?bemvindo=1&email=falhou');
+  }
+}
+---
+
+<Acesso titulo="Primeiro acesso" subtitulo={`Olá, ${cliente.razaoSocial}. Crie sua senha definitiva e informe o e-mail que vai receber o link de recuperação de senha.`}>
+  <form class="formulario" method="post" novalidate>
+    {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+    <label class="campo">
+      Nova senha
+      <input name="senha" type="password" autocomplete="new-password" minlength="10" required />
+      <small>Pelo menos 10 caracteres, com letras.</small>
+    </label>
+    <label class="campo">
+      Repita a nova senha
+      <input name="confirmacao" type="password" autocomplete="new-password" minlength="10" required />
+    </label>
+    <label class="campo">
+      E-mail
+      <input name="email" type="email" autocomplete="email" value={emailDigitado} required />
+      <small>Enviaremos um link para confirmar. Ele será usado se você esquecer a senha.</small>
+    </label>
+    <button class="btn btn--primario" type="submit">Salvar e entrar</button>
+  </form>
+  <form method="post" action="/sair" class="links-acesso"><button class="botao-texto" type="submit">Sair</button></form>
+</Acesso>

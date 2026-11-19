@@ -1,0 +1,70 @@
+---
+import { eq } from 'drizzle-orm';
+import Admin from '../../../layouts/Admin.astro';
+import SenhaTemporaria from '../../../components/SenhaTemporaria.astro';
+import { db, schema } from '../../../db';
+import { registrar } from '../../../lib/acessos';
+import { cnpjValido, soDigitos } from '../../../lib/cnpj';
+import { cadastrarCliente } from '../../../lib/contas';
+import { lerFormulario, texto } from '../../../lib/requisicao';
+
+const admin = Astro.locals.admin!;
+let erro = '';
+let criado: { id: number; cnpj: string; razaoSocial: string; senha: string } | null = null;
+let cnpjDigitado = '';
+let razaoDigitada = '';
+
+const form = await lerFormulario(Astro.request);
+if (form) {
+  cnpjDigitado = texto(form, 'cnpj');
+  razaoDigitada = texto(form, 'razao_social');
+  const cnpj = soDigitos(cnpjDigitado);
+  if (!cnpjValido(cnpj)) erro = 'CNPJ inválido. Confira os números.';
+  else if (razaoDigitada.length < 2) erro = 'Informe a razão social.';
+  else if (db.select().from(schema.clientes).where(eq(schema.clientes.cnpj, cnpj)).get()) erro = 'Já existe um cliente com esse CNPJ.';
+  else {
+    const senha = await cadastrarCliente(cnpj, razaoDigitada);
+    const cliente = db.select().from(schema.clientes).where(eq(schema.clientes.cnpj, cnpj)).get()!;
+    registrar({ evento: 'admin_acao', adminId: admin.id, clienteId: cliente.id, alvo: `Cadastro criado por ${admin.nome}`, ip: Astro.locals.ip });
+    criado = { id: cliente.id, cnpj, razaoSocial: cliente.razaoSocial, senha };
+  }
+}
+---
+
+<Admin titulo="Cadastrar cliente">
+  <header class="cabecalho-pagina-portal">
+    <p class="eyebrow">CLIENTES</p>
+    <h1>Cadastrar cliente</h1>
+  </header>
+
+  {
+    criado ? (
+      <>
+        <SenhaTemporaria senha={criado.senha} cnpj={criado.cnpj} razaoSocial={criado.razaoSocial} />
+        <p style="margin-top: 20px">
+          <a class="link" href={`/admin/clientes/${criado.id}`}>Abrir a ficha do cliente</a>
+        </p>
+      </>
+    ) : (
+      <section class="painel" style="max-width: 560px">
+        <form class="formulario" method="post" novalidate>
+          {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+          <label class="campo">
+            CNPJ
+            <input name="cnpj" inputmode="numeric" placeholder="00.000.000/0000-00" value={cnpjDigitado} required data-mascara-cnpj />
+          </label>
+          <label class="campo">
+            Razão social
+            <input name="razao_social" value={razaoDigitada} required />
+          </label>
+          <button class="btn btn--primario" type="submit">Cadastrar e gerar senha temporária</button>
+        </form>
+      </section>
+    )
+  }
+</Admin>
+
+<script>
+  import { mascararCnpj } from '../../../scripts/mascara';
+  mascararCnpj();
+</script>

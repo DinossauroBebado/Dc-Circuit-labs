@@ -24,9 +24,12 @@ npm run build  ──rsync──►  /var/www/dccircuitlabs.com/releases/2026102
 | `nginx/conf.d/dc-idioma-por-ip.conf` | Escolhe PT/EN/ZH pelo país do IP |
 | `nginx/conf.d/dc-geral.conf` | gzip, esconder versão do Nginx |
 | `nginx/sites-available/dccircuitlabs.com.conf` | Site principal (HTTP→HTTPS, www→domínio, cache, idioma) |
-| `nginx/sites-available/portal.dccircuitlabs.com.conf` | Portal — hoje só "em breve", com HTTPS próprio |
+| `nginx/sites-available/portal.dccircuitlabs.com.conf` | Portal do cliente (proxy para o app, arquivos protegidos, limite de tentativas de login) |
+| `portal-bootstrap.sh` | Prepara o VPS para o portal, uma vez, como root (Node 22, pm2, pastas, `.env`, backup, Nginx) |
+| `portal-deploy.sh` | Publica uma nova versão do portal |
+| `portal-backup.sh` | Backup diário do banco e dos arquivos do portal (instalado pelo `portal-bootstrap.sh`) |
 | `nginx/snippets/` | TLS, cabeçalhos de segurança, desafio do Let's Encrypt |
-| `portal-em-breve/` | A página do portal |
+| `portal-em-breve/` | Página de manutenção do portal (aparece se o app estiver fora do ar) |
 | `teste-local/` | Réplica do servidor em Docker para testar tudo antes (`./deploy/teste-local/testar.sh`) |
 
 ## Passo a passo — primeira vez
@@ -117,26 +120,62 @@ npm run build && ./deploy/teste-local/testar.sh
 - **Origem dos leads:** use links com `?utm_source=instagram` / `?utm_source=linkedin` na bio e nos posts — a origem vai junto na
   mensagem do WhatsApp/e-mail.
 
-## Portal do cliente (DC-117)
+## Portal do cliente (portal.dccircuitlabs.com)
 
-Hoje `portal.dccircuitlabs.com` serve só `portal-em-breve/`, com certificado próprio. Quando o backend existir:
+App próprio em `portal/` (Astro 7 + Node 22 + SQLite), rodando em `127.0.0.1:3100` pelo pm2, atrás do Nginx.
+Banco e arquivos ficam em `/srv/apps/portal/dados/` (nunca são tocados pelo deploy); as senhas e chaves em `/srv/apps/portal/.env`.
 
-1. Código em `/srv/apps/portal`, rodando com um usuário próprio (ex.: `adduser --system --group portal`).
-2. Processo gerenciado por **pm2** (reinicia sozinho no boot) — ou por um serviço systemd, se preferir não instalar Node global:
+**Uma vez, como root** (instala Node 22, pm2 e a configuração do Nginx do portal):
 
-   ```bash
-   # como root, uma vez
-   curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs
-   npm install -g pm2
-   # como o usuário do portal
-   pm2 start /srv/apps/portal/server.js --name portal -- --port 3100
-   pm2 save
-   pm2 startup systemd   # imprime o comando para rodar como root
-   ```
+```bash
+rsync -av -e "ssh -p 22022" deploy/ root@143.95.173.37:/root/dc-deploy/
+ssh -p 22022 root@143.95.173.37 'bash /root/dc-deploy/portal-bootstrap.sh'
+```
 
-3. No `nginx/sites-available/portal.dccircuitlabs.com.conf`, troque o `location /` pelo bloco `proxy_pass` que já está comentado
-   no arquivo (porta 3100) e adicione limite de tentativas de login (`limit_req`).
-4. Outros apps futuros seguem o mesmo padrão: `/srv/apps/<app>`, uma porta local, um bloco `server` no Nginx.
+Depois, no VPS, preencha `/srv/apps/portal/.env` e rode `pm2 restart portal`:
+
+| Variável | De onde vem |
+| --- | --- |
+| `SMTP_SENHA` | Senha da caixa `portal@dccircuitlabs.com` na Titan (e-mails de confirmação e de senha) |
+| `CONFLUENCE_EMAIL`, `CONFLUENCE_TOKEN` | E-mail de uma conta Atlassian com acesso ao espaço `PORTAL` + token criado em id.atlassian.com → Segurança → Tokens de API |
+| `BLING_CLIENT_ID`, `BLING_CLIENT_SECRET` | App de integração criado em developer.bling.com.br. Link de redirecionamento: `https://portal.dccircuitlabs.com/admin/bling/retorno`. Escopos: contatos, contas a receber e NF-e (leitura) |
+
+**Notas fiscais** são enviadas à mão no painel (ficha do cliente ou **Fiscal**): PDF da DANFE e, se houver, o XML da NF-e — com o XML,
+número, série, data e valor são lidos dele e o CNPJ do destinatário é conferido. A integração com o Bling está pronta mas **desligada**;
+para ligar: `BLING_ATIVO=true` + `BLING_CLIENT_ID/SECRET` no `.env`, `pm2 restart portal` e **Bling → Conectar Bling** no painel
+(ela também traz as contas a receber, que ativam a área Financeiro). O Confluence publica **todo dia às 3h** (e quando alguém clica em **Publicação → Publicar tudo** ou
+em **Publicar este cliente** na ficha).
+
+O mesmo bootstrap instala o **backup diário às 4h** (`/srv/apps/portal/backups/`, 14 dias: banco comprimido + foto dos arquivos com
+hard links). Ele fica no mesmo disco — mantenha também o backup/snapshot da Hostinger ligado. Para rodar na hora: `sudo systemctl start portal-backup`.
+
+Os links antigos da documentação (`dccircuitlabs.com/metabee/…`, `/rogge/…`, `/dnk/…`) redirecionam (301) para o portal pela
+configuração do site — vale depois de copiar `nginx/sites-available/dccircuitlabs.com.conf` para o VPS e recarregar o Nginx (root).
+
+**Publicar (e a cada atualização):**
+
+```bash
+DC_SERVIDOR=deploy@143.95.173.37 DC_SSH="ssh -p 22022" ./deploy/portal-deploy.sh
+```
+
+**Criar o acesso de um sócio ao painel** (gera uma senha temporária; no primeiro login ele configura o app autenticador e troca a senha):
+
+```bash
+ssh -p 22022 deploy@143.95.173.37
+cd /srv/apps/portal/app/portal && node --env-file=/srv/apps/portal/.env scripts/criar-admin.mjs "Nome" email@dominio
+# perdeu o celular do autenticador?  … scripts/criar-admin.mjs --redefinir email@dominio
+```
+
+Clientes são cadastrados no próprio painel (`/admin/clientes/novo`): ele mostra a senha temporária uma vez, com a mensagem pronta para mandar por WhatsApp.
+
+**Como a documentação é escrita no Confluence** (espaço `PORTAL`): página na raiz = cliente (com o CNPJ escrito nela) → página filha =
+projeto (tabela opcional com "Status" e "Valor") → página neta = versão da documentação, com os anexos. Rótulo `rascunho` esconde a
+página; `modelo`/`ignorar` numa página raiz marca que ela não é cliente. Detalhes na própria tela **Publicação** do painel.
+
+**Testes:** `./dev.sh npm test` (regras, renderização do Confluence, contas do financeiro) e `./dev.sh npx astro check`.
+
+**Desenvolvimento local** (a máquina tem Node 20; o portal roda num container com Node 22): `cd portal && ./dev.sh npm install`,
+`./dev.sh email` (caixa de e-mails de teste em http://localhost:8025) e `./dev.sh npm run dev` (http://localhost:4400).
 
 ## Checklist de segurança do servidor
 

@@ -1,0 +1,39 @@
+---
+// Mostra a senha temporária uma única vez, com a mensagem pronta para mandar ao cliente.
+import { formatarCnpj } from '../lib/cnpj';
+
+interface Props {
+  senha: string;
+  cnpj: string;
+  razaoSocial: string;
+}
+
+const { senha, cnpj, razaoSocial } = Astro.props;
+const portal = (process.env.PORTAL_URL ?? 'https://portal.dccircuitlabs.com').replace(/\/$/, '');
+const mensagem = `Olá! Seu acesso ao Portal do Cliente da DC Circuit Labs está pronto.\n\nEndereço: ${portal}\nCNPJ: ${formatarCnpj(cnpj)}\nSenha temporária: ${senha}\n\nNo primeiro acesso você vai criar sua senha definitiva e cadastrar um e-mail para recuperação.`;
+---
+
+<div class="painel senha-temporaria">
+  <p class="eyebrow">SENHA TEMPORÁRIA · {razaoSocial}</p>
+  <p class="senha"><code>{senha}</code></p>
+  <p class="aviso aviso--info">Ela aparece só agora. Envie ao cliente; no primeiro login ele cria a senha definitiva.</p>
+  <label class="campo">
+    Mensagem pronta para enviar
+    <textarea rows="7" readonly>{mensagem}</textarea>
+  </label>
+  <a class="btn btn--primario" href={`https://wa.me/?text=${encodeURIComponent(mensagem)}`} target="_blank" rel="noopener">Enviar pelo WhatsApp</a>
+</div>
+
+<style>
+  .senha-temporaria {
+    display: grid;
+    gap: 14px;
+    max-width: 560px;
+  }
+  .senha code {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--ink-strong);
+  }
+</style>

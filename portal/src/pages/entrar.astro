@@ -1,0 +1,65 @@
+---
+import { eq } from 'drizzle-orm';
+import Acesso from '../layouts/Acesso.astro';
+import { db, schema } from '../db';
+import { bloqueado, registrar } from '../lib/acessos';
+import { soDigitos } from '../lib/cnpj';
+import { destinoSeguro, lerFormulario, texto } from '../lib/requisicao';
+import { conferir, conferirFalso } from '../lib/senha';
+import { criarSessao } from '../lib/sessao';
+
+const { ip, userAgent } = Astro.locals;
+const voltar = Astro.url.searchParams.get('voltar');
+let erro = '';
+let cnpjDigitado = '';
+
+const form = await lerFormulario(Astro.request);
+if (form) {
+  cnpjDigitado = texto(form, 'cnpj');
+  const cnpj = soDigitos(cnpjDigitado);
+  const senha = typeof form.get('senha') === 'string' ? (form.get('senha') as string) : '';
+
+  if (bloqueado('login_falhou', cnpj, ip)) {
+    registrar({ evento: 'login_bloqueado', alvo: cnpj, ip, userAgent });
+    erro = 'Muitas tentativas seguidas. Aguarde 15 minutos e tente de novo.';
+  } else {
+    const cliente = cnpj ? db.select().from(schema.clientes).where(eq(schema.clientes.cnpj, cnpj)).get() : undefined;
+    const ok = cliente?.ativo ? await conferir(cliente.senhaHash, senha) : await conferirFalso(senha);
+    if (ok && cliente) {
+      criarSessao(Astro.cookies, 'cliente', { clienteId: cliente.id }, { ip, userAgent });
+      registrar({ evento: 'login', clienteId: cliente.id, ip, userAgent });
+      return Astro.redirect(destinoSeguro(voltar));
+    }
+    registrar({ evento: 'login_falhou', clienteId: cliente?.id, alvo: cnpj, ip, userAgent });
+    erro = 'CNPJ ou senha incorretos.';
+  }
+}
+
+const mensagem = Astro.url.searchParams.has('redefinida')
+  ? 'Senha alterada. Entre com a nova senha.'
+  : Astro.url.searchParams.has('saiu')
+    ? 'Você saiu do portal.'
+    : '';
+---
+
+<Acesso titulo="Entrar" subtitulo="Acesse a documentação, as notas fiscais e o financeiro dos seus projetos com a DC Circuit Labs.">
+  <form class="formulario" method="post" novalidate>
+    {erro && <p class="aviso aviso--erro" role="alert">{erro}</p>}
+    {!erro && mensagem && <p class="aviso aviso--ok">{mensagem}</p>}
+    <label class="campo">
+      CNPJ
+      <input name="cnpj" inputmode="numeric" autocomplete="username" placeholder="00.000.000/0000-00" value={cnpjDigitado} required data-mascara-cnpj />
+    </label>
+    <label class="campo">
+      Senha
+      <input name="senha" type="password" autocomplete="current-password" required />
+    </label>
+    <button class="btn btn--primario" type="submit">Entrar</button>
+  </form>
+  <p class="links-acesso"><a href="/esqueci-senha">Esqueci minha senha</a></p>
+</Acesso>
+
+<script>
+  import { mascararCnpj } from '../scripts/mascara';
+  mascararCnpj();
+</script>
